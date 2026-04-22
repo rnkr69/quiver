@@ -21,72 +21,59 @@ export function ProfilePage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ height: 32, width: 140, background: 'var(--gray-100)', borderRadius: 4 }} />
-        <div style={{ height: 160, background: 'var(--gray-100)', borderRadius: 8 }} />
+      <div className="flex flex-col gap-3">
+        <div className="h-8 w-[140px] bg-gray-100 rounded animate-pulse" />
+        <div className="h-40 bg-gray-100 rounded-lg animate-pulse" />
       </div>
     )
   }
 
   if (!profile) {
-    return <div style={{ color: 'var(--gray-500)', padding: 24 }}>No se pudo cargar el perfil.</div>
+    return <div className="text-gray-500 py-6">No se pudo cargar el perfil.</div>
   }
 
   const initials = `${profile.first_name[0] ?? ''}${profile.last_name[0] ?? ''}`.toUpperCase()
 
   return (
-    <div style={{ maxWidth: 640 }}>
+    <div className="max-w-[640px]">
       <PageHeader title="Mi perfil" />
 
       <Card>
-        <div style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{
-              width: 64, height: 64, borderRadius: '50%', flexShrink: 0,
-              background: 'var(--brand-50)', color: 'var(--brand-700)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 20, fontWeight: 700,
-            }}>
+        <div className="px-6 py-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center text-xl font-bold shrink-0">
               {initials}
             </div>
             <div>
-              <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--gray-900)', margin: '0 0 2px' }}>
-                {profile.first_name} {profile.last_name}
-              </p>
-              <p style={{ fontSize: 13, color: 'var(--gray-600)', margin: '0 0 6px' }}>{profile.email}</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              <p className="text-xl font-semibold text-gray-900 mb-0.5">{profile.first_name} {profile.last_name}</p>
+              <p className="text-md text-gray-600 mb-1.5">{profile.email}</p>
+              <div className="flex flex-wrap gap-1">
                 {profile.roles.map(r => <Badge key={r} variant="client">{r}</Badge>)}
               </div>
             </div>
           </div>
           <Link
             to="/portal/perfil/editar"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '8px 16px', fontSize: 14, fontWeight: 500,
-              background: 'white', color: 'var(--gray-800)',
-              border: '1px solid var(--gray-300)', borderRadius: 6,
-              textDecoration: 'none', flexShrink: 0,
-            }}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline shrink-0"
           >
             <Pencil size={14} />
             Editar perfil
           </Link>
         </div>
 
-        <div style={{ borderTop: '1px solid var(--gray-200)', padding: '20px 24px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 24px' }}>
+        <div className="border-t border-gray-200 px-6 py-5">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
             <DetailField label="Nombre" value={profile.first_name} />
             <DetailField label="Apellidos" value={profile.last_name} />
             <DetailField
               label="Email"
-              value={<>{profile.email} <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>(no editable)</span></>}
-              style={{ gridColumn: '1 / -1' }}
+              value={<>{profile.email} <span className="text-xs text-gray-400">(no editable)</span></>}
+              className="col-span-full"
             />
             <DetailField
               label="Miembro desde"
               value={formatDate(profile.created_at)}
-              style={{ gridColumn: '1 / -1' }}
+              className="col-span-full"
             />
           </div>
         </div>

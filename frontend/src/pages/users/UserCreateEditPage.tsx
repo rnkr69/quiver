@@ -62,7 +62,7 @@ export function UserCreateEditPage({ mode }: Props) {
 
   const loading = create.isPending || update.isPending
 
-  if (mode === 'edit' && userLoading) return <div style={{ color: 'var(--gray-500)', fontSize: 14 }}>Cargando...</div>
+  if (mode === 'edit' && userLoading) return <div className="text-gray-500 text-base">Cargando...</div>
 
   const selectedRoles = roles.filter(r => selectedRoleIds.includes(r.id))
   const availableRoles = roles.filter(r => !selectedRoleIds.includes(r.id))
@@ -73,8 +73,8 @@ export function UserCreateEditPage({ mode }: Props) {
       <BackLink to={backTo} label={mode === 'edit' ? 'Volver al detalle' : 'Volver al listado'} />
       <PageHeader title={mode === 'create' ? 'Crear usuario' : 'Editar usuario'} />
 
-      <Card style={{ padding: 24 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16, marginBottom: 20 }}>
+      <Card className="p-6">
+        <div className="grid [grid-template-columns:repeat(auto-fill,minmax(260px,1fr))] gap-4 mb-5">
           <Input label="Nombre" value={firstName} onChange={e => setFirstName(e.target.value)} required />
           <Input label="Apellidos" value={lastName} onChange={e => setLastName(e.target.value)} required />
           <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
@@ -87,54 +87,35 @@ export function UserCreateEditPage({ mode }: Props) {
           />
         </div>
 
-        {/* Roles */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--gray-700)', display: 'block', marginBottom: 8 }}>Roles</label>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="mb-5">
+          <label className="text-sm font-medium text-gray-700 block mb-2">Roles</label>
+          <div className="flex gap-1.5 flex-wrap items-center">
             {selectedRoles.map(r => (
-              <div key={r.id} style={{
-                display: 'flex', alignItems: 'center', gap: 4,
-                background: 'var(--brand-50)', color: 'var(--brand-700)',
-                padding: '3px 8px 3px 10px', borderRadius: 4, fontSize: 13,
-              }}>
+              <div key={r.id} className="flex items-center gap-1 bg-brand-50 text-brand-700 py-0.5 pr-2 pl-2.5 rounded text-md">
                 {r.display_name}
                 <button
                   onClick={() => setSelectedRoleIds(ids => ids.filter(i => i !== r.id))}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand-500)', fontSize: 14, padding: 0, lineHeight: 1 }}
+                  className="bg-transparent border-none cursor-pointer text-brand-500 text-base p-0 leading-none"
                 >
                   ×
                 </button>
               </div>
             ))}
             {availableRoles.length > 0 && (
-              <div style={{ position: 'relative' }}>
+              <div className="relative">
                 <button
                   onClick={() => setAddingRole(o => !o)}
-                  style={{
-                    padding: '3px 10px', fontSize: 13, fontFamily: 'inherit',
-                    background: 'transparent', color: 'var(--gray-600)',
-                    border: '1px dashed var(--gray-300)', borderRadius: 4, cursor: 'pointer',
-                  }}
+                  className="px-2.5 py-0.5 text-md font-sans bg-transparent text-gray-600 border border-dashed border-gray-300 rounded cursor-pointer"
                 >
                   + Agregar rol
                 </button>
                 {addingRole && (
-                  <div style={{
-                    position: 'absolute', top: 'calc(100% + 4px)', left: 0, zIndex: 50,
-                    background: 'white', border: '1px solid var(--gray-200)', borderRadius: 6,
-                    boxShadow: 'var(--shadow-md)', minWidth: 160, padding: '4px 0',
-                  }}>
+                  <div className="absolute top-full mt-1 left-0 z-50 bg-white border border-gray-200 rounded-md shadow-md min-w-[160px] py-1">
                     {availableRoles.map(r => (
                       <button
                         key={r.id}
                         onClick={() => { setSelectedRoleIds(ids => [...ids, r.id]); setAddingRole(false) }}
-                        style={{
-                          display: 'block', width: '100%', textAlign: 'left',
-                          padding: '7px 12px', background: 'none', border: 'none',
-                          fontSize: 13, color: 'var(--gray-800)', cursor: 'pointer', fontFamily: 'inherit',
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--gray-50)')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                        className="block w-full text-left px-3 py-1.5 bg-transparent border-none text-md text-gray-800 cursor-pointer font-sans hover:bg-gray-50"
                       >
                         {r.display_name}
                       </button>
@@ -146,7 +127,7 @@ export function UserCreateEditPage({ mode }: Props) {
           </div>
         </div>
 
-        <div style={{ marginBottom: 24 }}>
+        <div className="mb-6">
           <Toggle
             checked={isSuperuser}
             onChange={setIsSuperuser}
@@ -154,7 +135,7 @@ export function UserCreateEditPage({ mode }: Props) {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+        <div className="flex gap-2 justify-end">
           <Button variant="secondary" onClick={() => navigate(backTo)} disabled={loading}>Cancelar</Button>
           <Button variant="primary" loading={loading} onClick={() => mode === 'create' ? create.mutate() : update.mutate()}>
             {mode === 'create' ? 'Crear usuario' : 'Guardar cambios'}

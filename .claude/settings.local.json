@@ -39,7 +39,11 @@
       "mcp__chrome-devtools__list_console_messages",
       "mcp__chrome-devtools__list_network_requests",
       "mcp__chrome-devtools__get_network_request",
-      "mcp__chrome-devtools__evaluate_script"
+      "mcp__chrome-devtools__evaluate_script",
+      "Bash(lsof -ti:5173)",
+      "Bash(fuser 5173/tcp)",
+      "Bash(kill -9 241338 241890)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/quiver/api/me)"
     ]
   }
 }

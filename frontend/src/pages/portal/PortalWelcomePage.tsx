@@ -18,24 +18,17 @@ export function PortalWelcomePage() {
 
   if (!isDev) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+      <div className="text-center py-20 px-6">
         <QuiverLogo size={52} />
-        <h1 style={{ fontSize: 22, fontWeight: 600, color: 'var(--gray-900)', margin: '16px 0 8px' }}>
-          Bienvenido
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--gray-600)', marginBottom: 24 }}>
+        <h1 className="text-3xl font-semibold text-gray-900 mt-4 mb-2">Bienvenido</h1>
+        <p className="text-base text-gray-600 mb-6">
           {data?.message ?? 'Esta sección estará disponible próximamente.'}
         </p>
         <a
           href="https://github.com/your-org/quiver"
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', fontSize: 14, fontWeight: 500,
-            background: 'white', color: 'var(--gray-800)',
-            border: '1px solid var(--gray-300)', borderRadius: 6, textDecoration: 'none',
-          }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline"
         >
           <BookOpen size={15} />
           Ver documentación de Quiver
@@ -45,63 +38,50 @@ export function PortalWelcomePage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto' }}>
-      <div style={{
-        background: 'var(--brand-50)', border: '1px solid var(--brand-100)',
-        borderRadius: 6, padding: '10px 14px', marginBottom: 32,
-        display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, color: 'var(--brand-700)',
-      }}>
-        <Wrench size={15} style={{ marginTop: 1, flexShrink: 0, color: 'var(--brand-500)' }} />
+    <div className="max-w-[640px] mx-auto">
+      <div className="bg-brand-50 border border-brand-100 rounded px-3.5 py-2.5 mb-8 flex gap-2.5 items-start text-md text-brand-700">
+        <Wrench size={15} className="mt-px shrink-0 text-brand-500" />
         <div>
           <strong>Estás viendo la página de bienvenida por defecto.</strong>
-          {' '}Edita <code style={{ background: 'var(--brand-100)', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>src/pages/portal/PortalWelcomePage.tsx</code> para personalizarla.
+          {' '}Edita <code className="bg-brand-100 px-1 py-px rounded text-sm">src/pages/portal/PortalWelcomePage.tsx</code> para personalizarla.
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', marginBottom: 32 }}>
+      <div className="text-center mb-8">
         <QuiverLogo size={52} />
-        <h1 style={{ fontSize: 22, fontWeight: 600, color: 'var(--gray-900)', margin: '16px 0 8px' }}>
-          Portal activo
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--gray-600)', margin: 0 }}>
-          Esta es la zona de usuario.
-        </p>
+        <h1 className="text-3xl font-semibold text-gray-900 mt-4 mb-2">Portal activo</h1>
+        <p className="text-base text-gray-600">Esta es la zona de usuario.</p>
       </div>
 
-      <Card style={{ padding: 20, maxWidth: 420, margin: '0 auto 24px', fontFamily: 'monospace', fontSize: 13 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, color: 'var(--gray-800)' }}>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ color: 'var(--gray-500)', minWidth: 80 }}>Usuario:</span>
+      <Card className="p-5 max-w-[420px] mx-auto mb-6 font-mono text-md">
+        <div className="flex flex-col gap-2.5 text-gray-800">
+          <div className="flex gap-2 items-center">
+            <span className="text-gray-500 min-w-[80px]">Usuario:</span>
             <span>{user?.email ?? '—'}</span>
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-            <span style={{ color: 'var(--gray-500)', minWidth: 80 }}>Roles:</span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          <div className="flex gap-2 items-start">
+            <span className="text-gray-500 min-w-[80px]">Roles:</span>
+            <div className="flex flex-wrap gap-1">
               {user?.roles.map(r => <Badge key={r} variant="client">{r}</Badge>)}
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <span style={{ color: 'var(--gray-500)', minWidth: 80 }}>Entorno:</span>
+          <div className="flex gap-2">
+            <span className="text-gray-500 min-w-[80px]">Entorno:</span>
             <span>{data?.env ?? 'development'}</span>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <span style={{ color: 'var(--gray-500)', minWidth: 80 }}>Versión:</span>
+          <div className="flex gap-2">
+            <span className="text-gray-500 min-w-[80px]">Versión:</span>
             <span>{data?.version ?? 'Quiver 0.1.0'}</span>
           </div>
         </div>
       </Card>
 
-      <div style={{ textAlign: 'center' }}>
+      <div className="text-center">
         <a
           href="https://github.com/your-org/quiver"
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', fontSize: 14, fontWeight: 500,
-            background: 'white', color: 'var(--gray-800)',
-            border: '1px solid var(--gray-300)', borderRadius: 6, textDecoration: 'none',
-          }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline"
         >
           <BookOpen size={15} />
           Ver documentación de Quiver

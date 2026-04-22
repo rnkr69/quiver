@@ -16,20 +16,15 @@ interface Props {
 const SKELETON_COUNT = 3
 
 export function WidgetGrid({ widgets, isLoading, minColWidth = 240 }: Props) {
-  const gridStyle: React.CSSProperties = {
-    display: 'grid',
+  const gridStyle = {
     gridTemplateColumns: `repeat(auto-fill, minmax(${minColWidth}px, 1fr))`,
-    gap: 16,
   }
 
   if (isLoading) {
     return (
-      <div style={gridStyle}>
+      <div className="grid gap-4" style={gridStyle}>
         {[...Array(SKELETON_COUNT)].map((_, i) => (
-          <div key={i} style={{
-            height: 96, backgroundColor: '#f3f3f3', borderRadius: 8,
-            animation: 'pulse 1.5s ease-in-out infinite',
-          }} />
+          <div key={i} className="h-24 bg-gray-100 rounded-lg animate-pulse" />
         ))}
       </div>
     )
@@ -37,9 +32,9 @@ export function WidgetGrid({ widgets, isLoading, minColWidth = 240 }: Props) {
 
   if (!widgets.length) {
     return (
-      <div style={{ textAlign: 'center', padding: '48px 0', color: '#8a8a8a', fontSize: 14 }}>
+      <div className="text-center py-12 text-gray-600 text-base">
         No hay widgets configurados. Registra widgets con{' '}
-        <code style={{ fontFamily: 'monospace', backgroundColor: '#f3f3f3', padding: '2px 6px', borderRadius: 4 }}>
+        <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-sm">
           quiver.register_widget(...)
         </code>
       </div>
@@ -47,21 +42,19 @@ export function WidgetGrid({ widgets, isLoading, minColWidth = 240 }: Props) {
   }
 
   return (
-    <div style={gridStyle}>
+    <div className="grid gap-4" style={gridStyle}>
       {widgets.map((widget, i) => {
         const Component = getWidgetComponent(widget.component)
         if (!Component) {
           return (
-            <div key={i} style={{
-              backgroundColor: '#fff8ed', border: '1px solid #fde68a', borderRadius: 8, padding: 20,
-            }}>
-              <div style={{ fontSize: 12, color: '#92400e' }}>
+            <div key={i} className="bg-warning-50 border border-[#fde68a] rounded-lg p-5">
+              <div className="text-sm text-[#92400e]">
                 Widget desconocido: <code>{widget.component}</code>
               </div>
             </div>
           )
         }
-        return <Component key={i} title={widget.title} data={widget.data} icon={widget.data.icon != null ? <i className={`bi bi-${widget.data.icon}`} style={{ fontSize: 18 }} /> : undefined} />
+        return <Component key={i} title={widget.title} data={widget.data} icon={widget.data.icon != null ? <i className={`bi bi-${widget.data.icon} text-[18px]`} /> : undefined} />
       })}
     </div>
   )

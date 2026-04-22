@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { cn } from '@/lib/utils'
 import type { ColumnConfig } from '@/api/crud.api'
 
 interface Props {
@@ -12,12 +13,12 @@ interface Props {
   onSort?: (key: string) => void
   onSelect?: (ids: string[]) => void
   onRowClick?: (row: Record<string, unknown>) => void
-  relatedMap?: Record<string, Record<string, string>>  // { colKey: { rawValue: displayLabel } }
+  relatedMap?: Record<string, Record<string, string>>
 }
 
 function CellValue({ col, value, relatedMap }: { col: ColumnConfig; value: unknown; relatedMap?: Record<string, Record<string, string>> }) {
   if (value === null || value === undefined) {
-    return <span style={{ color: 'var(--gray-400)' }}>—</span>
+    return <span className="text-gray-400">—</span>
   }
   if (col.col_type === 'related') {
     const label = relatedMap?.[col.key]?.[String(value)]
@@ -63,35 +64,28 @@ export function DataTable({ columns, data, isLoading, sortBy, sortDir, selectedI
     onSelect(selectedIds.includes(id) ? selectedIds.filter(x => x !== id) : [...selectedIds, id])
   }
 
-  const th: React.CSSProperties = {
-    padding: '10px 12px', fontSize: 13, fontWeight: 600, color: 'var(--gray-700)',
-    textAlign: 'left', background: 'var(--gray-50)', borderBottom: '1px solid var(--gray-200)',
-    whiteSpace: 'nowrap',
-  }
-  const td: React.CSSProperties = {
-    padding: '10px 12px', fontSize: 14, color: 'var(--gray-900)',
-    borderBottom: '1px solid var(--gray-100)', verticalAlign: 'middle',
-  }
+  const thClass = 'px-3 py-[10px] text-md font-semibold text-gray-700 text-left bg-gray-50 border-b border-gray-200 whitespace-nowrap'
+  const tdClass = 'px-3 py-[10px] text-base text-gray-900 border-b border-gray-100 align-middle'
 
   return (
-    <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-sm)' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', background: 'white' }}>
+    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+      <table className="w-full border-collapse bg-white">
         <thead>
           <tr>
             {onSelect && (
-              <th style={{ ...th, width: 40 }}>
-                <input type="checkbox" checked={allSelected} onChange={toggleAll} style={{ accentColor: 'var(--brand-500)' }} />
+              <th className={cn(thClass, 'w-10')}>
+                <input type="checkbox" checked={allSelected} onChange={toggleAll} />
               </th>
             )}
             {columns.map(col => (
               <th
                 key={col.key}
-                style={{ ...th, cursor: col.sortable ? 'pointer' : 'default' }}
+                className={cn(thClass, col.sortable && 'cursor-pointer')}
                 onClick={() => col.sortable && onSort?.(col.key)}
               >
                 {col.label}
                 {col.sortable && sortBy === col.key && (
-                  <span style={{ marginLeft: 4, color: 'var(--brand-500)' }}>{sortDir === 'asc' ? '↑' : '↓'}</span>
+                  <span className="ml-1 text-brand-500">{sortDir === 'asc' ? '↑' : '↓'}</span>
                 )}
               </th>
             ))}
@@ -101,10 +95,10 @@ export function DataTable({ columns, data, isLoading, sortBy, sortDir, selectedI
           {isLoading
             ? [...Array(SKELETON_ROWS)].map((_, i) => (
                 <tr key={i}>
-                  {onSelect && <td style={td}><div style={{ width: 16, height: 16, background: 'var(--gray-100)', borderRadius: 3, animation: 'pulse 1.5s ease-in-out infinite' }} /></td>}
+                  {onSelect && <td className={tdClass}><div className="w-4 h-4 bg-gray-100 rounded animate-pulse" /></td>}
                   {columns.map(col => (
-                    <td key={col.key} style={td}>
-                      <div style={{ height: 16, background: 'var(--gray-100)', borderRadius: 4, animation: 'pulse 1.5s ease-in-out infinite', width: '80%' }} />
+                    <td key={col.key} className={tdClass}>
+                      <div className="h-4 bg-gray-100 rounded animate-pulse w-4/5" />
                     </td>
                   ))}
                 </tr>
@@ -123,27 +117,22 @@ export function DataTable({ columns, data, isLoading, sortBy, sortDir, selectedI
                   return (
                     <tr
                       key={id ?? i}
-                      style={{
-                        background: isSelected ? 'var(--brand-50)' : 'transparent',
-                        borderLeft: isSelected ? '3px solid var(--brand-500)' : '3px solid transparent',
-                        cursor: onRowClick ? 'pointer' : 'default',
-                      }}
+                      className={cn(
+                        'border-l-[3px] transition-colors',
+                        isSelected
+                          ? 'bg-brand-50 border-l-brand-500'
+                          : 'bg-transparent border-l-transparent hover:bg-gray-50',
+                        onRowClick && 'cursor-pointer',
+                      )}
                       onClick={() => onRowClick?.(row)}
-                      onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'var(--gray-50)' }}
-                      onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = 'transparent' }}
                     >
                       {onSelect && (
-                        <td style={td} onClick={e => e.stopPropagation()}>
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggleRow(id)}
-                            style={{ accentColor: 'var(--brand-500)' }}
-                          />
+                        <td className={tdClass} onClick={e => e.stopPropagation()}>
+                          <input type="checkbox" checked={isSelected} onChange={() => toggleRow(id)} />
                         </td>
                       )}
                       {columns.map(col => (
-                        <td key={col.key} style={td}>
+                        <td key={col.key} className={tdClass}>
                           <CellValue col={col} value={row[col.key]} relatedMap={relatedMap} />
                         </td>
                       ))}

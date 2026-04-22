@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 import { apiClient } from '@/api/client'
+import { cn } from '@/lib/utils'
 import type { FieldProps } from './index'
 
 interface Choice { value: string; label: string }
+
+const baseSelect = 'w-full px-[10px] py-2 rounded border border-gray-200 text-base text-gray-900 font-sans outline-none bg-white focus:border-brand-500 focus:ring-[3px] focus:ring-brand-500/20 transition-shadow cursor-pointer disabled:bg-gray-50 disabled:cursor-not-allowed'
+const errorSelect = 'border-danger-500 focus:border-danger-500 focus:ring-danger-500/20'
 
 export function SelectField({ field, value, onChange, error, readOnly }: FieldProps) {
   const [choices, setChoices] = useState<Choice[]>(field.choices ?? [])
@@ -19,18 +23,11 @@ export function SelectField({ field, value, onChange, error, readOnly }: FieldPr
     ? (Array.isArray(value) ? (value as string[]) : [])
     : []
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '8px 10px', borderRadius: 6,
-    border: `1px solid ${error ? '#f87171' : '#e8e8e8'}`,
-    fontSize: 14, color: '#1a1a1a', fontFamily: 'inherit',
-    backgroundColor: readOnly ? '#f9f9f9' : '#ffffff',
-    boxSizing: 'border-box',
-  }
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <label style={{ fontSize: 13, fontWeight: 500, color: '#3d3d3d' }}>
-        {field.label}{field.required && <span style={{ color: '#ef4444', marginLeft: 2 }}>*</span>}
+    <div className="flex flex-col gap-1">
+      <label className="text-md font-medium text-gray-800">
+        {field.label}
+        {field.required && <span className="text-danger-500 ml-0.5">*</span>}
       </label>
       {multiple ? (
         <select
@@ -38,7 +35,7 @@ export function SelectField({ field, value, onChange, error, readOnly }: FieldPr
           value={selectedValues}
           onChange={e => onChange(Array.from(e.target.selectedOptions, o => o.value))}
           disabled={readOnly}
-          style={{ ...inputStyle, minHeight: 100 }}
+          className={cn(baseSelect, 'min-h-[100px]', error && errorSelect)}
         >
           {choices.map(c => (
             <option key={c.value} value={c.value}>{c.label}</option>
@@ -49,7 +46,7 @@ export function SelectField({ field, value, onChange, error, readOnly }: FieldPr
           value={String(value ?? '')}
           onChange={e => onChange(e.target.value || null)}
           disabled={readOnly}
-          style={inputStyle}
+          className={cn(baseSelect, error && errorSelect)}
         >
           <option value="">— Seleccionar —</option>
           {choices.map(c => (
@@ -57,9 +54,9 @@ export function SelectField({ field, value, onChange, error, readOnly }: FieldPr
           ))}
         </select>
       )}
-      {error && <span style={{ fontSize: 12, color: '#ef4444' }}>{error}</span>}
+      {error && <span className="text-xs text-danger-500">{error}</span>}
       {field.help_text && !error && (
-        <span style={{ fontSize: 12, color: '#9ca3af' }}>{field.help_text}</span>
+        <span className="text-xs text-gray-500">{field.help_text}</span>
       )}
     </div>
   )

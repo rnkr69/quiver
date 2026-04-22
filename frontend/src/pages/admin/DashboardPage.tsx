@@ -25,10 +25,10 @@ export function DashboardPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 600, color: '#1a1a1a', marginBottom: 24 }}>Dashboard</h1>
+      <h1 className="text-4xl font-semibold text-gray-900 mb-6">Dashboard</h1>
       <WidgetGrid widgets={statWidgets} isLoading={loading} />
       {(loading || chartWidgets.length > 0) && (
-        <div style={{ marginTop: 24 }}>
+        <div className="mt-6">
           <WidgetGrid widgets={chartWidgets} isLoading={loading} minColWidth={500} />
         </div>
       )}

@@ -1,19 +1,14 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 
 interface CardProps {
   children: ReactNode
-  style?: CSSProperties
+  className?: string
 }
 
-export function Card({ children, style }: CardProps) {
+export function Card({ children, className }: CardProps) {
   return (
-    <div style={{
-      background: 'white',
-      border: '1px solid var(--gray-200)',
-      borderRadius: 8,
-      boxShadow: 'var(--shadow-sm)',
-      ...style,
-    }}>
+    <div className={cn('bg-white border border-gray-200 rounded-lg shadow-sm', className)}>
       {children}
     </div>
   )

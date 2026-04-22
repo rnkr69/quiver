@@ -1,16 +1,17 @@
-import type { ReactNode, CSSProperties } from 'react'
+import type { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 
 interface DetailFieldProps {
   label: string
   value?: ReactNode
-  style?: CSSProperties
+  className?: string
 }
 
-export function DetailField({ label, value, style }: DetailFieldProps) {
+export function DetailField({ label, value, className }: DetailFieldProps) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 3, ...style }}>
-      <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--gray-600)' }}>{label}</span>
-      <span style={{ fontSize: 14, color: 'var(--gray-900)' }}>{value ?? '—'}</span>
+    <div className={cn('flex flex-col gap-[3px]', className)}>
+      <span className="text-sm font-medium text-gray-600">{label}</span>
+      <span className="text-base text-gray-900">{value ?? '—'}</span>
     </div>
   )
 }

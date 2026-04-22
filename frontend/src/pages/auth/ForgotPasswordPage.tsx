@@ -5,7 +5,7 @@ import { AuthLayout } from '@/layout/AuthLayout'
 import { authApi } from '@/api/auth.api'
 import { Input } from '@/components/ui/Input'
 import { Alert } from '@/components/ui/Alert'
-import { Spinner } from '@/components/ui/Spinner'
+import { Button } from '@/components/ui/Button'
 
 type Status = 'idle' | 'loading' | 'sent' | 'error'
 
@@ -28,32 +28,18 @@ export function ForgotPasswordPage() {
   if (status === 'sent') {
     return (
       <AuthLayout>
-        <div style={{ textAlign: 'center', padding: '8px 0' }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: '50%',
-            background: 'var(--success-50)',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 16,
-          }}>
-            <CheckCircle size={24} color="var(--success-500)" />
+        <div className="text-center py-2">
+          <div className="w-12 h-12 rounded-full bg-success-50 inline-flex items-center justify-center mb-4">
+            <CheckCircle size={24} className="text-success-500" />
           </div>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--success-500)', margin: '0 0 8px' }}>
-            Enlace enviado
-          </h2>
-          <p style={{ fontSize: 14, color: 'var(--gray-600)', margin: '0 0 4px' }}>
-            Si el email existe, recibirás un enlace en breve.
-          </p>
-          <p style={{ fontSize: 13, color: 'var(--gray-500)', margin: '0 0 24px' }}>
-            Revisa también tu carpeta de spam.
-          </p>
-          <Link to="/auth/login">
-            <button style={{
-              width: '100%', padding: '8px 16px', fontSize: 14, fontWeight: 500,
-              background: 'white', color: 'var(--gray-800)',
-              border: '1px solid var(--gray-300)', borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-            }}>
-              Volver al login
-            </button>
+          <h2 className="text-xl font-semibold text-success-500 mb-2">Enlace enviado</h2>
+          <p className="text-base text-gray-600 mb-1">Si el email existe, recibirás un enlace en breve.</p>
+          <p className="text-md text-gray-500 mb-6">Revisa también tu carpeta de spam.</p>
+          <Link
+            to="/auth/login"
+            className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline"
+          >
+            Volver al login
           </Link>
         </div>
       </AuthLayout>
@@ -62,22 +48,18 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthLayout>
-      <Link to="/auth/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 13, color: 'var(--brand-500)', textDecoration: 'none', marginBottom: 20 }}>
+      <Link to="/auth/login" className="inline-flex items-center gap-1 text-md text-brand-500 hover:underline mb-5">
         ← Volver al login
       </Link>
 
-      <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--gray-900)', margin: '0 0 4px' }}>
-        Recuperar contraseña
-      </h2>
-      <p style={{ fontSize: 13, color: 'var(--gray-600)', margin: '0 0 24px' }}>
-        Introduce tu email y te enviaremos un enlace.
-      </p>
+      <h2 className="text-xl font-semibold text-gray-900 mb-1">Recuperar contraseña</h2>
+      <p className="text-md text-gray-600 mb-6">Introduce tu email y te enviaremos un enlace.</p>
 
       {status === 'error' && (
-        <Alert type="error" message="Ha ocurrido un error. Inténtalo de nuevo." style={{ marginBottom: 16 }} />
+        <Alert type="error" message="Ha ocurrido un error. Inténtalo de nuevo." className="mb-4" />
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           label="Email"
           type="email"
@@ -87,20 +69,9 @@ export function ForgotPasswordPage() {
           required
           disabled={status === 'loading'}
         />
-        <button
-          type="submit"
-          disabled={status === 'loading'}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            width: '100%', padding: '10px 16px', fontSize: 14, fontWeight: 500,
-            background: status === 'loading' ? 'var(--gray-300)' : 'var(--brand-500)',
-            color: 'white', border: '1px solid transparent', borderRadius: 6,
-            cursor: status === 'loading' ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-          }}
-        >
-          {status === 'loading' && <Spinner size={14} color="white" />}
+        <Button type="submit" variant="primary" className="w-full justify-center py-2.5" loading={status === 'loading'} disabled={status === 'loading'}>
           {status === 'loading' ? 'Enviando…' : 'Enviar enlace'}
-        </button>
+        </Button>
       </form>
     </AuthLayout>
   )

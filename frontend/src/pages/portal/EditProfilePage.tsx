@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Alert } from '@/components/ui/Alert'
 import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
 import { PageHeader } from '@/components/ui/PageHeader'
 
 export function EditProfilePage() {
@@ -62,62 +63,45 @@ export function EditProfilePage() {
   if (!profile) {
     return (
       <div>
-        <div style={{ height: 24, width: 180, background: 'var(--gray-100)', borderRadius: 4 }} />
+        <div className="h-6 w-[180px] bg-gray-100 rounded animate-pulse" />
       </div>
     )
   }
 
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div className="max-w-[600px]">
       <BackLink to="/portal/perfil" label="Mi perfil" />
       <PageHeader title="Editar perfil" />
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <Card style={{ padding: 24 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Card className="p-6">
+          <div className="grid grid-cols-2 gap-4">
             <Input label="Nombre" value={firstName} onChange={e => setFirstName(e.target.value)} required />
             <Input label="Apellidos" value={lastName} onChange={e => setLastName(e.target.value)} required />
           </div>
 
-          <div style={{ borderTop: '1px solid var(--gray-100)', marginTop: 20, paddingTop: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--gray-700)', marginBottom: 16 }}>
+          <div className="border-t border-gray-100 mt-5 pt-5">
+            <div className="text-md font-medium text-gray-700 mb-4">
               Cambiar contraseña{' '}
-              <span style={{ fontWeight: 400, color: 'var(--gray-400)' }}>(opcional)</span>
+              <span className="font-normal text-gray-400">(opcional)</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3">
               <PasswordInput label="Contraseña actual" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
               <PasswordInput label="Nueva contraseña" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
               <PasswordInput label="Confirmar nueva contraseña" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
             </div>
           </div>
 
-          {error && <Alert type="error" message={error} style={{ marginTop: 16 }} />}
+          {error && <Alert type="error" message={error} className="mt-4" />}
         </Card>
 
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-          <button
-            type="button"
-            onClick={() => navigate('/portal/perfil')}
-            style={{
-              padding: '8px 16px', fontSize: 14, fontWeight: 500,
-              background: 'white', color: 'var(--gray-800)',
-              border: '1px solid var(--gray-300)', borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-            }}
-          >
+        <div className="flex gap-3 justify-end">
+          <Button type="button" variant="secondary" onClick={() => navigate('/portal/perfil')}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={saving}
-            style={{
-              padding: '8px 16px', fontSize: 14, fontWeight: 500,
-              background: saving ? 'var(--gray-300)' : 'var(--brand-500)',
-              color: 'white', border: '1px solid transparent', borderRadius: 6,
-              cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-            }}
-          >
+          </Button>
+          <Button type="submit" variant="primary" loading={saving} disabled={saving}>
             {saving ? 'Guardando…' : 'Guardar cambios'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

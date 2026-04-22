@@ -2,33 +2,24 @@ import { Outlet } from 'react-router-dom'
 import { useState } from 'react'
 import { Topbar } from './Topbar'
 import { Sidebar } from './Sidebar'
+import { cn } from '@/lib/utils'
 
 export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <aside style={{
-        width: sidebarOpen ? 240 : 56,
-        minWidth: sidebarOpen ? 240 : 56,
-        height: '100vh',
-        position: 'sticky',
-        top: 0,
-        background: 'var(--gray-50)',
-        borderRight: '1px solid var(--gray-200)',
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'width 0.2s, min-width 0.2s',
-        overflow: 'hidden',
-        flexShrink: 0,
-      }}>
+    <div className="flex h-screen overflow-hidden">
+      <aside className={cn(
+        'h-screen sticky top-0 bg-gray-50 border-r border-gray-200 flex flex-col shrink-0 transition-[width,min-width] duration-200 overflow-hidden',
+        sidebarOpen ? 'w-60 min-w-60' : 'w-14 min-w-14',
+      )}>
         <Sidebar isOpen={sidebarOpen} />
       </aside>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Topbar onMenuToggle={() => setSidebarOpen(o => !o)} />
-        <main style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
-          <div style={{ maxWidth: 1600 }}>
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-[1600px]">
             <Outlet />
           </div>
         </main>

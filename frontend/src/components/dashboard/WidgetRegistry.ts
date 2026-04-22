@@ -1,10 +1,11 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { StatCard } from './StatCard'
 import { ChartWidget } from './ChartWidget'
 
 interface WidgetProps {
   title: string
   data: Record<string, unknown>
+  icon?: ReactNode
 }
 
 // Developer can add custom widgets: widgetRegistry.set('MyWidget', MyWidgetComponent)

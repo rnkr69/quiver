@@ -60,7 +60,7 @@ export function RoleEditPage() {
     })
   }
 
-  if (roleLoading || permsLoading) return <div style={{ color: 'var(--gray-500)', fontSize: 14 }}>Cargando...</div>
+  if (roleLoading || permsLoading) return <div className="text-gray-500 text-base">Cargando...</div>
   if (!role) return null
 
   const groups = groupPermissions(allPermissions)
@@ -71,9 +71,9 @@ export function RoleEditPage() {
       <BackLink to="/admin/roles" label="Volver a roles" />
       <PageHeader title={`Editar rol: ${role.display_name}`} />
 
-      <Card style={{ padding: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--gray-900)', margin: 0 }}>
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
             Permisos — {checkedCount} de {allPermissions.length} activos
           </h2>
           <button
@@ -85,41 +85,41 @@ export function RoleEditPage() {
                 return next
               })
             }}
-            style={{ fontSize: 13, color: 'var(--brand-500)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+            className="text-md text-brand-500 bg-transparent border-none cursor-pointer font-sans"
           >
             {allPermissions.every(p => checkedMap.get(p.id)) ? 'Deseleccionar todos' : 'Seleccionar todos'}
           </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="flex flex-col gap-4">
           {Object.entries(groups).map(([groupName, groupPerms]) => {
             const allChecked = groupPerms.every(p => checkedMap.get(p.id))
             const someChecked = groupPerms.some(p => checkedMap.get(p.id))
 
             return (
-              <div key={groupName} style={{ background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 6, padding: '12px 16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <div key={groupName} className="bg-gray-50 border border-gray-200 rounded-md px-4 py-3">
+                <div className="flex items-center gap-2 mb-2.5">
                   <input
                     type="checkbox"
                     checked={allChecked}
                     ref={el => { if (el) el.indeterminate = someChecked && !allChecked }}
                     onChange={() => toggleGroup(groupPerms)}
-                    style={{ width: 15, height: 15, accentColor: 'var(--brand-500)', cursor: 'pointer' }}
+                    className="cursor-pointer"
                   />
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--gray-700)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  <span className="text-sm font-semibold text-gray-700 uppercase tracking-[0.06em]">
                     {groupName}
                   </span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 6 }}>
+                <div className="grid [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))] gap-1.5">
                   {groupPerms.map(perm => (
-                    <label key={perm.id} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                    <label key={perm.id} className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={checkedMap.get(perm.id) ?? false}
                         onChange={() => togglePermission(perm.id)}
-                        style={{ width: 14, height: 14, accentColor: 'var(--brand-500)', cursor: 'pointer' }}
+                        className="cursor-pointer"
                       />
-                      <span style={{ fontSize: 13, color: 'var(--gray-800)' }}>{perm.display_name}</span>
+                      <span className="text-md text-gray-800">{perm.display_name}</span>
                     </label>
                   ))}
                 </div>
@@ -128,16 +128,12 @@ export function RoleEditPage() {
           })}
         </div>
 
-        <div style={{
-          marginTop: 20, background: 'var(--warning-50)', border: '1px solid var(--warning-500)',
-          borderRadius: 6, padding: '10px 14px', fontSize: 12, color: 'var(--warning-500)',
-          display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
-        }}>
+        <div className="flex items-center gap-2 mt-5 mb-4 bg-warning-50 border border-warning-500 rounded px-3.5 py-2.5 text-sm text-warning-500">
           <Clock size={14} />
           Los cambios pueden tardar hasta 15 minutos en reflejarse en sesiones activas.
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+        <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={() => navigate('/admin/roles')}>Cancelar</Button>
           <Button variant="primary" loading={savePermissions.isPending} onClick={() => savePermissions.mutate()}>
             Guardar permisos

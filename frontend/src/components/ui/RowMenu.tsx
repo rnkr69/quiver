@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { MoreHorizontal } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface RowMenuAction {
   label: string
@@ -49,14 +50,7 @@ export function RowMenu({ items }: RowMenuProps) {
       <button
         ref={btnRef}
         onClick={handleOpen}
-        style={{
-          background: 'transparent', border: '1px solid transparent', cursor: 'pointer',
-          color: 'var(--gray-500)', padding: '4px 6px', borderRadius: 4,
-          display: 'flex', alignItems: 'center', lineHeight: 1,
-          fontFamily: 'inherit',
-        }}
-        onMouseEnter={e => (e.currentTarget.style.background = 'var(--gray-100)')}
-        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+        className="bg-transparent border border-transparent cursor-pointer text-gray-500 px-1.5 py-1 rounded flex items-center leading-none font-sans hover:bg-gray-100 transition-colors"
       >
         <MoreHorizontal size={16} />
       </button>
@@ -64,38 +58,31 @@ export function RowMenu({ items }: RowMenuProps) {
       {open && createPortal(
         <div
           ref={menuRef}
-          style={{
-            position: 'fixed', top: pos.top, right: pos.right, zIndex: 9999,
-            background: 'white', border: '1px solid var(--gray-200)', borderRadius: 6,
-            boxShadow: 'var(--shadow-md)', minWidth: 160, padding: '4px 0',
-          }}
+          className="fixed z-[9999] bg-white border border-gray-200 rounded-md shadow-md min-w-[160px] py-1"
+          style={{ top: pos.top, right: pos.right }}
         >
           {items.map((item, i) => {
             if (item === 'divider') {
-              return <div key={i} style={{ height: 1, background: 'var(--gray-200)', margin: '4px 0' }} />
+              return <div key={i} className="h-px bg-gray-200 my-1" />
             }
-            const color = item.danger ? 'var(--danger-500)' : item.warning ? 'var(--warning-500)' : 'var(--gray-800)'
-            const hoverBg = item.danger ? 'var(--danger-50)' : 'var(--gray-50)'
             return (
               <button
                 key={i}
                 onClick={e => { e.stopPropagation(); setOpen(false); item.action() }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  width: '100%', padding: '7px 12px', fontSize: 13,
-                  background: 'transparent', border: 'none', cursor: 'pointer',
-                  color, textAlign: 'left', fontFamily: 'inherit',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                className={cn(
+                  'flex items-center gap-2 w-full px-3 py-[7px] text-md bg-transparent border-none cursor-pointer text-left font-sans transition-colors',
+                  item.danger   ? 'text-danger-500 hover:bg-danger-50'
+                  : item.warning  ? 'text-warning-500 hover:bg-gray-50'
+                  : 'text-gray-800 hover:bg-gray-50',
+                )}
               >
-                {item.icon && <span style={{ display: 'flex', flexShrink: 0 }}>{item.icon}</span>}
+                {item.icon && <span className="flex shrink-0">{item.icon}</span>}
                 {item.label}
               </button>
             )
           })}
         </div>,
-        document.body
+        document.body,
       )}
     </>
   )

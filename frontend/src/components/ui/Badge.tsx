@@ -1,49 +1,39 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 
-// Handoff variants
 export type BadgeVariant =
   | 'active' | 'inactive' | 'success' | 'danger' | 'warning' | 'admin' | 'client'
-  // Legacy color aliases kept for backwards compatibility
   | 'green' | 'red' | 'gray' | 'amber' | 'blue'
 
-interface BadgeStyle { background: string; color: string; border: string }
-
-const VARIANTS: Record<BadgeVariant, BadgeStyle> = {
-  active:   { background: 'var(--brand-50)',   color: 'var(--brand-700)',   border: '1px solid var(--brand-100)' },
-  inactive: { background: 'var(--gray-100)',   color: 'var(--gray-600)',    border: '1px solid var(--gray-200)' },
-  success:  { background: 'var(--success-50)', color: 'var(--success-500)', border: '1px solid #c3e6d7' },
-  danger:   { background: 'var(--danger-50)',  color: 'var(--danger-500)',  border: '1px solid #f5c6c6' },
-  warning:  { background: 'var(--warning-50)', color: 'var(--warning-500)', border: '1px solid #f0d9a0' },
-  admin:    { background: '#1a1a2e',           color: 'white',              border: 'none' },
-  client:   { background: 'var(--brand-50)',   color: 'var(--brand-700)',   border: '1px solid var(--brand-100)' },
-  // Legacy aliases
-  green:    { background: 'var(--success-50)', color: 'var(--success-500)', border: '1px solid #c3e6d7' },
-  red:      { background: 'var(--danger-50)',  color: 'var(--danger-500)',  border: '1px solid #f5c6c6' },
-  gray:     { background: 'var(--gray-100)',   color: 'var(--gray-600)',    border: '1px solid var(--gray-200)' },
-  amber:    { background: 'var(--warning-50)', color: 'var(--warning-500)', border: '1px solid #f0d9a0' },
-  blue:     { background: 'var(--brand-50)',   color: 'var(--brand-700)',   border: '1px solid var(--brand-100)' },
-}
-
-const baseStyle: CSSProperties = {
-  fontSize: 12, fontWeight: 500, lineHeight: 1.4,
-  padding: '2px 8px', borderRadius: 4,
-  whiteSpace: 'nowrap', display: 'inline-block',
+const VARIANT_CLASSES: Record<BadgeVariant, string> = {
+  active:   'bg-brand-50 text-brand-700 border border-brand-100',
+  inactive: 'bg-gray-100 text-gray-600 border border-gray-200',
+  success:  'bg-success-50 text-success-500 border border-[#c3e6d7]',
+  danger:   'bg-danger-50 text-danger-500 border border-[#f5c6c6]',
+  warning:  'bg-warning-50 text-warning-500 border border-[#f0d9a0]',
+  admin:    'bg-[#1a1a2e] text-white',
+  client:   'bg-brand-50 text-brand-700 border border-brand-100',
+  green:    'bg-success-50 text-success-500 border border-[#c3e6d7]',
+  red:      'bg-danger-50 text-danger-500 border border-[#f5c6c6]',
+  gray:     'bg-gray-100 text-gray-600 border border-gray-200',
+  amber:    'bg-warning-50 text-warning-500 border border-[#f0d9a0]',
+  blue:     'bg-brand-50 text-brand-700 border border-brand-100',
 }
 
 interface BadgeProps {
   variant?: BadgeVariant
-  /** Legacy prop — maps 'green'|'red'|'gray'|'amber'|'blue' to variant */
   color?: BadgeVariant
   children?: ReactNode
-  /** Legacy prop */
   value?: string
 }
 
 export function Badge({ variant, color, children, value }: BadgeProps) {
   const v = variant ?? color ?? 'inactive'
-  const s = VARIANTS[v] ?? VARIANTS.inactive
   return (
-    <span style={{ ...baseStyle, background: s.background, color: s.color, border: s.border }}>
+    <span className={cn(
+      'text-sm font-medium leading-snug px-2 py-0.5 rounded whitespace-nowrap inline-block',
+      VARIANT_CLASSES[v] ?? VARIANT_CLASSES.inactive,
+    )}>
       {children ?? value}
     </span>
   )

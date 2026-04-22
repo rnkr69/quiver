@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { CrudForm } from '@/components/crud/CrudForm'
+import { BackLink } from '@/components/ui/BackLink'
+import { Card } from '@/components/ui/Card'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
@@ -37,15 +39,13 @@ export function ShowPage() {
     onError: () => toast('Error al eliminar el registro', 'error'),
   })
 
-  if (configLoading || itemLoading) return <div style={{ padding: 24, color: '#6b6b6b' }}>Cargando...</div>
+  if (configLoading || itemLoading) return <div className="text-gray-700 text-base">Cargando...</div>
   if (!config) return null
   if (isError || !item) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
-        <p style={{ color: '#6b6b6b', marginBottom: 16 }}>No se encontró el registro.</p>
-        <button onClick={() => navigate(`/admin/${resource}`)} style={{ color: '#009ca6', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14 }}>
-          ← Volver al listado
-        </button>
+      <div className="text-center py-10">
+        <p className="text-gray-700 mb-4">No se encontró el registro.</p>
+        <Button variant="link" onClick={() => navigate(`/admin/${resource}`)}>← Volver al listado</Button>
       </div>
     )
   }
@@ -55,19 +55,12 @@ export function ShowPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 20, gap: 12 }}>
-        <div style={{ flex: 1 }}>
-          <button
-            onClick={() => navigate(`/admin/${resource}`)}
-            style={{ background: 'none', border: 'none', fontSize: 13, color: '#009ca6', cursor: 'pointer', padding: 0 }}
-          >
-            ← Volver al listado
-          </button>
-          <h1 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', marginTop: 8 }}>
-            {config.title ?? resource}
-          </h1>
+      <div className="flex items-start mb-5 gap-3">
+        <div className="flex-1">
+          <BackLink to={`/admin/${resource}`} label="Volver al listado" />
+          <h1 className="text-3xl font-semibold text-gray-900 mt-2">{config.title ?? resource}</h1>
         </div>
-        <div style={{ display: 'flex', gap: 8, paddingTop: 24 }}>
+        <div className="flex gap-2 pt-6">
           {canUpdate && (
             <Button variant="secondary" size="sm" onClick={() => navigate(`/admin/${resource}/${id}/edit`)}>
               Editar
@@ -81,13 +74,13 @@ export function ShowPage() {
         </div>
       </div>
 
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid #e8e8e8', borderRadius: 8, padding: 24 }}>
+      <Card className="p-6">
         <CrudForm
           fields={config.fields}
           initialValues={item}
           mode="show"
         />
-      </div>
+      </Card>
 
       <Modal
         open={deleteModalOpen}

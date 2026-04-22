@@ -1,36 +1,31 @@
-import type { CSSProperties, ReactNode, ButtonHTMLAttributes } from 'react'
+import type { ReactNode, ButtonHTMLAttributes } from 'react'
+import { cn } from '@/lib/utils'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'link'
 export type ButtonSize = 'sm' | 'md'
 
-const base: CSSProperties = {
-  display: 'inline-flex', alignItems: 'center', gap: 6,
-  fontFamily: 'inherit', fontWeight: 500, fontSize: 13,
-  borderRadius: 6, cursor: 'pointer',
-  transition: 'background 0.15s, opacity 0.15s',
-  lineHeight: 1, whiteSpace: 'nowrap', textDecoration: 'none',
+const variantClasses: Record<ButtonVariant, string> = {
+  primary:   'bg-brand-500 text-white border border-transparent hover:bg-brand-600',
+  secondary: 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50',
+  ghost:     'bg-transparent text-gray-700 border border-transparent hover:bg-gray-100',
+  danger:    'bg-white text-danger-500 border border-danger-500 hover:bg-danger-50',
+  link:      'bg-transparent text-brand-500 border-none p-0 font-normal hover:underline',
 }
 
-export const btnStyles: Record<ButtonVariant, CSSProperties> = {
-  primary:   { ...base, background: 'var(--brand-500)', color: 'white',             padding: '8px 16px', border: '1px solid transparent' },
-  secondary: { ...base, background: 'white',            color: 'var(--gray-800)',   padding: '8px 16px', border: '1px solid var(--gray-300)' },
-  ghost:     { ...base, background: 'transparent',      color: 'var(--gray-700)',   padding: '6px 10px', border: '1px solid transparent' },
-  danger:    { ...base, background: 'white',            color: 'var(--danger-500)', padding: '8px 16px', border: '1px solid var(--danger-500)' },
-  link:      { ...base, background: 'transparent',      color: 'var(--brand-500)',  padding: 0,          border: 'none', fontWeight: 400 },
+const sizeClasses: Record<ButtonVariant, Record<ButtonSize, string>> = {
+  primary:   { md: 'px-4 py-2',        sm: 'px-3 py-[5px] text-sm' },
+  secondary: { md: 'px-4 py-2',        sm: 'px-3 py-[5px] text-sm' },
+  ghost:     { md: 'px-[10px] py-1.5', sm: 'px-2 py-1 text-sm' },
+  danger:    { md: 'px-4 py-2',        sm: 'px-3 py-[5px] text-sm' },
+  link:      { md: '',                  sm: 'text-sm' },
 }
 
-const smOverride: Record<ButtonVariant, CSSProperties> = {
-  primary:   { padding: '5px 12px', fontSize: 12 },
-  secondary: { padding: '5px 12px', fontSize: 12 },
-  ghost:     { padding: '4px 8px',  fontSize: 12 },
-  danger:    { padding: '5px 12px', fontSize: 12 },
-  link:      { fontSize: 12 },
-}
+const baseClasses = 'inline-flex items-center gap-1.5 font-medium text-md rounded cursor-pointer transition-colors duration-150 leading-none whitespace-nowrap no-underline disabled:cursor-not-allowed disabled:opacity-70 font-sans'
 
 function Spinner() {
   return (
     <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-      style={{ animation: 'spin 0.7s linear infinite', flexShrink: 0 }}>
+      className="animate-spin shrink-0">
       <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
       <path d="M12 2a10 10 0 0 1 10 10" />
     </svg>
@@ -44,11 +39,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode
 }
 
-export function Button({ variant = 'primary', size = 'md', loading, disabled, children, style, ...rest }: ButtonProps) {
+export function Button({ variant = 'primary', size = 'md', loading, disabled, children, className, ...rest }: ButtonProps) {
   return (
     <button
       disabled={disabled || loading}
-      style={{ ...btnStyles[variant], ...(size === 'sm' ? smOverride[variant] : {}), opacity: (disabled || loading) ? 0.7 : 1, ...style }}
+      className={cn(
+        baseClasses,
+        variantClasses[variant],
+        sizeClasses[variant][size],
+        className,
+      )}
       {...rest}
     >
       {loading && <Spinner />}

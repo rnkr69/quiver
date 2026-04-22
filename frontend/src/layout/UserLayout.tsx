@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth.store'
 import { QuiverLogo } from '@/components/ui/QuiverLogo'
+import { cn } from '@/lib/utils'
 
 export function UserLayout() {
   const { user } = useAuthStore()
@@ -11,74 +12,52 @@ export function UserLayout() {
     ? `${user.first_name[0] ?? ''}${user.last_name[0] ?? ''}`.toUpperCase()
     : '?'
 
-  const navLinkStyle = (path: string) => ({
-    display: 'inline-flex', alignItems: 'center',
-    padding: '5px 10px', borderRadius: 4,
-    fontSize: 14, textDecoration: 'none',
-    border: '1px solid transparent',
-    color: location.pathname === path || location.pathname.startsWith(path + '/')
-      ? 'var(--brand-600)'
-      : 'var(--gray-700)',
-    background: location.pathname === path || location.pathname.startsWith(path + '/')
-      ? 'var(--brand-50)'
-      : 'transparent',
-  })
+  const navLinkClass = (path: string) => cn(
+    'inline-flex items-center px-[10px] py-[5px] rounded text-base no-underline border border-transparent transition-colors',
+    location.pathname === path || location.pathname.startsWith(path + '/')
+      ? 'text-brand-600 bg-brand-50'
+      : 'text-gray-700 bg-transparent hover:bg-gray-100',
+  )
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--gray-50)' }}>
-      <header style={{
-        height: 60, flexShrink: 0,
-        background: 'white', borderBottom: '1px solid var(--gray-200)',
-        display: 'flex', alignItems: 'center',
-        paddingInline: 24, gap: 16,
-        position: 'sticky', top: 0, zIndex: 100,
-      }}>
-        <Link to="/portal" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <header className="h-[60px] shrink-0 bg-white border-b border-gray-200 flex items-center px-6 gap-4 sticky top-0 z-[100]">
+        <Link to="/portal" className="flex items-center gap-2 no-underline">
           <QuiverLogo size={26} />
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-900)' }}>Portal</span>
+          <span className="text-base font-semibold text-gray-900">Portal</span>
         </Link>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: 8 }}>
-          <Link to="/portal/perfil" style={navLinkStyle('/portal/perfil')}>Mi perfil</Link>
+        <nav className="flex items-center gap-1 ml-2">
+          <Link to="/portal/perfil" className={navLinkClass('/portal/perfil')}>Mi perfil</Link>
         </nav>
 
-        <div style={{ flex: 1 }} />
+        <div className="flex-1" />
 
         {isAdmin && (
-          <Link to="/admin" style={{ fontSize: 13, color: 'var(--brand-500)', textDecoration: 'none' }}>
+          <Link to="/admin" className="text-md text-brand-500 no-underline">
             Panel de admin →
           </Link>
         )}
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{
-            width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-            background: 'var(--brand-50)', color: 'var(--brand-700)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 11, fontWeight: 600,
-          }}>
+        <div className="flex items-center gap-2">
+          <div className="w-[30px] h-[30px] rounded-full shrink-0 bg-brand-50 text-brand-700 flex items-center justify-center text-xs font-semibold">
             {initials}
           </div>
           {user && (
-            <span style={{ fontSize: 13, color: 'var(--gray-800)' }}>
+            <span className="text-md text-gray-800">
               {user.first_name} {user.last_name}
             </span>
           )}
         </div>
       </header>
 
-      <main style={{ flex: 1, maxWidth: 1100, width: '100%', margin: '0 auto', padding: 32 }}>
+      <main className="flex-1 max-w-[1100px] w-full mx-auto p-8">
         <Outlet />
       </main>
 
-      <footer style={{
-        background: 'white', borderTop: '1px solid var(--gray-200)',
-        padding: '14px 32px',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        flexShrink: 0,
-      }}>
-        <span style={{ fontSize: 12, color: 'var(--gray-400)' }}>© {new Date().getFullYear()} Empresa S.L.</span>
-        <span style={{ fontSize: 11, color: 'var(--gray-400)', fontFamily: 'monospace' }}>Quiver v0.1.0</span>
+      <footer className="bg-white border-t border-gray-200 px-8 py-[14px] flex justify-between items-center shrink-0">
+        <span className="text-sm text-gray-400">© {new Date().getFullYear()} Empresa S.L.</span>
+        <span className="text-xs text-gray-400 font-mono">Quiver v0.1.0</span>
       </footer>
     </div>
   )

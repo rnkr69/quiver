@@ -1,5 +1,6 @@
 import { useState, type InputHTMLAttributes } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface PasswordInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string
@@ -7,52 +8,35 @@ interface PasswordInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
   error?: string
 }
 
+const baseInput = 'w-full pl-3 pr-10 py-2 text-base text-gray-900 font-sans border border-gray-300 rounded outline-none bg-white focus:border-brand-500 focus:ring-[3px] focus:ring-brand-500/20 transition-shadow duration-150'
+const errorInput = 'border-danger-500 focus:border-danger-500 focus:ring-danger-500/20'
+
 export function PasswordInput({ label, required, error, ...props }: PasswordInputProps) {
   const [show, setShow] = useState(false)
-  const [focused, setFocused] = useState(false)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <div className="flex flex-col gap-1">
       {label && (
-        <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--gray-700)' }}>
+        <label className="text-sm font-medium text-gray-700">
           {label}
-          {required && <span style={{ color: 'var(--danger-500)', marginLeft: 2 }}>*</span>}
+          {required && <span className="text-danger-500 ml-0.5">*</span>}
         </label>
       )}
-      <div style={{ position: 'relative' }}>
+      <div className="relative">
         <input
           {...props}
           type={show ? 'text' : 'password'}
-          onFocus={e => { setFocused(true); props.onFocus?.(e) }}
-          onBlur={e => { setFocused(false); props.onBlur?.(e) }}
-          style={{
-            padding: '8px 40px 8px 12px', fontSize: 14,
-            color: 'var(--gray-900)', fontFamily: 'inherit',
-            border: error
-              ? '1px solid var(--danger-500)'
-              : focused
-                ? '2px solid var(--brand-500)'
-                : '1px solid var(--gray-300)',
-            borderRadius: 4, outline: 'none',
-            width: '100%', boxSizing: 'border-box',
-            background: 'white',
-            boxShadow: focused && !error ? '0 0 0 3px rgba(0,156,166,0.12)' : 'none',
-            ...props.style,
-          }}
+          className={cn(baseInput, error && errorInput, props.className)}
         />
         <button
           type="button"
           onClick={() => setShow(s => !s)}
-          style={{
-            position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--gray-400)', padding: 0, display: 'flex',
-          }}
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-400 p-0 flex"
         >
           {show ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
       </div>
-      {error && <span style={{ fontSize: 12, color: 'var(--danger-500)' }}>{error}</span>}
+      {error && <span className="text-xs text-danger-500">{error}</span>}
     </div>
   )
 }

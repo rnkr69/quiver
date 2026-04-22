@@ -4,7 +4,7 @@ import { CheckCircle, Link2Off } from 'lucide-react'
 import { AuthLayout } from '@/layout/AuthLayout'
 import { authApi } from '@/api/auth.api'
 import { PasswordInput } from '@/components/ui/PasswordInput'
-import { Spinner } from '@/components/ui/Spinner'
+import { Button } from '@/components/ui/Button'
 import { isAxiosError } from 'axios'
 
 type Status = 'idle' | 'submitting' | 'success' | 'invalid' | 'expired' | 'used'
@@ -27,30 +27,17 @@ export function ResetPasswordPage() {
   if (status === 'success') {
     return (
       <AuthLayout>
-        <div style={{ textAlign: 'center', padding: '8px 0' }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: '50%',
-            background: 'var(--success-50)',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 16,
-          }}>
-            <CheckCircle size={24} color="var(--success-500)" />
+        <div className="text-center py-2">
+          <div className="w-12 h-12 rounded-full bg-success-50 inline-flex items-center justify-center mb-4">
+            <CheckCircle size={24} className="text-success-500" />
           </div>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--success-500)', margin: '0 0 8px' }}>
-            Contraseña actualizada
-          </h2>
-          <p style={{ fontSize: 14, color: 'var(--gray-600)', margin: '0 0 4px' }}>
-            Tu contraseña se ha cambiado correctamente.
-          </p>
-          <p style={{ fontSize: 13, color: 'var(--gray-500)', margin: '0 0 24px' }}>
-            Todas tus sesiones activas han sido cerradas por seguridad.
-          </p>
-          <Link to="/auth/login" style={{
-            display: 'block', width: '100%', padding: '8px 16px', fontSize: 14, fontWeight: 500,
-            background: 'white', color: 'var(--gray-800)',
-            border: '1px solid var(--gray-300)', borderRadius: 6, cursor: 'pointer',
-            textDecoration: 'none', textAlign: 'center', boxSizing: 'border-box',
-          }}>
+          <h2 className="text-xl font-semibold text-success-500 mb-2">Contraseña actualizada</h2>
+          <p className="text-base text-gray-600 mb-1">Tu contraseña se ha cambiado correctamente.</p>
+          <p className="text-md text-gray-500 mb-6">Todas tus sesiones activas han sido cerradas por seguridad.</p>
+          <Link
+            to="/auth/login"
+            className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline"
+          >
             Ir al login
           </Link>
         </div>
@@ -66,27 +53,16 @@ export function ResetPasswordPage() {
     }
     return (
       <AuthLayout>
-        <div style={{ textAlign: 'center', padding: '8px 0' }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: '50%',
-            background: 'var(--danger-50)',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 16,
-          }}>
-            <Link2Off size={24} color="var(--danger-500)" />
+        <div className="text-center py-2">
+          <div className="w-12 h-12 rounded-full bg-danger-50 inline-flex items-center justify-center mb-4">
+            <Link2Off size={24} className="text-danger-500" />
           </div>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--danger-500)', margin: '0 0 8px' }}>
-            Enlace no válido
-          </h2>
-          <p style={{ fontSize: 14, color: 'var(--gray-600)', margin: '0 0 24px' }}>
-            {messages[status]}
-          </p>
-          <Link to="/auth/forgot-password" style={{
-            display: 'block', padding: '8px 16px', fontSize: 14, fontWeight: 500,
-            background: 'white', color: 'var(--gray-800)',
-            border: '1px solid var(--gray-300)', borderRadius: 6,
-            textDecoration: 'none', textAlign: 'center',
-          }}>
+          <h2 className="text-xl font-semibold text-danger-500 mb-2">Enlace no válido</h2>
+          <p className="text-base text-gray-600 mb-6">{messages[status]}</p>
+          <Link
+            to="/auth/forgot-password"
+            className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline"
+          >
             Solicitar nuevo enlace
           </Link>
         </div>
@@ -119,14 +95,10 @@ export function ResetPasswordPage() {
 
   return (
     <AuthLayout>
-      <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--gray-900)', margin: '0 0 4px' }}>
-        Nueva contraseña
-      </h2>
-      <p style={{ fontSize: 13, color: 'var(--gray-600)', margin: '0 0 24px' }}>
-        Elige una contraseña segura para tu cuenta.
-      </p>
+      <h2 className="text-xl font-semibold text-gray-900 mb-1">Nueva contraseña</h2>
+      <p className="text-md text-gray-600 mb-6">Elige una contraseña segura para tu cuenta.</p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <PasswordInput
           label="Nueva contraseña"
           value={password}
@@ -142,20 +114,9 @@ export function ResetPasswordPage() {
           error={matchError}
           required
         />
-        <button
-          type="submit"
-          disabled={isLoading}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            width: '100%', padding: '10px 16px', fontSize: 14, fontWeight: 500,
-            background: isLoading ? 'var(--gray-300)' : 'var(--brand-500)',
-            color: 'white', border: '1px solid transparent', borderRadius: 6,
-            cursor: isLoading ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-          }}
-        >
-          {isLoading && <Spinner size={14} color="white" />}
+        <Button type="submit" variant="primary" className="w-full justify-center py-2.5" loading={isLoading} disabled={isLoading}>
           {isLoading ? 'Guardando…' : 'Guardar contraseña'}
-        </button>
+        </Button>
       </form>
     </AuthLayout>
   )

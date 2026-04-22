@@ -1,46 +1,32 @@
-import { useState, type CSSProperties, type TextareaHTMLAttributes } from 'react'
+import type { TextareaHTMLAttributes } from 'react'
+import { cn } from '@/lib/utils'
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   required?: boolean
   error?: string
   hint?: string
-  containerStyle?: CSSProperties
+  className?: string
 }
 
-export function Textarea({ label, required, error, hint, containerStyle, ...props }: TextareaProps) {
-  const [focused, setFocused] = useState(false)
+const baseTextarea = 'w-full px-3 py-2 text-base text-gray-900 font-sans border border-gray-300 rounded outline-none bg-white focus:border-brand-500 focus:ring-[3px] focus:ring-brand-500/20 disabled:bg-gray-50 transition-shadow duration-150 min-h-[90px] resize-y'
+const errorTextarea = 'border-danger-500 focus:border-danger-500 focus:ring-danger-500/20'
 
+export function Textarea({ label, required, error, hint, className, ...props }: TextareaProps) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, ...containerStyle }}>
+    <div className={cn('flex flex-col gap-1', className)}>
       {label && (
-        <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--gray-700)', lineHeight: 1.4 }}>
+        <label className="text-sm font-medium text-gray-700 leading-snug">
           {label}
-          {required && <span style={{ color: 'var(--danger-500)', marginLeft: 2 }}>*</span>}
+          {required && <span className="text-danger-500 ml-0.5">*</span>}
         </label>
       )}
       <textarea
         {...props}
-        onFocus={e => { setFocused(true); props.onFocus?.(e) }}
-        onBlur={e => { setFocused(false); props.onBlur?.(e) }}
-        style={{
-          padding: '8px 12px', fontSize: 14, color: 'var(--gray-900)',
-          fontFamily: 'inherit',
-          border: error
-            ? '1px solid var(--danger-500)'
-            : focused
-              ? '2px solid var(--brand-500)'
-              : '1px solid var(--gray-300)',
-          borderRadius: 4, outline: 'none',
-          background: props.disabled ? 'var(--gray-50)' : 'white',
-          boxShadow: focused && !error ? '0 0 0 3px rgba(0,156,166,0.12)' : 'none',
-          width: '100%', boxSizing: 'border-box',
-          minHeight: 90, resize: 'vertical',
-          ...props.style,
-        }}
+        className={cn(baseTextarea, error && errorTextarea)}
       />
-      {hint && !error && <span style={{ fontSize: 12, color: 'var(--gray-500)' }}>{hint}</span>}
-      {error && <span style={{ fontSize: 12, color: 'var(--danger-500)' }}>{error}</span>}
+      {hint && !error && <span className="text-xs text-gray-500">{hint}</span>}
+      {error && <span className="text-xs text-danger-500">{error}</span>}
     </div>
   )
 }

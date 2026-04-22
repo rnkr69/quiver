@@ -90,7 +90,7 @@ export function ListPage() {
   }
 
   if (configLoading) {
-    return <div style={{ padding: 24, color: '#6b6b6b' }}>Cargando...</div>
+    return <div className="text-gray-700 text-base">Cargando...</div>
   }
 
   if (!config) return null
@@ -99,22 +99,14 @@ export function ListPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20, gap: 12 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', flex: 1 }}>
-          {config.title ?? resource}
-        </h1>
+      <div className="flex items-center mb-5 gap-3">
+        <h1 className="text-3xl font-semibold text-gray-900 flex-1">{config.title ?? resource}</h1>
         <input
           type="search"
           placeholder="Buscar..."
           value={searchInput}
           onChange={e => setSearchInput(e.target.value)}
-          style={{
-            padding: '7px 10px', border: '1px solid var(--gray-300)', borderRadius: 4,
-            fontSize: 13, width: 200, fontFamily: 'inherit', outline: 'none',
-            background: 'white', color: 'var(--gray-900)',
-          }}
-          onFocus={e => (e.currentTarget.style.borderColor = 'var(--brand-400)')}
-          onBlur={e => (e.currentTarget.style.borderColor = 'var(--gray-300)')}
+          className="w-[200px] px-[10px] py-[7px] border border-gray-300 rounded text-md font-sans outline-none bg-white text-gray-900 focus:border-brand-400 focus:ring-[2px] focus:ring-brand-400/20 transition-shadow"
         />
         {canCreate && (
           <Button variant="primary" onClick={() => navigate(`/admin/${resource}/new`)}>

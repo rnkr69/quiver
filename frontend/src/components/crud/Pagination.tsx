@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Props {
   page: number
@@ -14,46 +15,32 @@ export function Pagination({ page, pageSize, total, onChange }: Props) {
   const from = (page - 1) * pageSize + 1
   const to = Math.min(page * pageSize, total)
 
-  const btnStyle = (disabled: boolean): React.CSSProperties => ({
-    display: 'inline-flex', alignItems: 'center', gap: 4,
-    padding: '5px 10px', fontSize: 13, fontFamily: 'inherit',
-    background: disabled ? 'transparent' : 'transparent',
-    color: disabled ? 'var(--gray-300)' : 'var(--gray-700)',
-    border: '1px solid transparent', borderRadius: 4,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-  })
-
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '12px 0', fontSize: 13, color: 'var(--gray-600)',
-    }}>
+    <div className="flex items-center justify-between py-3 text-md text-gray-600">
       <span>{from}–{to} de {total}</span>
-      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+      <div className="flex gap-1 items-center">
         <button
-          style={btnStyle(page <= 1)}
+          className={cn(
+            'inline-flex items-center gap-1 px-[10px] py-[5px] text-md bg-transparent border border-transparent rounded font-sans transition-colors',
+            page <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 cursor-pointer hover:bg-gray-100',
+          )}
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
-          onMouseEnter={e => { if (page > 1) e.currentTarget.style.background = 'var(--gray-100)' }}
-          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         >
           <ChevronLeft size={14} /> Anterior
         </button>
 
-        <span style={{
-          padding: '5px 10px', fontSize: 13,
-          background: 'var(--brand-50)', color: 'var(--brand-700)',
-          borderRadius: 4, fontWeight: 500, minWidth: 64, textAlign: 'center',
-        }}>
+        <span className="px-[10px] py-[5px] text-md bg-brand-50 text-brand-700 rounded font-medium min-w-16 text-center">
           {page} / {totalPages}
         </span>
 
         <button
-          style={btnStyle(page >= totalPages)}
+          className={cn(
+            'inline-flex items-center gap-1 px-[10px] py-[5px] text-md bg-transparent border border-transparent rounded font-sans transition-colors',
+            page >= totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 cursor-pointer hover:bg-gray-100',
+          )}
           disabled={page >= totalPages}
           onClick={() => onChange(page + 1)}
-          onMouseEnter={e => { if (page < totalPages) e.currentTarget.style.background = 'var(--gray-100)' }}
-          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         >
           Siguiente <ChevronRight size={14} />
         </button>

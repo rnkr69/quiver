@@ -1,14 +1,14 @@
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import type { CSSProperties } from 'react'
+import { cn } from '@/lib/utils'
 
 interface BackLinkProps {
   to?: string
   label?: string
-  style?: CSSProperties
+  className?: string
 }
 
-export function BackLink({ to, label = 'Volver', style }: BackLinkProps) {
+export function BackLink({ to, label = 'Volver', className }: BackLinkProps) {
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -19,13 +19,11 @@ export function BackLink({ to, label = 'Volver', style }: BackLinkProps) {
   return (
     <button
       onClick={handleClick}
-      style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        background: 'transparent', border: 'none', cursor: 'pointer',
-        color: 'var(--brand-500)', fontSize: 13, padding: 0,
-        marginBottom: 16, fontFamily: 'inherit',
-        ...style,
-      }}
+      className={cn(
+        'inline-flex items-center gap-1.5 bg-transparent border-none cursor-pointer',
+        'text-brand-500 text-md p-0 mb-4 font-sans hover:underline',
+        className,
+      )}
     >
       <ArrowLeft size={14} />
       {label}

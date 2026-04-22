@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth.store'
+import { Button } from '@/components/ui/Button'
 
 export function ForbiddenPage() {
   const navigate = useNavigate()
@@ -10,31 +11,14 @@ export function ForbiddenPage() {
   const target = isAdmin ? '/admin' : '/portal'
 
   return (
-    <div style={{
-      minHeight: '60vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-    }}>
-      <div style={{ fontSize: 64, fontWeight: 700, color: 'var(--brand-500)', lineHeight: 1, marginBottom: 12 }}>
-        403
-      </div>
-      <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--gray-900)', marginBottom: 8 }}>
-        Acceso denegado
-      </div>
-      <div style={{ fontSize: 14, color: 'var(--gray-600)', marginBottom: 28 }}>
-        No tienes permiso para ver esta página.
-      </div>
-      <button
-        onClick={() => navigate(target, { replace: true })}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '8px 16px', fontSize: 14, fontWeight: 500,
-          background: 'var(--brand-500)', color: 'white',
-          border: '1px solid transparent', borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-        }}
-      >
+    <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
+      <div className="text-[64px] font-bold text-brand-500 leading-none mb-3">403</div>
+      <div className="text-xl font-semibold text-gray-900 mb-2">Acceso denegado</div>
+      <div className="text-base text-gray-600 mb-7">No tienes permiso para ver esta página.</div>
+      <Button variant="primary" onClick={() => navigate(target, { replace: true })}>
         <ArrowLeft size={14} />
         Volver al inicio
-      </button>
+      </Button>
     </div>
   )
 }

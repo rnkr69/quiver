@@ -4,6 +4,7 @@ import { useMenuStore } from '@/store/menu.store'
 import { useAuthStore } from '@/store/auth.store'
 import { QuiverLogo } from '@/components/ui/QuiverLogo'
 import { LogOut } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type { MenuEntry, MenuGroupEntry } from '@/api/menu.api'
 
 const STORAGE_KEY = 'quiver_sidebar_groups'
@@ -50,36 +51,22 @@ export function Sidebar({ isOpen }: Props) {
         key={route}
         to={route}
         title={!isOpen ? label : undefined}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: isOpen ? `8px 16px 8px ${indent ? 28 : 16}px` : '8px 16px',
-          textDecoration: 'none', fontSize: 14,
-          color: active ? 'var(--brand-700)' : 'var(--gray-700)',
-          background: active ? 'var(--brand-50)' : 'transparent',
-          borderLeft: active ? '3px solid var(--brand-500)' : '3px solid transparent',
-          fontWeight: active ? 500 : 400,
-          marginBottom: 1,
-          transition: 'background 0.1s',
-          whiteSpace: 'nowrap', overflow: 'hidden',
-        }}
-        onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--gray-100)' }}
-        onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+        className={cn(
+          'flex items-center gap-2.5 text-base border-l-[3px] mb-px transition-colors duration-100 overflow-hidden whitespace-nowrap',
+          isOpen ? `py-2 pr-4 ${indent ? 'pl-7' : 'pl-4'}` : 'py-2 px-4',
+          active
+            ? 'text-brand-700 bg-brand-50 border-l-brand-500 font-medium'
+            : 'text-gray-700 bg-transparent border-l-transparent font-normal hover:bg-gray-100',
+        )}
       >
         {icon && (
-          <i
-            className={`bi bi-${icon}`}
-            style={{ fontSize: 15, width: 16, flexShrink: 0, textAlign: 'center' }}
-          />
+          <i className={`bi bi-${icon} text-[15px] w-4 shrink-0 text-center`} />
         )}
         {isOpen && (
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {label}
-          </span>
+          <span className="overflow-hidden text-ellipsis">{label}</span>
         )}
         {!isOpen && !icon && (
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {label[0]}
-          </span>
+          <span className="overflow-hidden text-ellipsis">{label[0]}</span>
         )}
       </NavLink>
     )
@@ -93,21 +80,14 @@ export function Sidebar({ isOpen }: Props) {
         {isOpen && (
           <button
             onClick={() => toggleGroup(entry.title)}
-            style={{
-              display: 'flex', alignItems: 'center', width: '100%',
-              padding: '6px 16px', gap: 6,
-              background: 'none', border: 'none', cursor: 'pointer',
-              fontSize: 11, fontWeight: 600, color: 'var(--gray-500)',
-              textTransform: 'uppercase', letterSpacing: '0.06em',
-              textAlign: 'left', marginTop: 12,
-            }}
+            className="flex items-center w-full px-4 py-1.5 gap-1.5 bg-transparent border-none cursor-pointer text-xs font-semibold text-gray-500 uppercase tracking-[0.06em] text-left mt-3"
           >
             {entry.icon && (
-              <i className={`bi bi-${entry.icon}`} style={{ fontSize: 12, flexShrink: 0 }} />
+              <i className={`bi bi-${entry.icon} text-xs shrink-0`} />
             )}
-            <span style={{ flex: 1 }}>{entry.title}</span>
+            <span className="flex-1">{entry.title}</span>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-              style={{ transform: isGroupCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.15s', flexShrink: 0 }}>
+              className={cn('shrink-0 transition-transform duration-150', isGroupCollapsed && '-rotate-90')}>
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </button>
@@ -133,52 +113,42 @@ export function Sidebar({ isOpen }: Props) {
   return (
     <>
       {/* Header */}
-      <div style={{
-        height: 64, background: 'white', borderBottom: '1px solid var(--gray-200)',
-        display: 'flex', alignItems: 'center',
-        padding: isOpen ? '0 12px 0 16px' : '0 14px',
-        gap: 10, flexShrink: 0,
-      }}>
+      <div className={cn(
+        'h-16 bg-white border-b border-gray-200 flex items-center gap-2.5 shrink-0',
+        isOpen ? 'px-4' : 'px-[14px]',
+      )}>
         <QuiverLogo size={28} />
-        {isOpen && <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--gray-900)', flex: 1, whiteSpace: 'nowrap' }}>Quiver</span>}
+        {isOpen && <span className="text-lg font-semibold text-gray-900 flex-1 whitespace-nowrap">Quiver</span>}
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
+      <nav className="flex-1 py-2 overflow-y-auto">
         {items.map((entry, i) => <div key={i}>{renderEntry(entry)}</div>)}
       </nav>
 
       {/* Footer */}
       {user && (
-        <div style={{
-          borderTop: '1px solid var(--gray-200)',
-          padding: isOpen ? '10px 12px' : '10px 14px',
-          display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
-        }}>
-          <div style={{
-            width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-            background: 'var(--brand-50)', color: 'var(--brand-700)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 11, fontWeight: 600,
-          }}>
+        <div className={cn(
+          'border-t border-gray-200 flex items-center gap-2.5 shrink-0',
+          isOpen ? 'px-3 py-[10px]' : 'px-[14px] py-[10px]',
+        )}>
+          <div className="w-[30px] h-[30px] rounded-full shrink-0 bg-brand-50 text-brand-700 flex items-center justify-center text-xs font-semibold">
             {initials}
           </div>
           {isOpen && (
             <>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--gray-900)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div className="flex-1 min-w-0">
+                <div className="text-md font-medium text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">
                   {user.first_name} {user.last_name}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--gray-500)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
                   {user.email}
                 </div>
               </div>
               <button
                 onClick={logout}
                 title="Cerrar sesión"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)', padding: 4, display: 'flex', flexShrink: 0 }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--gray-700)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--gray-400)')}
+                className="bg-transparent border-none cursor-pointer text-gray-400 p-1 flex shrink-0 hover:text-gray-700 transition-colors"
               >
                 <LogOut size={15} />
               </button>

@@ -22,14 +22,8 @@ export function ChartWidget({ title, data }: Props) {
   const chartType = data.chart_type ?? 'line'
 
   return (
-    <div style={{
-      backgroundColor: '#ffffff',
-      border: '1px solid #e8e8e8',
-      borderRadius: 8,
-      padding: 20,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-    }}>
-      <div style={{ fontSize: 13, color: '#8a8a8a', marginBottom: 12 }}>{title}</div>
+    <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+      <div className="text-md text-gray-600 mb-3">{title}</div>
       <ResponsiveContainer width="100%" height={160}>
         {chartType === 'bar'
           ? (

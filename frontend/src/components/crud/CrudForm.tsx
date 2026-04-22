@@ -43,7 +43,6 @@ export function CrudForm({ fields, initialValues, mode, loading, onSubmit, onCan
     e.preventDefault()
     if (readOnly) return
     if (!validate()) return
-    // exclude password fields that are empty (edit mode — don't overwrite)
     const payload: Record<string, unknown> = {}
     for (const f of fields) {
       const v = values[f.key]
@@ -55,7 +54,7 @@ export function CrudForm({ fields, initialValues, mode, loading, onSubmit, onCan
 
   return (
     <form onSubmit={handleSubmit}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16, marginBottom: 24 }}>
+      <div className="grid [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))] gap-4 mb-6">
         {visibleFields.map(field => {
           const Component = getFieldComponent(field.field_type)
           return (
@@ -71,7 +70,7 @@ export function CrudForm({ fields, initialValues, mode, loading, onSubmit, onCan
         })}
       </div>
       {!readOnly && (
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+        <div className="flex gap-2 justify-end">
           {onCancel && (
             <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
               Cancelar

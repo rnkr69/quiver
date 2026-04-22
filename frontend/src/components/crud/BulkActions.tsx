@@ -16,17 +16,11 @@ export function BulkActions({ selectedCount, actions, loading, onAction, onClear
   if (selectedCount === 0) return null
 
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 12,
-      padding: '10px 16px',
-      backgroundColor: '#e6f7f8',
-      borderRadius: 6,
-      marginBottom: 12,
-    }}>
-      <span style={{ fontSize: 14, color: '#005e63', fontWeight: 500 }}>
+    <div className="flex items-center gap-3 px-4 py-[10px] bg-brand-50 rounded-md mb-3">
+      <span className="text-base text-brand-700 font-medium">
         {selectedCount} seleccionado{selectedCount !== 1 ? 's' : ''}
       </span>
-      <div style={{ flex: 1 }} />
+      <div className="flex-1" />
       {actions.map(action => (
         <Button
           key={action}

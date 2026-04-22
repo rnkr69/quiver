@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { Input } from '@/components/ui/Input'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { Alert } from '@/components/ui/Alert'
-import { Spinner } from '@/components/ui/Spinner'
+import { Button } from '@/components/ui/Button'
 import { isAxiosError } from 'axios'
 
 type Status = 'idle' | 'loading' | 'error'
@@ -56,16 +56,12 @@ export function LoginPage() {
 
   return (
     <AuthLayout>
-      <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--gray-900)', margin: '0 0 4px' }}>
-        Bienvenido
-      </h2>
-      <p style={{ fontSize: 13, color: 'var(--gray-600)', margin: '0 0 24px' }}>
-        Accede a tu cuenta
-      </p>
+      <h2 className="text-xl font-semibold text-gray-900 mb-1">Bienvenido</h2>
+      <p className="text-md text-gray-600 mb-6">Accede a tu cuenta</p>
 
-      {status === 'error' && <Alert type="error" message={errorMsg} style={{ marginBottom: 16 }} />}
+      {status === 'error' && <Alert type="error" message={errorMsg} className="mb-4" />}
 
-      <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <Input
           label="Email"
           type="email"
@@ -76,7 +72,6 @@ export function LoginPage() {
           error={fieldErrors.email}
           required
         />
-
         <PasswordInput
           label="Contraseña"
           value={password}
@@ -85,38 +80,20 @@ export function LoginPage() {
           error={fieldErrors.password}
           required
         />
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            width: '100%', padding: '10px 16px', fontSize: 14, fontWeight: 500,
-            background: isLoading ? 'var(--gray-300)' : 'var(--brand-500)',
-            color: 'white', border: '1px solid transparent', borderRadius: 6,
-            cursor: isLoading ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-          }}
-        >
-          {isLoading && <Spinner size={14} color="white" />}
+        <Button type="submit" variant="primary" className="w-full justify-center py-2.5" loading={isLoading} disabled={isLoading}>
           {isLoading ? 'Entrando…' : 'Iniciar sesión'}
-        </button>
+        </Button>
       </form>
 
-      <div style={{ textAlign: 'center', marginTop: 16 }}>
-        <a
-          href="/auth/forgot-password"
-          style={{ fontSize: 13, color: 'var(--brand-500)', textDecoration: 'none' }}
-        >
+      <div className="text-center mt-4">
+        <a href="/auth/forgot-password" className="text-md text-brand-500 hover:underline">
           ¿Olvidaste tu contraseña?
         </a>
       </div>
 
       {import.meta.env.DEV && (
-        <div style={{
-          marginTop: 20, background: 'var(--gray-50)', border: '1px solid var(--gray-200)',
-          borderRadius: 6, padding: '10px 12px', fontSize: 12, color: 'var(--gray-600)',
-        }}>
-          <strong style={{ color: 'var(--gray-700)' }}>Demo:</strong> usa las credenciales del superusuario creado en el setup.
+        <div className="mt-5 bg-gray-50 border border-gray-200 rounded px-3 py-2.5 text-sm text-gray-600">
+          <strong className="text-gray-700">Demo:</strong> usa las credenciales del superusuario creado en el setup.
         </div>
       )}
     </AuthLayout>

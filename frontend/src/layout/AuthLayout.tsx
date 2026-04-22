@@ -7,33 +7,17 @@ interface Props {
 
 export function AuthLayout({ children }: Props) {
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'var(--gray-50)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 24,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+      <div className="flex items-center gap-2.5 mb-6">
         <QuiverLogo size={40} />
-        <span style={{ fontSize: 22, fontWeight: 600, color: 'var(--gray-900)' }}>Quiver</span>
+        <span className="text-3xl font-semibold text-gray-900">Quiver</span>
       </div>
 
-      <div style={{
-        background: 'white',
-        borderRadius: 8,
-        padding: 32,
-        width: '100%',
-        maxWidth: 400,
-        boxShadow: 'var(--shadow-md)',
-        border: '1px solid var(--gray-200)',
-      }}>
+      <div className="bg-white rounded-lg p-8 w-full max-w-[400px] shadow-md border border-gray-200">
         {children}
       </div>
 
-      <div style={{ marginTop: 24, fontSize: 12, color: 'var(--gray-400)' }}>
+      <div className="mt-6 text-sm text-gray-400">
         © {new Date().getFullYear()} Quiver
       </div>
     </div>

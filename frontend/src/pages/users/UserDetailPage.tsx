@@ -34,11 +34,11 @@ export function UserDetailPage() {
     onError: () => toast('Error al desactivar el usuario', 'error'),
   })
 
-  if (isLoading) return <div style={{ color: 'var(--gray-500)', fontSize: 14 }}>Cargando...</div>
+  if (isLoading) return <div className="text-gray-500 text-base">Cargando...</div>
   if (isError || !user) {
     return (
-      <div style={{ textAlign: 'center', padding: 40 }}>
-        <p style={{ color: 'var(--gray-500)', marginBottom: 16 }}>Usuario no encontrado.</p>
+      <div className="text-center py-10">
+        <p className="text-gray-500 mb-4">Usuario no encontrado.</p>
         <BackLink to="/admin/users" label="Volver al listado" />
       </div>
     )
@@ -50,31 +50,22 @@ export function UserDetailPage() {
     <div>
       <BackLink to="/admin/users" label="Volver al listado" />
 
-      <Card style={{ padding: 20, marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{
-              width: 56, height: 56, borderRadius: '50%', flexShrink: 0,
-              background: 'var(--brand-50)', color: 'var(--brand-700)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 18, fontWeight: 600,
-            }}>
+      <Card className="p-5 mb-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-14 h-14 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center text-lg font-semibold shrink-0">
               {initials}
             </div>
             <div>
-              <h1 style={{ fontSize: 20, fontWeight: 600, color: 'var(--gray-900)', margin: '0 0 2px' }}>
-                {user.first_name} {user.last_name}
-              </h1>
-              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
-                <span style={{ fontSize: 13, color: 'var(--gray-500)' }}>{user.email}</span>
-              </div>
-              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 6 }}>
+              <h1 className="text-xl font-semibold text-gray-900 mb-0.5">{user.first_name} {user.last_name}</h1>
+              <span className="text-md text-gray-500">{user.email}</span>
+              <div className="flex gap-1 flex-wrap mt-1.5">
                 {user.is_superuser && <Badge variant="warning">Superuser</Badge>}
                 {user.roles.map(r => <Badge key={r.id} variant="active">{r.display_name}</Badge>)}
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+          <div className="flex gap-2 shrink-0">
             <Button variant="secondary" size="sm" onClick={() => navigate(`/admin/users/${id}/edit`)}>
               Editar
             </Button>
@@ -87,8 +78,8 @@ export function UserDetailPage() {
         </div>
       </Card>
 
-      <Card style={{ padding: 20 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px 24px' }}>
+      <Card className="p-5">
+        <div className="grid [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-4">
           <DetailField label="Nombre" value={user.first_name} />
           <DetailField label="Apellidos" value={user.last_name} />
           <DetailField label="Email" value={user.email} />

@@ -1,18 +1,19 @@
+import { cn } from '@/lib/utils'
 import type { FieldProps } from './index'
 
 export function CheckboxField({ field, value, onChange, readOnly }: FieldProps) {
   return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: readOnly ? 'default' : 'pointer' }}>
+    <label className={cn('flex items-center gap-2', readOnly ? 'cursor-default' : 'cursor-pointer')}>
       <input
         type="checkbox"
         checked={Boolean(value)}
         onChange={e => onChange(e.target.checked)}
         disabled={readOnly}
-        style={{ width: 16, height: 16, accentColor: '#009ca6' }}
+        className="w-4 h-4"
       />
-      <span style={{ fontSize: 14, color: '#1a1a1a' }}>
+      <span className="text-base text-gray-900">
         {field.label}
-        {field.required && <span style={{ color: '#ef4444', marginLeft: 2 }}>*</span>}
+        {field.required && <span className="text-danger-500 ml-0.5">*</span>}
       </span>
     </label>
   )

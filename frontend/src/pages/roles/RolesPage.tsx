@@ -12,6 +12,9 @@ import { RowMenu } from '@/components/ui/RowMenu'
 import { useToast } from '@/components/ui/Toast'
 import { rolesApi } from '@/api/roles.api'
 
+const thClass = 'px-4 py-2.5 text-left text-md font-semibold text-gray-700 bg-gray-50 border-b border-gray-200'
+const tdClass = 'px-4 py-3 text-base text-gray-900 border-b border-gray-100 align-middle'
+
 export function RolesPage() {
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -40,16 +43,6 @@ export function RolesPage() {
     onError: () => toast('Error al crear el rol', 'error'),
   })
 
-  const th: React.CSSProperties = {
-    padding: '10px 16px', textAlign: 'left',
-    fontSize: 13, fontWeight: 600, color: 'var(--gray-700)',
-    background: 'var(--gray-50)', borderBottom: '1px solid var(--gray-200)',
-  }
-  const td: React.CSSProperties = {
-    padding: '12px 16px', fontSize: 14, color: 'var(--gray-900)',
-    borderBottom: '1px solid var(--gray-100)', verticalAlign: 'middle',
-  }
-
   return (
     <div>
       <PageHeader
@@ -58,16 +51,16 @@ export function RolesPage() {
       />
 
       {isLoading ? (
-        <div style={{ color: 'var(--gray-500)', fontSize: 14 }}>Cargando...</div>
+        <div className="text-gray-500 text-base">Cargando...</div>
       ) : (
-        <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: 8, overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+          <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th style={th}>Nombre</th>
-                <th style={th}>Identificador</th>
-                <th style={{ ...th, textAlign: 'center' }}>Permisos</th>
-                <th style={{ ...th, width: 40 }}></th>
+                <th className={thClass}>Nombre</th>
+                <th className={thClass}>Identificador</th>
+                <th className={`${thClass} text-center`}>Permisos</th>
+                <th className={`${thClass} w-10`}></th>
               </tr>
             </thead>
             <tbody>
@@ -78,21 +71,15 @@ export function RolesPage() {
                   </td>
                 </tr>
               ) : roles.map(role => (
-                <tr
-                  key={role.id}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--gray-50)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <td style={{ ...td, fontWeight: 500 }}>{role.display_name}</td>
-                  <td style={td}>
-                    <code style={{ fontSize: 12, background: 'var(--gray-100)', padding: '2px 6px', borderRadius: 4, color: 'var(--gray-600)' }}>
-                      {role.name}
-                    </code>
+                <tr key={role.id} className="hover:bg-gray-50">
+                  <td className={`${tdClass} font-medium`}>{role.display_name}</td>
+                  <td className={tdClass}>
+                    <code className="text-sm bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{role.name}</code>
                   </td>
-                  <td style={{ ...td, textAlign: 'center' }}>
+                  <td className={`${tdClass} text-center`}>
                     <Badge variant="active">{role.permissions_count} permisos</Badge>
                   </td>
-                  <td style={{ ...td, textAlign: 'right' }}>
+                  <td className={`${tdClass} text-right`}>
                     <RowMenu items={[
                       { label: 'Editar', icon: <Edit size={14} />, action: () => navigate(`/admin/roles/${role.id}/edit`) },
                       'divider',
@@ -115,7 +102,7 @@ export function RolesPage() {
         onConfirm={() => createRole.mutate()}
         onCancel={() => { setCreating(false); setNewName(''); setNewDisplayName('') }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3">
           <Input label="Nombre para mostrar" value={newDisplayName} onChange={e => setNewDisplayName(e.target.value)} placeholder="ej. Supervisor" required />
           <Input
             label="Identificador (slug)"

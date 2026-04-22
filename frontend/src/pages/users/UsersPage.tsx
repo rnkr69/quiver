@@ -14,12 +14,7 @@ import { usersApi } from '@/api/users.api'
 function Avatar({ firstName, lastName }: { firstName: string; lastName: string }) {
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase()
   return (
-    <div style={{
-      width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-      background: 'var(--brand-50)', color: 'var(--brand-700)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 11, fontWeight: 600,
-    }}>
+    <div className="w-8 h-8 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center text-xs font-semibold shrink-0">
       {initials}
     </div>
   )
@@ -29,6 +24,9 @@ function formatDate(dt: string | null) {
   if (!dt) return '—'
   return new Date(dt).toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' })
 }
+
+const thClass = 'px-4 py-2.5 text-left text-md font-semibold text-gray-700 bg-gray-50 border-b border-gray-200'
+const tdClass = 'px-4 py-3 text-base text-gray-900 border-b border-gray-100 align-middle'
 
 export function UsersPage() {
   const navigate = useNavigate()
@@ -44,16 +42,6 @@ export function UsersPage() {
     onError: () => toast('Error al desactivar el usuario', 'error'),
   })
 
-  const th: React.CSSProperties = {
-    padding: '10px 16px', textAlign: 'left',
-    fontSize: 13, fontWeight: 600, color: 'var(--gray-700)',
-    background: 'var(--gray-50)', borderBottom: '1px solid var(--gray-200)',
-  }
-  const td: React.CSSProperties = {
-    padding: '12px 16px', fontSize: 14, color: 'var(--gray-900)',
-    borderBottom: '1px solid var(--gray-100)', verticalAlign: 'middle',
-  }
-
   return (
     <div>
       <PageHeader
@@ -62,17 +50,17 @@ export function UsersPage() {
       />
 
       {isLoading ? (
-        <div style={{ color: 'var(--gray-500)', fontSize: 14 }}>Cargando...</div>
+        <div className="text-gray-500 text-base">Cargando...</div>
       ) : (
-        <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: 8, overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+          <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th style={th}>Usuario</th>
-                <th style={th}>Roles</th>
-                <th style={th}>Estado</th>
-                <th style={th}>Último acceso</th>
-                <th style={{ ...th, width: 40 }}></th>
+                <th className={thClass}>Usuario</th>
+                <th className={thClass}>Roles</th>
+                <th className={thClass}>Estado</th>
+                <th className={thClass}>Último acceso</th>
+                <th className={`${thClass} w-10`}></th>
               </tr>
             </thead>
             <tbody>
@@ -85,35 +73,31 @@ export function UsersPage() {
               ) : users.map(user => (
                 <tr
                   key={user.id}
-                  style={{ cursor: 'pointer' }}
+                  className="hover:bg-gray-50 cursor-pointer"
                   onClick={() => navigate(`/admin/users/${user.id}`)}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--gray-50)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <td style={td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <td className={tdClass}>
+                    <div className="flex items-center gap-2.5">
                       <Avatar firstName={user.first_name} lastName={user.last_name} />
                       <div>
-                        <div style={{ fontWeight: 500 }}>{user.first_name} {user.last_name}</div>
-                        <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>{user.email}</div>
+                        <div className="font-medium">{user.first_name} {user.last_name}</div>
+                        <div className="text-sm text-gray-500">{user.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td style={td}>
-                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  <td className={tdClass}>
+                    <div className="flex gap-1 flex-wrap">
                       {user.is_superuser && <Badge variant="warning">Superuser</Badge>}
                       {user.roles.map(r => <Badge key={r.id} variant="active">{r.display_name}</Badge>)}
                     </div>
                   </td>
-                  <td style={td}>
+                  <td className={tdClass}>
                     <Badge variant={user.is_active ? 'success' : 'inactive'}>
                       {user.is_active ? 'Activo' : 'Inactivo'}
                     </Badge>
                   </td>
-                  <td style={{ ...td, color: 'var(--gray-600)', fontSize: 13 }}>
-                    {formatDate(user.last_login_at)}
-                  </td>
-                  <td style={{ ...td, textAlign: 'right' }} onClick={e => e.stopPropagation()}>
+                  <td className={`${tdClass} text-gray-600 text-md`}>{formatDate(user.last_login_at)}</td>
+                  <td className={`${tdClass} text-right`} onClick={e => e.stopPropagation()}>
                     <RowMenu items={[
                       { label: 'Editar', action: () => navigate(`/admin/users/${user.id}/edit`) },
                       'divider',

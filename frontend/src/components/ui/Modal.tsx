@@ -35,30 +35,15 @@ export function Modal({
       role="dialog"
       aria-modal="true"
       onClick={onCancel}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 100,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.4)',
-      }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{
-          backgroundColor: '#ffffff',
-          borderRadius: 10,
-          padding: 24,
-          width: '100%',
-          maxWidth: 440,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-        }}
+        className="bg-white rounded-xl p-6 w-full max-w-[440px] shadow-modal"
       >
-        <div style={{ fontSize: 16, fontWeight: 600, color: '#1a1a1a', marginBottom: 8 }}>
-          {title}
-        </div>
-        <div style={{ fontSize: 14, color: '#6b6b6b', marginBottom: 24 }}>
-          {children}
-        </div>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+        <div className="text-xl font-semibold text-gray-900 mb-2">{title}</div>
+        <div className="text-base text-gray-700 mb-6">{children}</div>
+        <div className="flex gap-2 justify-end">
           <Button variant="secondary" size="sm" onClick={onCancel} disabled={loading}>
             {cancelLabel}
           </Button>
