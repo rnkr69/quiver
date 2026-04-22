@@ -2,6 +2,8 @@
 
 Panel de administración y portal de usuario para FastAPI. Añade un admin completo —gestión de usuarios, roles, CRUDs automáticos, dashboard y portal de cliente— a cualquier aplicación FastAPI existente en menos de 30 minutos.
 
+→ **[Resumen ejecutivo del proyecto](docs/quiver-executive-summary.html)**
+
 ---
 
 ## Inicio rápido
