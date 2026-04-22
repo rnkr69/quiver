@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiver — Resumen Ejecutivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand-50:  #e6f7f8;
+      --brand-100: #b3e8ec;
+      --brand-400: #00b3be;
+      --brand-500: #009ca6;
+      --brand-600: #007a83;
+      --brand-700: #005e63;
+      --gray-50:   #f9f9f9;
+      --gray-100:  #f3f3f3;
+      --gray-200:  #e8e8e8;
+      --gray-300:  #d4d4d4;
+      --gray-500:  #adadad;
+      --gray-600:  #8a8a8a;
+      --gray-700:  #6b6b6b;
+      --gray-800:  #3d3d3d;
+      --gray-900:  #1a1a1a;
+      --success-500: #2d9e6b;
+      --success-50:  #edf7f2;
+      --danger-500:  #d94040;
+      --warning-500: #c78b1a;
+      --white: #ffffff;
+
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-xl: 12px;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--gray-800);
+      background: var(--gray-50);
+    }
+
+    /* ── NAV ───────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--brand-500);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: white;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--gray-900);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-600);
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: var(--radius-md);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-links a:hover {
+      background: var(--gray-100);
+      color: var(--gray-900);
+    }
+
+    .badge-mvp {
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--brand-50);
+      color: var(--brand-700);
+      border: 1px solid var(--brand-100);
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+    }
+
+    /* ── MAIN CONTAINER ────────────────────────────────── */
+    main {
+      margin-top: 56px;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── HERO ──────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 64px 32px 56px;
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 40px;
+    }
+
+    .hero-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--brand-500);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .hero-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: none;
+      stroke: white;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .hero-tagline {
+      font-size: 16px;
+      color: var(--gray-600);
+      max-width: 560px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    .hero-meta {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .meta-pill {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 9999px;
+      padding: 4px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta-pill span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--brand-500);
+    }
+
+    /* ── SECTION ───────────────────────────────────────── */
+    section {
+      margin-bottom: 40px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--brand-50);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: var(--brand-500);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .section-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--gray-900);
+      letter-spacing: -0.01em;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── CARD ──────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+    }
+
+    .card p {
+      color: var(--gray-700);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .card p + p {
+      margin-top: 12px;
+    }
+
+    /* ── FEATURE GRID ──────────────────────────────────── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 720px) {
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--brand-100);
+      box-shadow: 0 4px 16px rgba(0,156,166,0.08);
+    }
+
+    .feature-card-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--brand-50);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .feature-card-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: var(--brand-500);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feature-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 6px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.55;
+    }
+
+    /* ── STACK GRID ────────────────────────────────────── */
+    .stack-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .stack-split { grid-template-columns: 1fr; }
+    }
+
+    .stack-panel {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stack-panel h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+
+    .stack-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      margin: 3px;
+    }
+
+    .stack-tag .dot-brand {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--brand-500);
+    }
+
+    /* ── ARCHITECTURE ──────────────────────────────────── */
+    .arch-diagram {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .arch-row {
+      display: flex;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+
+    .arch-row:last-child { margin-bottom: 0; }
+
+    .arch-box {
+      flex: 1;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-size: 13px;
+    }
+
+    .arch-box.brand {
+      background: var(--brand-50);
+      border: 1px solid var(--brand-100);
+    }
+
+    .arch-box.neutral {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+    }
+
+    .arch-box h4 {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .arch-box.brand h4 { color: var(--brand-700); }
+    .arch-box.neutral h4 { color: var(--gray-500); }
+
+    .arch-box ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .arch-box ul li {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+    }
+
+    .arch-box.brand ul li {
+      color: var(--brand-700);
+      border-color: var(--brand-100);
+      background: var(--white);
+    }
+
+    .arch-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-300);
+      font-size: 20px;
+      width: 24px;
+      flex-shrink: 0;
+    }
+
+    /* ── CODE BLOCK ────────────────────────────────────── */
+    .code-block {
+      background: var(--gray-900);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      overflow-x: auto;
+      margin-bottom: 0;
+    }
+
+    .code-block pre {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+
+    .code-block .kw  { color: #7dd3fc; }
+    .code-block .cls { color: #86efac; }
+    .code-block .str { color: #fca5a5; }
+    .code-block .cm  { color: #6b7280; font-style: italic; }
+    .code-block .fn  { color: #c4b5fd; }
+    .code-block .py  { color: #fde68a; }
+    .code-block .op  { color: #94a3b8; }
+
+    /* ── TWO-COL ───────────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 640px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    /* ── COMPARISON TABLE ──────────────────────────────── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .cmp-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-500);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .cmp-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      color: var(--gray-700);
+      vertical-align: middle;
+    }
+
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .cmp-table tr:hover td { background: var(--gray-50); }
+
+    .cmp-table td:first-child { color: var(--gray-500); font-weight: 500; }
+    .cmp-table td:last-child  { color: var(--gray-900); font-weight: 500; }
+
+    /* ── STATUS LIST ───────────────────────────────────── */
+    .status-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .status-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--gray-700);
+    }
+
+    .status-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--success-50);
+      border: 1px solid #86efac;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .status-check svg {
+      width: 10px;
+      height: 10px;
+      stroke: var(--success-500);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    /* ── HIGHLIGHT BOX ─────────────────────────────────── */
+    .highlight-box {
+      background: var(--brand-50);
+      border: 1px solid var(--brand-100);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .highlight-box svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: var(--brand-500);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .highlight-box p {
+      font-size: 13px;
+      color: var(--brand-700);
+      line-height: 1.6;
+    }
+
+    .highlight-box strong { font-weight: 600; }
+
+    /* ── MVP TABLE ─────────────────────────────────────── */
+    .mvp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .mvp-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-500);
+      padding: 10px 16px;
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    .mvp-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      vertical-align: middle;
+    }
+
+    .mvp-table tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+    }
+
+    .badge-active {
+      background: var(--brand-50);
+      color: var(--brand-700);
+      border: 1px solid var(--brand-100);
+    }
+
+    .badge-done {
+      background: var(--success-50);
+      color: var(--success-500);
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-post {
+      background: var(--gray-100);
+      color: var(--gray-600);
+      border: 1px solid var(--gray-200);
+    }
+
+    .badge-dark {
+      background: #1a1a2e;
+      color: white;
+    }
+
+    /* ── FOOTER ────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 40px 24px 24px;
+      color: var(--gray-500);
+      font-size: 12px;
+      border-top: 1px solid var(--gray-200);
+      margin-top: 16px;
+    }
+
+    footer strong {
+      color: var(--gray-700);
+    }
+
+    /* ── DIVIDER ───────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--gray-200);
+      margin: 8px 0 24px;
+    }
+
+    /* ── SCREEN MOCKUP ─────────────────────────────────── */
+    .mockup {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .mockup-topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mockup-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-300);
+    }
+
+    .mockup-body {
+      display: flex;
+      height: 180px;
+    }
+
+    .mockup-sidebar {
+      width: 100px;
+      background: var(--gray-50);
+      border-right: 1px solid var(--gray-200);
+      padding: 10px 0;
+    }
+
+    .mockup-sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: var(--gray-600);
+      cursor: default;
+    }
+
+    .mockup-sidebar-item.active {
+      background: var(--brand-50);
+      border-left: 2px solid var(--brand-500);
+      color: var(--brand-700);
+      font-weight: 500;
+    }
+
+    .mockup-sidebar-item .icon {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      background: currentColor;
+      opacity: 0.4;
+      flex-shrink: 0;
+    }
+
+    .mockup-content {
+      flex: 1;
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .mockup-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 10px;
+    }
+
+    .mockup-stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .mockup-stat {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 5px;
+      padding: 8px;
+    }
+
+    .mockup-stat .val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .mockup-stat .lbl {
+      font-size: 10px;
+      color: var(--gray-500);
+    }
+
+    .mockup-table-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 11px;
+      color: var(--gray-700);
+    }
+
+    .mockup-table-row .pill {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .pill-active {
+      background: var(--brand-50);
+      color: var(--brand-700);
+    }
+
+    .pill-inactive {
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav>
+    <div class="nav-brand">
+      <div class="nav-logo">
+        <!-- Arrow icon (quiver / arrow) -->
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <span class="nav-title">Quiver</span>
+      <span class="badge-mvp">MVP v1.0</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#concepto">Concepto</a></li>
+      <li><a href="#funcionalidades">Funcionalidades</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#arquitectura">Arquitectura</a></li>
+      <li><a href="#quickstart">Quick Start</a></li>
+      <li><a href="#estado">Estado</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ── HERO ── -->
+    <div class="hero">
+      <div class="hero-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <h1>Quiver</h1>
+      <p class="hero-tagline">
+        Starter kit de panel de administración para FastAPI.<br/>
+        Listo para producción desde el primer <code style="font-family:monospace;background:var(--gray-100);padding:1px 5px;border-radius:3px;">git clone</code>.
+      </p>
+      <div class="hero-meta">
+        <span class="meta-pill"><span class="dot"></span>FastAPI + React</span>
+        <span class="meta-pill"><span class="dot"></span>RBAC integrado</span>
+        <span class="meta-pill"><span class="dot"></span>CRUD Engine declarativo</span>
+        <span class="meta-pill"><span class="dot"></span>Portal de usuario</span>
+        <span class="meta-pill"><span class="dot"></span>64 tests · ✅ passing</span>
+      </div>
+    </div>
+
+    <!-- ── CONCEPTO ── -->
+    <section id="concepto">
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div>
+          <div class="section-label">01 · Concepto</div>
+          <h2>Qué es Quiver</h2>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <p>
+          Quiver es el equivalente a <strong>Laravel Backpack</strong> en el ecosistema FastAPI.
+          El developer lo clona una vez por proyecto y obtiene de inmediato un panel de administración
+          completo, un portal de usuario y un sistema de control de acceso basado en roles, sin escribir
+          una sola línea de infraestructura.
+        </p>
+        <p>
+          A diferencia de los paquetes pip, Quiver entrega el código fuente completo desde el
+          primer día. El equipo es dueño del código y puede modificar cualquier capa sin restricciones.
+          Las actualizaciones del core se gestionan como un merge manual, igual que cualquier otro fork.
+        </p>
+      </div>
+
+      <div class="highlight-box">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <p>
+          <strong>Dirigido a:</strong> developers con perfil backend (Python / Laravel) y experiencia
+          media-baja en React. Quiver elimina la fricción de arrancar una nueva aplicación interna,
+          entregando autenticación, gestión de usuarios, permisos y CRUD en minutos.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── ANALOGÍA ── -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        </div>
+        <div>
+          <div class="section-label">02 · Analogía</div>
+          <h2>Laravel Backpack → Quiver</h2>
+        </div>
+      </div>
+
+      <div class="card">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th>Laravel / Backpack</th>
+              <th>Quiver</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code style="font-family:monospace">php artisan backpack:install</code></td>
+              <td><code style="font-family:monospace">git clone</code> del starter kit</td>
+            </tr>
+            <tr>
+              <td>CrudController</td>
+              <td>QuiverCRUD</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:monospace">@can('permission')</code> (Blade)</td>
+              <td><code style="font-family:monospace">&lt;Can do="permission"&gt;</code> (React)</td>
+            </tr>
+            <tr>
+              <td><code style="font-family:monospace">@role('admin')</code> (Blade)</td>
+              <td><code style="font-family:monospace">&lt;HasRole roles={[...]}&gt;</code> (React)</td>
+            </tr>
+            <tr>
+              <td>Spatie Roles &amp; Permissions</td>
+              <td>Sistema RBAC integrado</td>
+            </tr>
+            <tr>
+              <td>Rutas de admin protegidas</td>
+              <td>RequireRole + require_permission()</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── FUNCIONALIDADES ── -->
+    <section id="funcionalidades">
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div>
+          <div class="section-label">03 · Funcionalidades</div>
+          <h2>Qué incluye el MVP</h2>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>Autenticación completa</h3>
+          <p>Login, logout, refresh silencioso, recuperación de contraseña. JWT en memoria + cookie HttpOnly.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>RBAC integrado</h3>
+          <p>Roles y permisos granulares. Admin por permiso, portal por rol. Matriz de checkboxes en la UI.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <h3>CRUD Engine declarativo</h3>
+          <p>Define el modelo, extiende QuiverCRUD y registra. 7 endpoints generados automáticamente.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Dashboard con widgets</h3>
+          <p>StatCard y ChartWidget configurables. Grids responsivos. Sin código frontend necesario.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/></svg>
+          </div>
+          <h3>Gestión de usuarios</h3>
+          <p>CRUD built-in de usuarios admin. Roles asignables. Desactivación sin borrado físico.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h3>Portal de usuario</h3>
+          <p>Zona separada con UserLayout personalizable, acceso por rol y páginas custom con @quiver_page.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+          <h3>Menú lateral dinámico</h3>
+          <p>Filtrado automático por permisos y roles. Sin configuración manual de visibilidad.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          </div>
+          <h3>Páginas custom</h3>
+          <p>Registra páginas en admin y portal con @quiver_page. El router las inyecta automáticamente.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>CLI integrada</h3>
+          <p>quiver create-superuser, quiver db migrate, quiver db rollback. Setup inicial en segundos.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── MOCKUP ── -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div>
+          <div class="section-label">04 · UI</div>
+          <h2>Panel de administración</h2>
+        </div>
+      </div>
+
+      <div class="mockup">
+        <div class="mockup-topbar">
+          <div class="mockup-dot"></div>
+          <div class="mockup-dot"></div>
+          <div class="mockup-dot"></div>
+          <span style="margin-left:8px;font-size:11px;color:var(--gray-500);">Admin Panel — Quiver</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-sidebar">
+            <div class="mockup-sidebar-item active">
+              <div class="icon"></div> Dashboard
+            </div>
+            <div class="mockup-sidebar-item">
+              <div class="icon"></div> Productos
+            </div>
+            <div class="mockup-sidebar-item">
+              <div class="icon"></div> Usuarios
+            </div>
+            <div class="mockup-sidebar-item">
+              <div class="icon"></div> Roles
+            </div>
+            <div class="mockup-sidebar-item" style="margin-top:auto;border-top:1px solid var(--gray-200);padding-top:8px;">
+              <div class="icon"></div> Logout
+            </div>
+          </div>
+          <div class="mockup-content">
+            <div class="mockup-title">Buenos días, Admin</div>
+            <div class="mockup-stat-row">
+              <div class="mockup-stat">
+                <div class="val" style="color:var(--brand-500)">1.432</div>
+                <div class="lbl">Usuarios</div>
+              </div>
+              <div class="mockup-stat">
+                <div class="val">284</div>
+                <div class="lbl">Productos</div>
+              </div>
+              <div class="mockup-stat">
+                <div class="val" style="color:var(--success-500)">↑ 12%</div>
+                <div class="lbl">Este mes</div>
+              </div>
+            </div>
+            <div class="mockup-table-row">
+              <span style="flex:1">Producto A</span>
+              <span class="pill pill-active">Activo</span>
+              <span style="color:var(--gray-400)">€ 49.99</span>
+            </div>
+            <div class="mockup-table-row">
+              <span style="flex:1">Producto B</span>
+              <span class="pill pill-inactive">Inactivo</span>
+              <span style="color:var(--gray-400)">€ 12.00</span>
+            </div>
+            <div class="mockup-table-row">
+              <span style="flex:1">Producto C</span>
+              <span class="pill pill-active">Activo</span>
+              <span style="color:var(--gray-400)">€ 299.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CRUD ENGINE ── -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div>
+          <div class="section-label">05 · CRUD Engine</div>
+          <h2>De modelo a panel en 10 líneas</h2>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <pre><span class="kw">class</span> <span class="cls">ProductCRUD</span>(<span class="cls">QuiverCRUD</span>):
+    <span class="cm"># Modelo SQLModel del proyecto — sin adaptadores</span>
+    model <span class="op">=</span> <span class="cls">Product</span>
+    route <span class="op">=</span> <span class="str">"products"</span>
+
+    columns <span class="op">=</span> [
+        <span class="fn">Column</span>(<span class="str">"name"</span>, sortable<span class="op">=</span><span class="py">True</span>),
+        <span class="fn">Column</span>(<span class="str">"price"</span>, col_type<span class="op">=</span><span class="str">"currency"</span>),
+        <span class="fn">Column</span>(<span class="str">"is_active"</span>, col_type<span class="op">=</span><span class="str">"badge"</span>),
+    ]
+    filters <span class="op">=</span> [<span class="fn">TextFilter</span>(<span class="str">"name"</span>), <span class="fn">SelectFilter</span>(<span class="str">"is_active"</span>)]
+    order_by <span class="op">=</span> <span class="str">"-created_at"</span>
+
+<span class="cm"># Un registro, 7 endpoints generados automáticamente</span>
+quiver<span class="op">.</span><span class="fn">register</span>(<span class="cls">ProductCRUD</span>)</pre>
+      </div>
+    </section>
+
+    <!-- ── STACK ── -->
+    <section id="stack">
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <div class="section-label">06 · Stack</div>
+          <h2>Tecnologías</h2>
+        </div>
+      </div>
+
+      <div class="stack-split">
+        <div class="stack-panel">
+          <h3>Backend</h3>
+          <div>
+            <span class="stack-tag"><span class="dot-brand"></span>FastAPI</span>
+            <span class="stack-tag"><span class="dot-brand"></span>SQLModel</span>
+            <span class="stack-tag"><span class="dot-brand"></span>Alembic</span>
+            <span class="stack-tag"><span class="dot-brand"></span>python-jose</span>
+            <span class="stack-tag"><span class="dot-brand"></span>bcrypt</span>
+            <span class="stack-tag"><span class="dot-brand"></span>PostgreSQL</span>
+            <span class="stack-tag"><span class="dot-brand"></span>pytest</span>
+          </div>
+        </div>
+        <div class="stack-panel">
+          <h3>Frontend</h3>
+          <div>
+            <span class="stack-tag"><span class="dot-brand"></span>React 18</span>
+            <span class="stack-tag"><span class="dot-brand"></span>TypeScript</span>
+            <span class="stack-tag"><span class="dot-brand"></span>Vite</span>
+            <span class="stack-tag"><span class="dot-brand"></span>React Router 6</span>
+            <span class="stack-tag"><span class="dot-brand"></span>Zustand</span>
+            <span class="stack-tag"><span class="dot-brand"></span>TanStack Query</span>
+            <span class="stack-tag"><span class="dot-brand"></span>Axios</span>
+            <span class="stack-tag"><span class="dot-brand"></span>Recharts</span>
+            <span class="stack-tag"><span class="dot-brand"></span>Lucide Icons</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ARQUITECTURA ── -->
+    <section id="arquitectura">
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </div>
+        <div>
+          <div class="section-label">07 · Arquitectura</div>
+          <h2>Cómo encaja en tu proyecto</h2>
+        </div>
+      </div>
+
+      <div class="arch-diagram">
+        <div class="arch-row">
+          <div class="arch-box brand" style="flex:2">
+            <h4>Tu FastAPI existente</h4>
+            <ul>
+              <li>Modelos SQLModel propios</li>
+              <li>Lógica de negocio</li>
+              <li>Endpoints propios</li>
+            </ul>
+          </div>
+          <div class="arch-arrow">+</div>
+          <div class="arch-box neutral" style="flex:1">
+            <h4>Quiver</h4>
+            <ul>
+              <li>include_router(quiver.router)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="text-align:center;color:var(--gray-400);font-size:20px;margin:4px 0">↓</div>
+
+        <div class="arch-row">
+          <div class="arch-box brand">
+            <h4>/admin/*</h4>
+            <ul>
+              <li>AdminLayout</li>
+              <li>CRUD engine</li>
+              <li>Dashboard</li>
+              <li>Usuarios / Roles</li>
+            </ul>
+          </div>
+          <div class="arch-box brand">
+            <h4>/portal/*</h4>
+            <ul>
+              <li>UserLayout</li>
+              <li>Páginas custom</li>
+              <li>Perfil de usuario</li>
+            </ul>
+          </div>
+          <div class="arch-box brand">
+            <h4>/auth/*</h4>
+            <ul>
+              <li>Login</li>
+              <li>Refresh</li>
+              <li>Reset password</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SEGURIDAD ── -->
+    <section>
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="section-label">08 · Seguridad</div>
+          <h2>Autenticación y sesiones</h2>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h3 style="font-size:13px;font-weight:600;color:var(--gray-900);margin-bottom:12px;">Estrategia de tokens</h3>
+          <ul class="status-list">
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              Access token JWT en memoria (15 min)
+            </li>
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              Refresh token opaco — cookie HttpOnly
+            </li>
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              Refresco silencioso transparente vía Axios
+            </li>
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              Revocación total al resetear contraseña
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="font-size:13px;font-weight:600;color:var(--gray-900);margin-bottom:12px;">Control de acceso</h3>
+          <ul class="status-list">
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              Superuser bypasea todos los checks
+            </li>
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              Permisos en payload del JWT — sin queries extra
+            </li>
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              &lt;Can&gt; y &lt;HasRole&gt; solo son UI — seguridad real en backend
+            </li>
+            <li>
+              <div class="status-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
+              Desactivar usuario, no borrar — integridad referencial
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── QUICK START ── -->
+    <section id="quickstart">
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div>
+          <div class="section-label">09 · Quick Start</div>
+          <h2>De cero a panel en 5 minutos</h2>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <pre><span class="cm"># 1. Clonar y entrar</span>
+git clone https://github.com/tu-org/quiver mi-proyecto
+<span class="kw">cd</span> mi-proyecto/backend
+
+<span class="cm"># 2. Instalar y migrar</span>
+pip install -e <span class="str">".[dev]"</span>
+quiver db migrate
+
+<span class="cm"># 3. Crear superusuario</span>
+quiver create-superuser
+
+<span class="cm"># 4. Registrar tu primer CRUD</span>
+<span class="cm"># En main.py:</span>
+quiver <span class="op">=</span> <span class="cls">QuiverApp</span>(app)
+quiver<span class="op">.</span><span class="fn">register</span>(<span class="cls">ProductCRUD</span>)
+
+<span class="cm"># 5. Arrancar</span>
+uvicorn main:app --reload
+<span class="cm"># → http://localhost:8000/admin</span></pre>
+      </div>
+    </section>
+
+    <!-- ── ESTADO ── -->
+    <section id="estado">
+      <div class="section-header">
+        <div class="section-icon">
+          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div>
+          <div class="section-label">10 · Estado del proyecto</div>
+          <h2>MVP completado — Abril 2026</h2>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <table class="mvp-table">
+          <thead>
+            <tr>
+              <th>Épica</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;color:var(--gray-900)">E1–E2</td>
+              <td style="color:var(--gray-700)">Setup del proyecto + Autenticación completa</td>
+              <td><span class="badge badge-done">✓ Completo</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--gray-900)">E3–E4</td>
+              <td style="color:var(--gray-700)">CRUD Engine + Dashboard con widgets</td>
+              <td><span class="badge badge-done">✓ Completo</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--gray-900)">E5–E6</td>
+              <td style="color:var(--gray-700)">RBAC (roles y permisos) + Menú dinámico</td>
+              <td><span class="badge badge-done">✓ Completo</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--gray-900)">E7–E8</td>
+              <td style="color:var(--gray-700)">Páginas custom + Portal de usuario</td>
+              <td><span class="badge badge-done">✓ Completo</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--gray-900)">E9–E10</td>
+              <td style="color:var(--gray-700)">Frontend design system + CLI</td>
+              <td><span class="badge badge-done">✓ Completo</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:var(--gray-900)">Docs</td>
+              <td style="color:var(--gray-700)">Documentación completa (10 guías)</td>
+              <td><span class="badge badge-done">✓ Completo</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;">
+        <div class="card" style="text-align:center;padding:20px;">
+          <div style="font-size:28px;font-weight:700;color:var(--brand-500);margin-bottom:4px;">64</div>
+          <div style="font-size:12px;color:var(--gray-500)">Tests · 100% passing</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;">
+          <div style="font-size:28px;font-weight:700;color:var(--gray-900);margin-bottom:4px;">10</div>
+          <div style="font-size:12px;color:var(--gray-500)">Guías de documentación</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;">
+          <div style="font-size:28px;font-weight:700;color:var(--gray-900);margin-bottom:4px;">20+</div>
+          <div style="font-size:12px;color:var(--gray-500)">Pantallas diseñadas</div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <p>
+          <strong>Post-MVP prioritario:</strong> sesiones activas del usuario, soft delete configurable,
+          upload de imágenes y ficheros, audit log, Two-factor authentication (TOTP) y export de listados a CSV/Excel.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <strong>Quiver</strong> — Starter kit de admin panel para FastAPI &nbsp;·&nbsp;
+    MVP v1.0 &nbsp;·&nbsp; Abril 2026
+  </footer>
+
+</body>
+</html>

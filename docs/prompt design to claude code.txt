@@ -1,0 +1,9 @@
+Fetch this design file, read its readme, and implement the relevant aspects of the design. https://api.anthropic.com/v1/design/h/_uvg8fSlRDy_5I0wS62CnQ?open_file=Quiver+App.html
+Implement: Quiver App.html
+
+
+
+o pasarle el zip
+
+Read the attached quiver-handoff.zip and the README inside.
+Implement: Quiver App.html

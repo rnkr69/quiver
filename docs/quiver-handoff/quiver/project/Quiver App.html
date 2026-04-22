@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --brand-500: #009ca6; --brand-400: #00b3be; --brand-600: #007a83;
+  --brand-50: #e6f7f8;  --brand-100: #b3e8ec; --brand-700: #005e63;
+  --gray-50: #f9f9f9;   --gray-100: #f3f3f3;  --gray-200: #e8e8e8;
+  --gray-300: #d4d4d4;  --gray-400: #c0c0c0;  --gray-500: #adadad;
+  --gray-600: #8a8a8a;  --gray-700: #6b6b6b;  --gray-800: #3d3d3d;  --gray-900: #1a1a1a;
+  --success-500: #2d9e6b; --success-50: #edf7f2;
+  --danger-500: #d94040;  --danger-50: #fdf0f0;
+  --warning-500: #c78b1a; --warning-50: #fdf6e6;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+}
+html, body, #root {
+  height: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px; color: var(--gray-800); background: var(--gray-50);
+  -webkit-font-smoothing: antialiased;
+}
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes pulse   { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes slideIn { from { transform: translateX(16px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+input[type="checkbox"] { width: 15px; height: 15px; }
+button:disabled { cursor: not-allowed; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+select { cursor: pointer; }
+a { color: inherit; }
+
+/* Tweaks panel */
+#tweaks-panel {
+  display: none; position: fixed; bottom: 20px; right: 20px;
+  background: white; border: 1px solid var(--gray-200); border-radius: 8px;
+  box-shadow: var(--shadow-lg); padding: 16px; z-index: 9999; width: 260px;
+}
+#tweaks-panel h3 { font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+#tweaks-panel .tw-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+#tweaks-panel .tw-label { font-size: 11px; font-weight: 500; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.04em; }
+#tweaks-panel .tw-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+#tweaks-panel .tw-btn {
+  font-size: 12px; font-family: inherit; padding: 4px 10px; border-radius: 4px;
+  border: 1px solid var(--gray-300); background: white; color: var(--gray-700);
+  cursor: pointer; transition: all 0.1s;
+}
+#tweaks-panel .tw-btn.active { background: var(--brand-50); border-color: var(--brand-300, #77cfd4); color: var(--brand-700); font-weight: 500; }
+#tweaks-panel .tw-divider { height: 1px; background: var(--gray-100); margin: 8px 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Tweaks panel (controlled by toolbar toggle) -->
+<div id="tweaks-panel">
+  <h3>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07M4.93 4.93a10 10 0 0 0 14.14 14.14"/></svg>
+    Tweaks
+  </h3>
+  <div class="tw-row">
+    <div class="tw-label">Pantalla</div>
+    <div class="tw-btns" id="tw-screen">
+      <button class="tw-btn" data-val="/auth/login">Login</button>
+      <button class="tw-btn" data-val="/auth/forgot-password">Forgot pw</button>
+      <button class="tw-btn" data-val="/auth/reset-password">Reset pw</button>
+      <button class="tw-btn" data-val="/admin">Dashboard</button>
+      <button class="tw-btn" data-val="/admin/productos">Productos</button>
+      <button class="tw-btn" data-val="/admin/productos/new">Crear prod.</button>
+      <button class="tw-btn" data-val="/admin/productos/1">Detalle prod.</button>
+      <button class="tw-btn" data-val="/admin/productos/1/edit">Editar prod.</button>
+      <button class="tw-btn" data-val="/admin/users">Usuarios</button>
+      <button class="tw-btn" data-val="/admin/users/new">Crear user</button>
+      <button class="tw-btn" data-val="/admin/users/101">Detalle user</button>
+      <button class="tw-btn" data-val="/admin/roles">Roles</button>
+      <button class="tw-btn" data-val="/admin/roles/201/edit">Editar rol</button>
+      <button class="tw-btn" data-val="/admin/roles/new/edit">Nuevo rol</button>
+      <button class="tw-btn" data-val="/portal">Portal dev</button>
+      <button class="tw-btn" data-val="/portal/dev">Portal prod</button>
+      <button class="tw-btn" data-val="/portal/perfil">Mi perfil</button>
+      <button class="tw-btn" data-val="/portal/perfil/editar">Editar perfil</button>
+      <button class="tw-btn" data-val="/403">403</button>
+    </div>
+  </div>
+  <div class="tw-divider"></div>
+  <div class="tw-row">
+    <div class="tw-label">Sidebar</div>
+    <div class="tw-btns" id="tw-sidebar">
+      <button class="tw-btn active" data-val="expanded">Expandido</button>
+      <button class="tw-btn" data-val="collapsed">Colapsado</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tweaks wiring — vanilla JS, no React needed
+(function() {
+  function syncActive(groupId, val) {
+    document.querySelectorAll(`#${groupId} .tw-btn`).forEach(b => {
+      b.classList.toggle('active', b.dataset.val === val);
+    });
+  }
+
+  document.querySelectorAll('#tw-screen .tw-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      localStorage.setItem('quiver_route', btn.dataset.val);
+      window.location.reload();
+    });
+  });
+
+  document.querySelectorAll('#tw-sidebar .tw-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      window.__quiverSidebarCollapsed = btn.dataset.val === 'collapsed';
+      syncActive('tw-sidebar', btn.dataset.val);
+      // signal React (handled by App's effect)
+      window.dispatchEvent(new CustomEvent('quiver-sidebar', { detail: btn.dataset.val }));
+    });
+  });
+
+  // Sync screen buttons on load
+  const cur = localStorage.getItem('quiver_route') || '/auth/login';
+  document.querySelectorAll('#tw-screen .tw-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === cur);
+  });
+
+  const panel = document.getElementById('tweaks-panel');
+  window.addEventListener('message', e => {
+    if (e.data?.type === '__activate_edit_mode')   panel.style.display = 'block';
+    if (e.data?.type === '__deactivate_edit_mode') panel.style.display = 'none';
+  });
+})();
+</script>
+
+<script type="text/babel" src="quiver/components.jsx"></script>
+<script type="text/babel" src="quiver/layouts.jsx"></script>
+<script type="text/babel" src="quiver/screens-auth.jsx"></script>
+<script type="text/babel" src="quiver/screens-dashboard.jsx"></script>
+<script type="text/babel" src="quiver/screens-products.jsx"></script>
+<script type="text/babel" src="quiver/screens-users.jsx"></script>
+<script type="text/babel" src="quiver/screens-roles.jsx"></script>
+<script type="text/babel" src="quiver/screens-portal.jsx"></script>
+<script type="text/babel" src="quiver/app.jsx"></script>
+</body>
+</html>
