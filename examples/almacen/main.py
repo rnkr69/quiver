@@ -69,3 +69,8 @@ quiver.set_menu([
     MenuItem("Usuarios", route="/admin/users", permission="users.list", icon="people"),
     MenuItem("Roles",    route="/admin/roles",  permission="roles.list", icon="shield-lock"),
 ])
+
+# Servir el SPA bundleado en /quiver (debe ir al final, tras registrar los CRUDs).
+# Si no hay build del frontend, esto no hace nada (puedes servir el SPA aparte con
+# `npm run dev`). Ver docs/01-installation.md.
+quiver.serve_frontend()
