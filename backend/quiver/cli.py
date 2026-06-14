@@ -9,6 +9,7 @@ import click
 
 def _load_env() -> None:
     from dotenv import load_dotenv
+
     load_dotenv(Path(".env"))
 
 
@@ -28,10 +29,11 @@ def db_migrate():
     _load_env()
 
     from quiver.config import QuiverConfig
+
     cfg = QuiverConfig()
 
-    from alembic.config import Config as AlembicConfig
     from alembic import command as alembic_command
+    from alembic.config import Config as AlembicConfig
 
     migrations_dir = Path(__file__).parent / "database" / "migrations"
     alembic_cfg = AlembicConfig()
@@ -52,10 +54,11 @@ def db_rollback():
     _load_env()
 
     from quiver.config import QuiverConfig
+
     cfg = QuiverConfig()
 
-    from alembic.config import Config as AlembicConfig
     from alembic import command as alembic_command
+    from alembic.config import Config as AlembicConfig
 
     migrations_dir = Path(__file__).parent / "database" / "migrations"
     alembic_cfg = AlembicConfig()
@@ -91,13 +94,14 @@ def create_superuser():
             continue
         break
 
-    from quiver.config import QuiverConfig
-    from quiver.database.session import _build_engine
-    from quiver.auth.password import hash_password
-    from quiver.models.admin_user import AdminUser
     from sqlmodel import Session, select
 
-    cfg = QuiverConfig()
+    from quiver.auth.password import hash_password
+    from quiver.config import QuiverConfig
+    from quiver.database.session import _build_engine
+    from quiver.models.admin_user import AdminUser
+
+    QuiverConfig()
     engine = _build_engine()
 
     with Session(engine) as session:

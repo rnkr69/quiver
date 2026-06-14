@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
-
+from dataclasses import dataclass
 
 from quiver.crud.fields.base import QuiverField
 
@@ -10,10 +8,10 @@ from quiver.crud.fields.base import QuiverField
 @dataclass
 class SelectField(QuiverField):
     field_type: str = "select"
-    choices: Optional[list[dict]] = None       # [{"value": ..., "label": ...}]
-    choices_from: Optional[str] = None         # resource slug for dynamic choices
-    choices_label: str = "name"               # model field to use as label in choices endpoint
-    choices_value: str = "id"                 # model field to use as value in choices endpoint
+    choices: list[dict] | None = None  # [{"value": ..., "label": ...}]
+    choices_from: str | None = None  # resource slug for dynamic choices
+    choices_label: str = "name"  # model field to use as label in choices endpoint
+    choices_value: str = "id"  # model field to use as value in choices endpoint
 
     def to_dict(self) -> dict:
         d = super().to_dict()
@@ -30,8 +28,8 @@ class SelectField(QuiverField):
 @dataclass
 class SelectMultipleField(QuiverField):
     field_type: str = "select_multiple"
-    choices: Optional[list[dict]] = None
-    choices_from: Optional[str] = None
+    choices: list[dict] | None = None
+    choices_from: str | None = None
     choices_label: str = "name"
     choices_value: str = "id"
 

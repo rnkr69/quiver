@@ -2,24 +2,26 @@ from __future__ import annotations
 
 import os
 import uuid
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlalchemy.pool import StaticPool
 from sqlalchemy import create_engine
+from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, select
 
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-user-tests")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 
-from quiver.database.session import override_engine, create_all_tables
+from datetime import UTC
+
+from quiver import QuiverApp
+from quiver.auth.jwt import create_access_token
+from quiver.auth.password import hash_password
+from quiver.database.session import create_all_tables, override_engine
 from quiver.models.admin_user import AdminUser
 from quiver.models.role import Role
-from quiver.models.associations import UserHasRole
 from quiver.models.token import RefreshToken
-from quiver.auth.password import hash_password
-from quiver.auth.jwt import create_access_token
-from quiver import QuiverApp
 
 
 @pytest.fixture(scope="module")
@@ -166,14 +168,18 @@ def test_get_user(app_client, db):
         headers={"Authorization": f"Bearer {token}"},
     )
     user_id = create_r.json()["id"]
-    r = app_client.get(f"/quiver/v1/admin/users/{user_id}", headers={"Authorization": f"Bearer {token}"})
+    r = app_client.get(
+        f"/quiver/v1/admin/users/{user_id}", headers={"Authorization": f"Bearer {token}"}
+    )
     assert r.status_code == 200
     assert r.json()["id"] == user_id
 
 
 def test_get_user_not_found(app_client, db):
     token, _ = _superuser_token(db)
-    r = app_client.get(f"/quiver/v1/admin/users/{uuid.uuid4()}", headers={"Authorization": f"Bearer {token}"})
+    r = app_client.get(
+        f"/quiver/v1/admin/users/{uuid.uuid4()}", headers={"Authorization": f"Bearer {token}"}
+    )
     assert r.status_code == 404
 
 
@@ -271,12 +277,14 @@ def test_deactivate_revokes_tokens(app_client, db):
 
     # plant a refresh token for this user
     from quiver.auth.jwt import create_refresh_token
+
     plain, token_hash = create_refresh_token()
-    from datetime import datetime, timedelta, timezone
+    from datetime import datetime, timedelta
+
     rt = RefreshToken(
         user_id=user_id,
         token_hash=token_hash,
-        expires_at=datetime.now(tz=timezone.utc) + timedelta(days=7),
+        expires_at=datetime.now(tz=UTC) + timedelta(days=7),
     )
     db.add(rt)
     db.commit()

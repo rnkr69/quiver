@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from quiver.config import QuiverConfigError
 
-_PERM_NAME_PATTERN = __import__('re').compile(r'^[a-z0-9_]+\.[a-z0-9_]+$')
+_PERM_NAME_PATTERN = __import__("re").compile(r"^[a-z0-9_]+\.[a-z0-9_]+$")
 
 
 @dataclass

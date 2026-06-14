@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
@@ -13,7 +12,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
 
 # Import all quiver models so their metadata is registered
 import quiver.models  # noqa: F401, E402
-
 from quiver.config import QuiverConfig  # noqa: E402
 
 config = context.config

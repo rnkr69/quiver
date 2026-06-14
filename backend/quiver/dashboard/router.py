@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
 
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
@@ -25,8 +24,7 @@ def create_dashboard_router() -> APIRouter:
 
         # Filter widgets the user has permission to see
         visible = [
-            w for w in widgets
-            if w.permission is None or is_super or w.permission in user_perms
+            w for w in widgets if w.permission is None or is_super or w.permission in user_perms
         ]
 
         if not visible:

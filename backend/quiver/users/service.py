@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlmodel import Session, select
 
@@ -31,26 +30,29 @@ def _build_user_response(user: AdminUser, db: Session) -> UserResponse:
 
 
 def _get_user_roles(user_id: str, db: Session) -> list[RoleResponse]:
-    from quiver.rbac.service import get_roles_with_stats
-    role_ids = db.exec(
-        select(UserHasRole.role_id).where(UserHasRole.user_id == str(user_id))
-    ).all()
+    role_ids = db.exec(select(UserHasRole.role_id).where(UserHasRole.user_id == str(user_id))).all()
     roles = []
     for rid in role_ids:
         role = db.get(Role, rid)
         if role:
             from sqlmodel import select as sel
+
             from quiver.models.associations import RoleHasPermission
-            perm_count = len(db.exec(sel(RoleHasPermission).where(RoleHasPermission.role_id == rid)).all())
+
+            perm_count = len(
+                db.exec(sel(RoleHasPermission).where(RoleHasPermission.role_id == rid)).all()
+            )
             user_count = len(db.exec(sel(UserHasRole).where(UserHasRole.role_id == rid)).all())
-            roles.append(RoleResponse(
-                id=str(role.id),
-                name=role.name,
-                display_name=role.display_name,
-                description=role.description,
-                permissions_count=perm_count,
-                users_count=user_count,
-            ))
+            roles.append(
+                RoleResponse(
+                    id=str(role.id),
+                    name=role.name,
+                    display_name=role.display_name,
+                    description=role.description,
+                    permissions_count=perm_count,
+                    users_count=user_count,
+                )
+            )
     return roles
 
 
@@ -59,16 +61,18 @@ def list_users(db: Session) -> list[UserListResponse]:
     result = []
     for user in users:
         roles = _get_user_roles(str(user.id), db)
-        result.append(UserListResponse(
-            id=str(user.id),
-            email=user.email,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            is_active=user.is_active,
-            is_superuser=user.is_superuser,
-            last_login_at=user.last_login_at,
-            roles=roles,
-        ))
+        result.append(
+            UserListResponse(
+                id=str(user.id),
+                email=user.email,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                is_active=user.is_active,
+                is_superuser=user.is_superuser,
+                last_login_at=user.last_login_at,
+                roles=roles,
+            )
+        )
     return result
 
 
@@ -137,9 +141,7 @@ def update_user(user_id: str, data: UserUpdate, current_user_id: str, db: Sessio
     db.add(user)
 
     if data.role_ids is not None:
-        existing_roles = db.exec(
-            select(UserHasRole).where(UserHasRole.user_id == user_id)
-        ).all()
+        existing_roles = db.exec(select(UserHasRole).where(UserHasRole.user_id == user_id)).all()
         for row in existing_roles:
             db.delete(row)
         for role_id in data.role_ids:
@@ -160,7 +162,7 @@ def deactivate_user(user_id: str, current_user_id: str, db: Session) -> None:
     if not user:
         raise QuiverNotFound(f"User '{user_id}' not found.")
 
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     user.is_active = False
     db.add(user)
 

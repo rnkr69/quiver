@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
 class QuiverField:
     key: str
-    label: Optional[str] = None
+    label: str | None = None
     required: bool = False
-    help_text: Optional[str] = None
+    help_text: str | None = None
     read_only: bool = False
     default: Any = None
-    field_type: str = "text"   # set by subclasses
+    field_type: str = "text"  # set by subclasses
 
     def to_dict(self) -> dict:
         return {

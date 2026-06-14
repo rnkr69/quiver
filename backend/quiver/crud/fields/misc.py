@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 from quiver.crud.fields.base import QuiverField
 
@@ -9,9 +8,9 @@ from quiver.crud.fields.base import QuiverField
 @dataclass
 class NumberField(QuiverField):
     field_type: str = "number"
-    min: Optional[float] = None
-    max: Optional[float] = None
-    step: Optional[float] = None
+    min: float | None = None
+    max: float | None = None
+    step: float | None = None
 
     def to_dict(self) -> dict:
         d = super().to_dict()

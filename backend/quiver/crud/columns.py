@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
 class Column:
     key: str
-    label: Optional[str] = None          # auto-derived from key if None
-    col_type: str = "text"               # text|number|currency|badge|date|datetime|boolean|related
+    label: str | None = None  # auto-derived from key if None
+    col_type: str = "text"  # text|number|currency|badge|date|datetime|boolean|related
     sortable: bool = False
-    badge_map: Optional[dict] = None     # only for col_type="badge": {value: (display_label, color)}
-    choices_from: Optional[str] = None   # only for col_type="related": resource slug
-    choices_label: str = "name"          # model field to use as label in choices endpoint
-    choices_value: str = "id"            # model field to use as value in choices endpoint
+    badge_map: dict | None = None  # only for col_type="badge": {value: (display_label, color)}
+    choices_from: str | None = None  # only for col_type="related": resource slug
+    choices_label: str = "name"  # model field to use as label in choices endpoint
+    choices_value: str = "id"  # model field to use as value in choices endpoint
 
     def to_dict(self) -> dict:
         d: dict = {

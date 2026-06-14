@@ -3,7 +3,7 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import date, datetime
-from typing import Any, Optional, get_args, get_origin
+from typing import Any, get_args, get_origin
 
 from sqlmodel import SQLModel
 
@@ -47,7 +47,11 @@ def _unwrap_optional(annotation: Any) -> Any:
         return None
     # Union / X | None
     import types
-    if origin is getattr(types, "UnionType", None) or str(origin) in ("<class 'typing.Union'>", "typing.Union"):
+
+    if origin is getattr(types, "UnionType", None) or str(origin) in (
+        "<class 'typing.Union'>",
+        "typing.Union",
+    ):
         args = [a for a in get_args(annotation) if a is not type(None)]
         return args[0] if args else annotation
     return annotation
@@ -89,17 +93,17 @@ class QuiverCRUD:
     route: str
 
     # Optional declarations
-    permissions: Optional[str] = None       # permission group name, defaults to route
-    columns: Optional[list[Column]] = None
-    exclude_columns: Optional[list[str]] = None
-    fields: Optional[list[QuiverField]] = None
-    exclude_fields: Optional[list[str]] = None
+    permissions: str | None = None  # permission group name, defaults to route
+    columns: list[Column] | None = None
+    exclude_columns: list[str] | None = None
+    fields: list[QuiverField] | None = None
+    exclude_fields: list[str] | None = None
     filters: list = []
     search_fields: list[str] = []
     order_by: str = "-created_at"
     page_size: int = 25
     bulk_actions: list[str] = ["delete"]
-    title: Optional[str] = None
+    title: str | None = None
 
     # ── Life-cycle hooks (override in subclass) ───────────────────────────────
 
@@ -124,6 +128,7 @@ class QuiverCRUD:
     async def get_queryset(self, db: Any, user: Any):
         """Return the base queryset for list / choices. Override to add filters."""
         from sqlmodel import select
+
         return select(self.model)
 
     # ── Internal helpers ─────────────────────────────────────────────────────
@@ -176,10 +181,14 @@ class QuiverCRUD:
     @classmethod
     def _register_permissions(cls) -> None:
         """Register CRUD permissions in the quiver_permission registry."""
-        from quiver.rbac.registry import quiver_permission
         from quiver.config import QuiverConfigError
+        from quiver.rbac.registry import quiver_permission
 
-        perm_group = cls.permissions if isinstance(getattr(cls, "permissions", None), str) else getattr(cls, "route", None)
+        perm_group = (
+            cls.permissions
+            if isinstance(getattr(cls, "permissions", None), str)
+            else getattr(cls, "route", None)
+        )
         if not perm_group:
             return
 
