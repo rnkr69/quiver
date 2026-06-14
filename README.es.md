@@ -1,9 +1,13 @@
-# Quiver
+<p align="center">
+  <img src="assets/quiver-logo.png" alt="Quiver" width="380" />
+</p>
 
-[![CI](https://github.com/rnkr69/quiver/actions/workflows/ci.yml/badge.svg)](https://github.com/rnkr69/quiver/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
-[![Python](https://img.shields.io/pypi/pyversions/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<p align="center">
+  <a href="https://github.com/rnkr69/quiver/actions/workflows/ci.yml"><img src="https://github.com/rnkr69/quiver/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/v/fastapi-quiver.svg" alt="PyPI" /></a>
+  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/pyversions/fastapi-quiver.svg" alt="Python" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
+</p>
 
 **Un panel de administración y portal de usuario completo para cualquier app FastAPI + SQLModel, declarado en Python.**
 
@@ -13,6 +17,12 @@ panel de administración completo (UI de list/create/edit/delete, dashboard, RBA
 de cliente — sin escribir nada de frontend.
 
 > 🇬🇧 *This README is also available in [English](README.md).*
+
+<p align="center">
+  <img src="assets/quiver-install.gif" alt="Instala Quiver y monta un panel de administración completo en una línea" width="840" />
+</p>
+
+<p align="center"><sub>▶️ Mira el recorrido completo (con audio): <a href="assets/quiver-demo.mp4">assets/quiver-demo.mp4</a> — login, dashboard y CRUD automático</sub></p>
 
 ---
 
@@ -131,6 +141,19 @@ permisos personalizados y una página custom. Es el mejor sitio para ver cómo s
 - **Portal de usuario** — área separada para tus clientes, con roles propios
 - **Páginas custom** — añade tus propias páginas React al admin o al portal
 - **Menú configurable** — estructura el sidebar con grupos, ítems y control de permisos
+- **Internacionalización** — UI en inglés/español lista para usar (react-i18next) con selector de idioma; detecta el idioma del navegador y es fácil de ampliar con nuevos idiomas
+
+---
+
+## Capturas
+
+| Dashboard | Listado CRUD autogenerado |
+|---|---|
+| ![Dashboard](assets/screenshots/02-dashboard.png) | ![Listado CRUD](assets/screenshots/03-crud-list.png) |
+| **Formulario autogenerado** | **Login** |
+| ![Formulario CRUD](assets/screenshots/04-crud-form.png) | ![Login](assets/screenshots/01-login.png) |
+
+<sub>Capturas de la app de referencia [`examples/almacen`](examples/almacen/).</sub>
 
 ---
 

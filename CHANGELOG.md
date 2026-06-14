@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Internationalized frontend (react-i18next): English/Spanish UI with browser-language
+  auto-detection and a language switcher. The reference example app is in English.
+
 ## [0.1.0] - 2026-06-14
 
 ### Added
