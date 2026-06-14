@@ -1,9 +1,13 @@
-# Quiver
+<p align="center">
+  <img src="assets/quiver-logo.png" alt="Quiver" width="380" />
+</p>
 
-[![CI](https://github.com/rnkr69/quiver/actions/workflows/ci.yml/badge.svg)](https://github.com/rnkr69/quiver/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
-[![Python](https://img.shields.io/pypi/pyversions/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<p align="center">
+  <a href="https://github.com/rnkr69/quiver/actions/workflows/ci.yml"><img src="https://github.com/rnkr69/quiver/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/v/fastapi-quiver.svg" alt="PyPI" /></a>
+  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/pyversions/fastapi-quiver.svg" alt="Python" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
+</p>
 
 **A complete admin panel and user portal for any FastAPI + SQLModel app — declared in Python.**
 
@@ -13,6 +17,12 @@ panel (list/create/edit/delete UI, dashboard, RBAC) plus a client portal — wit
 any frontend code.
 
 > 🇪🇸 *Este README está disponible también en [español](README.es.md).*
+
+<p align="center">
+  <img src="assets/quiver-install.gif" alt="Install Quiver and mount a full admin panel in one line" width="840" />
+</p>
+
+<p align="center"><sub>▶️ Watch the full walkthrough (with audio): <a href="assets/quiver-demo.mp4">assets/quiver-demo.mp4</a> — login, dashboard and auto-generated CRUD</sub></p>
 
 ---
 
@@ -133,6 +143,19 @@ everything up.
 - **User portal** — a separate area for your clients, with its own roles
 - **Custom pages** — drop your own React pages into the admin or portal
 - **Configurable menu** — structure the sidebar with groups, items and permission control
+- **Internationalization** — English/Spanish UI out of the box (react-i18next) with a language switcher; auto-detects the browser language and is easy to extend with new locales
+
+---
+
+## Screenshots
+
+| Dashboard | Auto-generated CRUD list |
+|---|---|
+| ![Dashboard](assets/screenshots/02-dashboard.png) | ![CRUD list](assets/screenshots/03-crud-list.png) |
+| **Auto-generated form** | **Login** |
+| ![CRUD form](assets/screenshots/04-crud-form.png) | ![Login](assets/screenshots/01-login.png) |
+
+<sub>Screenshots from the [`examples/almacen`](examples/almacen/) reference app.</sub>
 
 ---
 
