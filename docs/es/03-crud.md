@@ -1,12 +1,12 @@
 # CRUD Engine
 
-> 🇪🇸 [Versión en español](es/03-crud.md)
+> 🇬🇧 [English version](../03-crud.md)
 
-The CRUD Engine automatically generates the REST endpoints and the UI to manage any SQLModel model. You define a class with `model` and `route`, and Quiver does the rest.
+El CRUD Engine genera automáticamente los endpoints REST y la UI para gestionar cualquier modelo SQLModel. Defines una clase con `model` y `route`, y Quiver hace el resto.
 
 ---
 
-## Basic definition
+## Definición básica
 
 ```python
 from quiver import QuiverCRUD
@@ -17,24 +17,24 @@ class ProductCRUD(QuiverCRUD):
     route = "products"
 ```
 
-This generates:
+Esto genera:
 
-| Endpoint | Description |
+| Endpoint | Descripción |
 |---|---|
-| `GET /quiver/v1/products/` | List with pagination, search and filters |
-| `POST /quiver/v1/products/` | Create |
-| `GET /quiver/v1/products/{id}` | View detail |
-| `PATCH /quiver/v1/products/{id}` | Edit |
-| `DELETE /quiver/v1/products/{id}` | Delete |
-| `DELETE /quiver/v1/products/bulk` | Delete several |
-| `GET /quiver/v1/products/choices` | Options for the SelectField of another CRUD |
-| `GET /quiver/v1/products/schema` | Column and field metadata (used by the frontend) |
+| `GET /quiver/v1/products/` | Listar con paginación, búsqueda y filtros |
+| `POST /quiver/v1/products/` | Crear |
+| `GET /quiver/v1/products/{id}` | Ver detalle |
+| `PATCH /quiver/v1/products/{id}` | Editar |
+| `DELETE /quiver/v1/products/{id}` | Eliminar |
+| `DELETE /quiver/v1/products/bulk` | Eliminar varios |
+| `GET /quiver/v1/products/choices` | Opciones para SelectField de otro CRUD |
+| `GET /quiver/v1/products/schema` | Metadata de columnas y campos (usada por el frontend) |
 
 ---
 
-## Columns (list table)
+## Columnas (tabla del listado)
 
-Columns control what appears in the list table. If you don't define them, Quiver infers them from the model.
+Las columnas controlan qué aparece en la tabla del listado. Si no las defines, Quiver las infiere del modelo.
 
 ```python
 from quiver.crud.columns import Column
@@ -52,22 +52,22 @@ class ProductCRUD(QuiverCRUD):
     ]
 ```
 
-### Available column types
+### Tipos de columna disponibles
 
-| `col_type` | Rendering |
+| `col_type` | Renderizado |
 |---|---|
-| `text` | Plain text |
-| `number` | Number |
-| `currency` | Number with currency symbol |
-| `boolean` | Yes / No |
-| `date` | Formatted date |
-| `datetime` | Formatted date and time |
-| `badge` | Colored chip (requires `badge_map`) |
-| `link` | Clickable link |
+| `text` | Texto plano |
+| `number` | Número |
+| `currency` | Número con símbolo de moneda |
+| `boolean` | Sí / No |
+| `date` | Fecha formateada |
+| `datetime` | Fecha y hora formateadas |
+| `badge` | Chip de color (requiere `badge_map`) |
+| `link` | Enlace clicable |
 
 ### `badge_map`
 
-Maps model values to `(label, variant)`. The available variants are: `active`, `inactive`, `success`, `danger`, `warning`, `admin`, `client`.
+Mapea valores del modelo a `(etiqueta, variante)`. Las variantes disponibles son: `active`, `inactive`, `success`, `danger`, `warning`, `admin`, `client`.
 
 ```python
 Column("status", col_type="badge", badge_map={
@@ -77,9 +77,9 @@ Column("status", col_type="badge", badge_map={
 })
 ```
 
-### Excluding columns (automatic mode)
+### Excluir columnas (modo automático)
 
-If you don't want to define all columns manually, use `exclude_columns` to omit some from autodetection:
+Si no quieres definir todas las columnas manualmente, usa `exclude_columns` para omitir algunas del autodetect:
 
 ```python
 class ProductCRUD(QuiverCRUD):
@@ -90,9 +90,9 @@ class ProductCRUD(QuiverCRUD):
 
 ---
 
-## Fields (create/edit form)
+## Campos (formulario de creación/edición)
 
-Fields control the form. If you don't define them, Quiver infers them from the model, excluding `id`, `created_at` and `updated_at`.
+Los campos controlan el formulario. Si no los defines, Quiver los infiere del modelo excluyendo `id`, `created_at` y `updated_at`.
 
 ```python
 from quiver.crud.fields.text import TextField, EmailField, TextareaField, PasswordField
@@ -110,34 +110,34 @@ class ProductCRUD(QuiverCRUD):
     ]
 ```
 
-### Field reference
+### Referencia de campos
 
-| Class | `field_type` | Notes |
+| Clase | `field_type` | Notas |
 |---|---|---|
-| `TextField` | `text` | Single-line text |
-| `EmailField` | `email` | Email format validation |
-| `PasswordField` | `password` | Hides the value |
-| `TextareaField` | `textarea` | Multiline. `rows=4` by default |
-| `NumberField` | `number` | Integer or decimal |
-| `CheckboxField` | `checkbox` | Boolean |
-| `DateField` | `date` | Date picker |
-| `DateTimeField` | `datetime` | Date and time picker |
-| `SelectField` | `select` | Dropdown. `choices` or `choices_from` |
-| `SelectMultipleField` | `select_multiple` | Multiple selection |
-| `HiddenField` | `hidden` | Not visible, sent as-is |
+| `TextField` | `text` | Texto de una línea |
+| `EmailField` | `email` | Validación de formato email |
+| `PasswordField` | `password` | Oculta el valor |
+| `TextareaField` | `textarea` | Multilínea. `rows=4` por defecto |
+| `NumberField` | `number` | Entero o decimal |
+| `CheckboxField` | `checkbox` | Booleano |
+| `DateField` | `date` | Selector de fecha |
+| `DateTimeField` | `datetime` | Selector de fecha y hora |
+| `SelectField` | `select` | Desplegable. `choices` o `choices_from` |
+| `SelectMultipleField` | `select_multiple` | Selección múltiple |
+| `HiddenField` | `hidden` | No visible, se envía tal cual |
 
-### Common field parameters
+### Parámetros comunes de campo
 
-| Parameter | Type | Description |
+| Parámetro | Tipo | Descripción |
 |---|---|---|
-| `key` | `str` | Name of the field in the model |
-| `label` | `str` | Visible label. Auto-derived if omitted. |
-| `required` | `bool` | Whether the field is mandatory |
-| `help_text` | `str` | Help text below the field |
-| `read_only` | `bool` | Visible but not editable |
-| `default` | `Any` | Initial form value |
+| `key` | `str` | Nombre del campo en el modelo |
+| `label` | `str` | Etiqueta visible. Auto-derivada si se omite. |
+| `required` | `bool` | Si el campo es obligatorio |
+| `help_text` | `str` | Texto de ayuda bajo el campo |
+| `read_only` | `bool` | Visible pero no editable |
+| `default` | `Any` | Valor inicial del formulario |
 
-### SelectField with static options
+### SelectField con opciones estáticas
 
 ```python
 SelectField("status", label="Estado", choices=[
@@ -147,20 +147,20 @@ SelectField("status", label="Estado", choices=[
 ])
 ```
 
-### SelectField with dynamic options (from another CRUD)
+### SelectField con opciones dinámicas (de otro CRUD)
 
 ```python
-# Loads the options from GET /quiver/v1/categories/choices
+# Carga las opciones desde GET /quiver/v1/categories/choices
 SelectField("category_id", label="Categoría", choices_from="categories")
 ```
 
-The `/choices` endpoint returns `[{"value": id, "label": name}]` for each record.
+El endpoint `/choices` devuelve `[{"value": id, "label": nombre}]` para cada registro.
 
 ---
 
-## Filters
+## Filtros
 
-Filters appear in the search panel of the list.
+Los filtros aparecen en el panel de búsqueda del listado.
 
 ```python
 from quiver.crud.filters import TextFilter, SelectFilter, BooleanFilter, DateRangeFilter
@@ -177,20 +177,20 @@ class ProductCRUD(QuiverCRUD):
     ]
 ```
 
-### Filter types
+### Tipos de filtro
 
-| Class | Behavior |
+| Clase | Funcionamiento |
 |---|---|
-| `TextFilter` | `ILIKE %value%` on the column |
-| `SelectFilter` | Exact equality (`=`) |
-| `BooleanFilter` | Filters by `true`/`false` |
-| `DateRangeFilter` | `from` → `to` range on a date column |
+| `TextFilter` | `ILIKE %valor%` en la columna |
+| `SelectFilter` | Igualdad exacta (`=`) |
+| `BooleanFilter` | Filtra por `true`/`false` |
+| `DateRangeFilter` | Rango `from` → `to` en una columna de fecha |
 
 ---
 
-## Free-text search
+## Búsqueda de texto libre
 
-Define which columns the global search field searches in:
+Define en qué columnas busca el campo de búsqueda global:
 
 ```python
 class ProductCRUD(QuiverCRUD):
@@ -199,19 +199,19 @@ class ProductCRUD(QuiverCRUD):
 
 ---
 
-## Pagination and ordering
+## Paginación y ordenación
 
 ```python
 class ProductCRUD(QuiverCRUD):
-    page_size = 25          # rows per page (default 25)
-    order_by = "-created_at"  # - prefix for descending
+    page_size = 25          # filas por página (por defecto 25)
+    order_by = "-created_at"  # prefijo - para descendente
 ```
 
 ---
 
-## Lifecycle hooks
+## Hooks de ciclo de vida
 
-Override these methods in your class to add business logic:
+Sobreescribe estos métodos en tu clase para añadir lógica de negocio:
 
 ```python
 class ProductCRUD(QuiverCRUD):
@@ -219,36 +219,36 @@ class ProductCRUD(QuiverCRUD):
     route = "products"
 
     async def before_create(self, data: dict, db, user: dict) -> dict:
-        """Modify data before creating. Must return data."""
+        """Modificar datos antes de crear. Debe devolver data."""
         data["name"] = data["name"].strip()
         return data
 
     async def after_create(self, instance, db, user: dict) -> None:
-        """Runs after a successful create."""
+        """Ejecutado tras crear exitosamente."""
         await notify_team(f"Nuevo producto: {instance.name}")
 
     async def before_update(self, data: dict, db, user: dict) -> dict:
-        """Modify data before updating. Must return data."""
+        """Modificar datos antes de actualizar. Debe devolver data."""
         return data
 
     async def after_update(self, instance, db, user: dict) -> None:
-        """Runs after a successful update."""
+        """Ejecutado tras actualizar exitosamente."""
         pass
 
     async def before_delete(self, instance, db, user: dict) -> None:
-        """Runs before deleting. Raise an exception to cancel."""
+        """Ejecutado antes de eliminar. Lanza excepción para cancelar."""
         if instance.has_orders:
             from quiver.exceptions import QuiverBadRequest
             raise QuiverBadRequest("No se puede eliminar un producto con pedidos.")
 
     async def after_delete(self, instance_id, db, user: dict) -> None:
-        """Runs after a successful delete."""
+        """Ejecutado tras eliminar exitosamente."""
         pass
 ```
 
-### Filtering the base queryset
+### Filtrar el queryset base
 
-To show only a subset of records (for example, only those of the current user):
+Para mostrar solo un subconjunto de registros (por ejemplo, solo los del usuario actual):
 
 ```python
 async def get_queryset(self, db, user: dict):
@@ -258,37 +258,37 @@ async def get_queryset(self, db, user: dict):
 
 ---
 
-## Permissions
+## Permisos
 
-When you register a CRUD with `quiver.register(ProductCRUD)`, Quiver automatically registers these permissions:
+Al registrar un CRUD con `quiver.register(ProductCRUD)`, Quiver registra automáticamente estos permisos:
 
-| Permission | Action |
+| Permiso | Acción |
 |---|---|
-| `products.list` | Access to the list |
-| `products.create` | Create records |
-| `products.show` | View detail |
-| `products.update` | Edit records |
-| `products.delete` | Delete records |
+| `products.list` | Acceso al listado |
+| `products.create` | Crear registros |
+| `products.show` | Ver detalle |
+| `products.update` | Editar registros |
+| `products.delete` | Eliminar registros |
 
-The permission group is derived from `route` by default. To change it:
+El grupo de permisos se deriva de `route` por defecto. Para cambiarlo:
 
 ```python
 class ProductCRUD(QuiverCRUD):
     route = "products"
-    permissions = "catalog_products"   # use this name instead of "products"
+    permissions = "catalog_products"   # usa este nombre en vez de "products"
 ```
 
 ---
 
-## Reserved slugs
+## Slugs reservados
 
-The following values cannot be used as `route` because they are reserved by Quiver:
+Los siguientes valores no pueden usarse como `route` porque están reservados por Quiver:
 
 `auth`, `users`, `roles`, `permissions`, `dashboard`, `portal`, `static`, `health`
 
 ---
 
-## Complete example
+## Ejemplo completo
 
 ```python
 from quiver import QuiverCRUD
@@ -337,4 +337,4 @@ class ProductCRUD(QuiverCRUD):
 
 ---
 
-← [Quick start](02-quick-start.md) | [Dashboard →](04-dashboard.md)
+← [Inicio rápido](02-inicio-rapido.md) | [Dashboard →](04-dashboard.md)

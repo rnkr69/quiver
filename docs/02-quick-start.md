@@ -1,14 +1,16 @@
-# Inicio rápido
+# Quick start
 
-En esta guía construirás una app funcional que usa Quiver paso a paso: un CRUD para gestionar productos, una StatCard en el dashboard, roles y un portal de usuario. Tiempo estimado: 20 minutos.
+> 🇪🇸 [Versión en español](es/02-inicio-rapido.md)
 
-Se asume que ya tienes Quiver instalado y las tablas creadas. Si no, sigue primero la [guía de instalación](01-instalacion.md).
+In this guide you'll build a working app that uses Quiver step by step: a CRUD to manage products, a StatCard on the dashboard, roles, and a user portal. Estimated time: 20 minutes.
+
+This assumes you already have Quiver installed and the tables created. If not, follow the [installation guide](01-installation.md) first.
 
 ---
 
-## El proyecto de ejemplo
+## The example project
 
-Partimos de una app FastAPI con un modelo `Product`:
+We start from a FastAPI app with a `Product` model:
 
 ```python
 # models.py
@@ -27,7 +29,7 @@ class Product(SQLModel, table=True):
 
 ---
 
-## 1. Montar Quiver
+## 1. Mount Quiver
 
 ```python
 # main.py
@@ -35,15 +37,15 @@ from fastapi import FastAPI
 from quiver import QuiverApp
 from models import Product
 
-app = FastAPI(title="Mi tienda")
+app = FastAPI(title="My store")
 quiver = QuiverApp(app)
 ```
 
 ---
 
-## 2. Crear un CRUD para productos
+## 2. Create a CRUD for products
 
-Crea el fichero `cruds/product_crud.py`:
+Create the file `cruds/product_crud.py`:
 
 ```python
 from quiver import QuiverCRUD
@@ -77,7 +79,7 @@ class ProductCRUD(QuiverCRUD):
     order_by = "-created_at"
 ```
 
-Regístralo en `main.py`:
+Register it in `main.py`:
 
 ```python
 from cruds.product_crud import ProductCRUD
@@ -86,13 +88,13 @@ quiver = QuiverApp(app)
 quiver.register(ProductCRUD)
 ```
 
-Quiver genera automáticamente los endpoints REST y la UI para listar, crear, editar y eliminar productos. Abre `http://localhost:5173/admin/products` para verlo.
+Quiver automatically generates the REST endpoints and the UI to list, create, edit, and delete products. The admin UI is the separate frontend SPA — start it from `frontend/` (`npm install && npm run dev`) and open `http://localhost:5173/admin/products` to see it.
 
 ---
 
-## 3. Configurar el menú lateral
+## 3. Configure the sidebar menu
 
-Define la estructura del sidebar del admin:
+Define the structure of the admin sidebar:
 
 ```python
 from quiver import QuiverApp
@@ -111,13 +113,13 @@ quiver.set_menu([
 ])
 ```
 
-Los ítems con `permission` solo se muestran si el usuario tiene ese permiso. Si `permission` se omite, el ítem es siempre visible.
+Items with a `permission` are only shown if the user has that permission. If `permission` is omitted, the item is always visible.
 
 ---
 
-## 4. Añadir una StatCard al dashboard
+## 4. Add a StatCard to the dashboard
 
-Crea `widgets/product_stats.py`:
+Create `widgets/product_stats.py`:
 
 ```python
 from quiver.dashboard.widgets.stat_card import StatCardWidget
@@ -136,7 +138,7 @@ active_products = StatCardWidget(
 )
 ```
 
-Regístralos en `main.py`:
+Register them in `main.py`:
 
 ```python
 import widgets.product_stats as stats
@@ -149,31 +151,31 @@ quiver.register_widget(stats.active_products)
 
 ---
 
-## 5. Crear roles y asignar permisos
+## 5. Create roles and assign permissions
 
-Arranca la app y entra al panel como superuser. Desde la UI:
+Start the app and log in to the panel as a superuser. From the UI:
 
-1. Ve a **Roles** → **Nuevo rol**
-2. Crea el rol `editor` con los permisos `products.list`, `products.create`, `products.update`
-3. Crea el rol `viewer` con solo `products.list`
+1. Go to **Roles** → **New role**
+2. Create the `editor` role with the permissions `products.list`, `products.create`, `products.update`
+3. Create the `viewer` role with only `products.list`
 
-Los permisos `products.*` los registró Quiver automáticamente al hacer `quiver.register(ProductCRUD)`.
-
----
-
-## 6. Añadir un usuario con rol
-
-Desde la UI:
-
-1. Ve a **Usuarios** → **Nuevo usuario**
-2. Rellena los datos y asígnale el rol `editor`
-3. El usuario podrá listar y editar productos, pero no crearlos (si no tiene `products.create`)
+The `products.*` permissions were registered automatically by Quiver when you called `quiver.register(ProductCRUD)`.
 
 ---
 
-## 7. Añadir lógica de negocio (hooks)
+## 6. Add a user with a role
 
-Si crear un producto implica lógica adicional, usa los hooks del CRUD:
+From the UI:
+
+1. Go to **Users** → **New user**
+2. Fill in the details and assign the `editor` role
+3. The user will be able to list and edit products, but not create them (if they don't have `products.create`)
+
+---
+
+## 7. Add business logic (hooks)
+
+If creating a product involves additional logic, use the CRUD hooks:
 
 ```python
 class ProductCRUD(QuiverCRUD):
@@ -181,32 +183,32 @@ class ProductCRUD(QuiverCRUD):
     route = "products"
 
     async def before_create(self, data, db, user):
-        # Normalizar el nombre antes de guardar
+        # Normalize the name before saving
         data["name"] = data["name"].strip().title()
         return data
 
     async def after_create(self, instance, db, user):
-        # Lógica post-creación: notificación, caché, etc.
+        # Post-creation logic: notification, cache, etc.
         print(f"Producto creado: {instance.name} por {user['email']}")
 ```
 
-Hooks disponibles: `before_create`, `after_create`, `before_update`, `after_update`, `before_delete`, `after_delete`.
+Available hooks: `before_create`, `after_create`, `before_update`, `after_update`, `before_delete`, `after_delete`.
 
 ---
 
-## Resultado
+## Result
 
-Al final de esta guía tienes:
+At the end of this guide you have:
 
-- Panel admin en `http://localhost:5173/auth/login`
-- CRUD de productos en `/admin/products` (list, create, edit, delete, search)
-- Dashboard con StatCards en `/admin`
-- Sistema de roles con permisos granulares
-- Menú lateral configurable
+- Admin panel at `http://localhost:5173/auth/login`
+- Product CRUD at `/admin/products` (list, create, edit, delete, search)
+- Dashboard with StatCards at `/admin`
+- Role system with granular permissions
+- Configurable sidebar menu
 
 ---
 
-## `main.py` completo
+## Complete `main.py`
 
 ```python
 from fastapi import FastAPI
@@ -216,7 +218,7 @@ from quiver.menu.schemas import MenuGroup, MenuItem
 from cruds.product_crud import ProductCRUD
 import widgets.product_stats as stats
 
-app = FastAPI(title="Mi tienda")
+app = FastAPI(title="My store")
 
 quiver = QuiverApp(app)
 quiver.register(ProductCRUD)
@@ -235,4 +237,4 @@ quiver.set_menu([
 
 ---
 
-← [Instalación](01-instalacion.md) | [CRUD Engine →](03-crud.md)
+← [Installation](01-installation.md) | [CRUD Engine →](03-crud.md)

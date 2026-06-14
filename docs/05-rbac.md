@@ -1,55 +1,57 @@
-# Roles y permisos
+# Roles and permissions
 
-Quiver usa un sistema RBAC (Role-Based Access Control): los usuarios tienen roles, los roles tienen permisos, y los permisos controlan el acceso a cada acción.
+> 🇪🇸 [Versión en español](es/05-rbac.md)
 
----
-
-## Cómo funciona
-
-1. Los **permisos** se registran en el código (no en la base de datos)
-2. Los **roles** se crean desde la UI del admin
-3. Los **usuarios** reciben roles desde la UI
-4. En el frontend, el componente `<Can>` controla qué se muestra según los permisos del usuario
+Quiver uses an RBAC (Role-Based Access Control) system: users have roles, roles have permissions, and permissions control access to each action.
 
 ---
 
-## Permisos automáticos de los CRUDs
+## How it works
 
-Al hacer `quiver.register(MiCRUD)`, Quiver registra automáticamente cinco permisos con el formato `{route}.{acción}`:
+1. **Permissions** are registered in code (not in the database)
+2. **Roles** are created from the admin UI
+3. **Users** are assigned roles from the UI
+4. On the frontend, the `<Can>` component controls what is shown based on the user's permissions
 
-| Permiso | Acción |
+---
+
+## Automatic CRUD permissions
+
+When you call `quiver.register(MyCRUD)`, Quiver automatically registers five permissions with the format `{route}.{action}`:
+
+| Permission | Action |
 |---|---|
-| `products.list` | Ver el listado |
-| `products.create` | Crear registros |
-| `products.show` | Ver el detalle |
-| `products.update` | Editar registros |
-| `products.delete` | Eliminar registros |
+| `products.list` | View the list |
+| `products.create` | Create records |
+| `products.show` | View the detail |
+| `products.update` | Edit records |
+| `products.delete` | Delete records |
 
 ---
 
-## Permisos personalizados
+## Custom permissions
 
-Para proteger recursos que no son CRUDs (reportes, acciones especiales, exportaciones), registra permisos manualmente:
+To protect resources that are not CRUDs (reports, special actions, exports), register permissions manually:
 
 ```python
 from quiver.rbac.registry import quiver_permission
 
-# En un fichero de permisos o al inicio del módulo
-quiver_permission("reports.view",   display_name="Ver reportes",    group="Reportes")
-quiver_permission("reports.export", display_name="Exportar datos",  group="Reportes")
-quiver_permission("settings.edit",  display_name="Editar ajustes",  group="Configuración")
+# In a permissions file or at the top of the module
+quiver_permission("reports.view",   display_name="View reports",   group="Reports")
+quiver_permission("reports.export", display_name="Export data",    group="Reports")
+quiver_permission("settings.edit",  display_name="Edit settings",  group="Configuration")
 ```
 
-**Reglas del nombre:**
-- Formato obligatorio: `grupo.accion` (solo letras minúsculas, números y guiones bajos)
-- Ejemplos válidos: `orders.refund`, `inventory.adjust_stock`, `reports.view`
-- Ejemplos inválidos: `Orders.View`, `orders-view`, `orders`
+**Name rules:**
+- Required format: `group.action` (only lowercase letters, numbers and underscores)
+- Valid examples: `orders.refund`, `inventory.adjust_stock`, `reports.view`
+- Invalid examples: `Orders.View`, `orders-view`, `orders`
 
-**Cuándo registrar:** los permisos deben registrarse antes de que se cree `QuiverApp`. Al arrancar, Quiver sincroniza el registro con la base de datos automáticamente.
+**When to register:** permissions must be registered before `QuiverApp` is created. On startup, Quiver synchronizes the registry with the database automatically.
 
 ```python
 # main.py
-import permissions  # importar activa el registro
+import permissions  # importing triggers the registration
 from quiver import QuiverApp
 
 quiver = QuiverApp(app)
@@ -59,40 +61,40 @@ quiver = QuiverApp(app)
 # permissions.py
 from quiver.rbac.registry import quiver_permission
 
-quiver_permission("reports.view",   display_name="Ver reportes",   group="Reportes")
-quiver_permission("reports.export", display_name="Exportar datos", group="Reportes")
+quiver_permission("reports.view",   display_name="View reports", group="Reports")
+quiver_permission("reports.export", display_name="Export data",  group="Reports")
 ```
 
 ---
 
-## Gestionar roles desde la UI
+## Managing roles from the UI
 
-1. Entra al admin → **Roles** → **Nuevo rol**
-2. Asigna un nombre (p.ej. `editor`) y una descripción
-3. Activa los permisos que quieras
-4. Guarda
+1. Go to the admin → **Roles** → **New role**
+2. Assign a name (e.g. `editor`) and a description
+3. Enable the permissions you want
+4. Save
 
-Para asignar el rol a un usuario: **Usuarios** → edita el usuario → sección Roles.
+To assign the role to a user: **Users** → edit the user → Roles section.
 
 ---
 
-## Control de acceso en el frontend
+## Access control on the frontend
 
-### Componente `<Can>`
+### `<Can>` component
 
-Muestra su contenido solo si el usuario tiene el permiso indicado:
+Renders its content only if the user has the given permission:
 
 ```tsx
 import { Can } from '@/components/access/Can'
 
-<Can permission="products.create">
-  <Button onClick={openCreateModal}>Nuevo producto</Button>
+<Can do="products.create">
+  <Button onClick={openCreateModal}>New product</Button>
 </Can>
 ```
 
-### Componente `<HasRole>`
+### `<HasRole>` component
 
-Muestra su contenido si el usuario tiene el rol indicado:
+Renders its content if the user has the given role:
 
 ```tsx
 import { HasRole } from '@/components/access/HasRole'
@@ -102,23 +104,25 @@ import { HasRole } from '@/components/access/HasRole'
 </HasRole>
 ```
 
-### Proteger una ruta completa
+### Protecting a whole route
 
-Usa el guard `<RequireRole>` en el router para bloquear el acceso a páginas enteras:
+Use the `<RequireRole>` guard in the router to block access to entire pages:
 
 ```tsx
-<Route element={<RequireRole permission="reports.view" />}>
-  <Route path="/admin/reports" element={<ReportsPage />} />
-</Route>
+import { RequireRole } from '@/guards/RequireRole'
+
+<RequireRole roles={['admin']}>
+  <ReportsPage />
+</RequireRole>
 ```
 
-Si el usuario no tiene el permiso, se le redirige a `/admin/403`.
+If the user does not have one of the required roles, they are redirected to `/403`.
 
 ---
 
 ## Superuser
 
-El superuser tiene acceso total, sin importar los permisos o roles asignados. Créalo con:
+The superuser has full access, regardless of the permissions or roles assigned. Create one with:
 
 ```bash
 quiver create-superuser
@@ -126,23 +130,23 @@ quiver create-superuser
 
 ---
 
-## Referencia de la API de permisos
+## Permissions API reference
 
 ```python
 from quiver.rbac.registry import quiver_permission, get_registry
 
-# Registrar un permiso
+# Register a permission
 quiver_permission(
     "orders.refund",
-    display_name="Reembolsar pedidos",
-    group="Pedidos",
+    display_name="Refund orders",
+    group="Orders",
 )
 
-# Consultar todos los permisos registrados (útil para debugging)
+# Query all registered permissions (useful for debugging)
 registry = get_registry()
 # {"orders.refund": PermissionDefinition(name="orders.refund", ...), ...}
 ```
 
 ---
 
-← [Dashboard](04-dashboard.md) | [Menú →](06-menu.md)
+← [Dashboard](04-dashboard.md) | [Menu →](06-menu.md)
