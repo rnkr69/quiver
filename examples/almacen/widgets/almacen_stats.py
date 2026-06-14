@@ -8,14 +8,14 @@ from models import Material, MovimientoStock, TipoMovimiento
 # ── StatCards ────────────────────────────────────────────────────────────────
 
 total_materiales = StatCardWidget(
-    "Materiales registrados",
+    "Registered materials",
     model=Material,
     filter_fn=lambda q: q.where(Material.activo == True),
     icon="box-seam",
 )
 
 materiales_stock_bajo = StatCardWidget(
-    "Stock bajo (alerta)",
+    "Low stock (alert)",
     model=Material,
     filter_fn=lambda q: q.where(
         Material.activo == True,
@@ -27,7 +27,7 @@ materiales_stock_bajo = StatCardWidget(
 )
 
 entradas_mes = StatCardWidget(
-    "Entradas este mes",
+    "Inbound this month",
     model=MovimientoStock,
     filter_fn=lambda q: q.where(
         MovimientoStock.tipo == TipoMovimiento.entrada,
@@ -38,7 +38,7 @@ entradas_mes = StatCardWidget(
 )
 
 salidas_mes = StatCardWidget(
-    "Salidas este mes",
+    "Outbound this month",
     model=MovimientoStock,
     filter_fn=lambda q: q.where(
         MovimientoStock.tipo == TipoMovimiento.salida,
@@ -52,7 +52,7 @@ salidas_mes = StatCardWidget(
 # ── ChartWidget ───────────────────────────────────────────────────────────────
 
 def movimientos_ultimos_30_dias(db: Session):
-    """Entradas vs salidas por día en los últimos 30 días."""
+    """Inbound vs outbound per day over the last 30 days."""
     from datetime import datetime, timedelta
     desde = datetime.utcnow() - timedelta(days=29)
 
@@ -68,7 +68,7 @@ def movimientos_ultimos_30_dias(db: Session):
         .order_by("dia")
     ).all()
 
-    # Agrupar por día sumando entradas y salidas
+    # Group by day, summing inbound and outbound
     por_dia: dict[str, dict] = {}
     for row in rows:
         if row.dia not in por_dia:
@@ -82,7 +82,7 @@ def movimientos_ultimos_30_dias(db: Session):
 
 
 movimientos_chart = ChartWidget(
-    "Movimientos netos (últimos 30 días)",
+    "Net movements (last 30 days)",
     data_fn=movimientos_ultimos_30_dias,
     chart_type="bar",
     x_key="label",

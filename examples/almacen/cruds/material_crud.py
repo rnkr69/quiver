@@ -14,44 +14,44 @@ _UNIDADES = [{"value": u.value, "label": u.value} for u in UnidadMedida]
 class MaterialCRUD(QuiverCRUD):
     model = Material
     route = "materiales"
-    title = "Materiales"
+    title = "Materials"
     page_size = 30
     order_by = "nombre"
     search_fields = ["referencia", "nombre"]
 
     columns = [
-        Column("referencia",     label="Referencia",   sortable=True),
-        Column("nombre",         label="Nombre",       sortable=True),
-        Column("unidad",         label="Unidad",       col_type="badge",
+        Column("referencia",     label="Reference",     sortable=True),
+        Column("nombre",         label="Name",          sortable=True),
+        Column("unidad",         label="Unit",          col_type="badge",
                badge_map={u.value: (u.value, "inactive") for u in UnidadMedida}),
-        Column("stock_actual",   label="Stock actual", col_type="number",  sortable=True),
-        Column("stock_minimo",   label="Stock mínimo", col_type="number"),
-        Column("precio_unitario", label="Precio unit.", col_type="currency"),
-        Column("activo",         label="Estado",       col_type="badge",
-               badge_map={True: ("Activo", "active"), False: ("Inactivo", "inactive")}),
+        Column("stock_actual",   label="Current stock", col_type="number",  sortable=True),
+        Column("stock_minimo",   label="Minimum stock", col_type="number"),
+        Column("precio_unitario", label="Unit price",    col_type="currency"),
+        Column("activo",         label="Status",        col_type="badge",
+               badge_map={True: ("Active", "active"), False: ("Inactive", "inactive")}),
     ]
 
     fields = [
-        TextField("referencia",      label="Referencia / SKU",   required=True),
-        TextField("nombre",          label="Nombre",             required=True),
-        TextareaField("descripcion", label="Descripción"),
-        SelectField("categoria_id",  label="Categoría",          choices_from="categorias",  choices_label="nombre"),
-        SelectField("proveedor_id",  label="Proveedor",          choices_from="proveedores", choices_label="nombre"),
-        SelectField("unidad",        label="Unidad de medida",   choices=_UNIDADES, required=True),
-        NumberField("stock_actual",  label="Stock inicial",      default=0),
-        NumberField("stock_minimo",  label="Stock mínimo",       default=0,
-                    help_text="Se generará una alerta si el stock baja de este valor"),
-        NumberField("precio_unitario", label="Precio unitario (€)"),
-        CheckboxField("activo",      label="Activo",             default=True),
+        TextField("referencia",      label="Reference / SKU",    required=True),
+        TextField("nombre",          label="Name",               required=True),
+        TextareaField("descripcion", label="Description"),
+        SelectField("categoria_id",  label="Category",           choices_from="categorias",  choices_label="nombre"),
+        SelectField("proveedor_id",  label="Supplier",           choices_from="proveedores", choices_label="nombre"),
+        SelectField("unidad",        label="Unit of measure",    choices=_UNIDADES, required=True),
+        NumberField("stock_actual",  label="Initial stock",      default=0),
+        NumberField("stock_minimo",  label="Minimum stock",      default=0,
+                    help_text="An alert will be generated if stock drops below this value"),
+        NumberField("precio_unitario", label="Unit price (€)"),
+        CheckboxField("activo",      label="Active",             default=True),
     ]
 
     filters = [
-        TextFilter("referencia",    label="Referencia"),
-        TextFilter("nombre",        label="Nombre"),
-        SelectFilter("categoria_id", label="Categoría", choices=[]),  # se podría poblar dinámicamente
-        SelectFilter("unidad",      label="Unidad",
+        TextFilter("referencia",    label="Reference"),
+        TextFilter("nombre",        label="Name"),
+        SelectFilter("categoria_id", label="Category", choices=[]),  # could be populated dynamically
+        SelectFilter("unidad",      label="Unit",
                      choices=_UNIDADES),
-        BooleanFilter("activo",     label="Estado"),
+        BooleanFilter("activo",     label="Status"),
     ]
 
     async def before_create(self, data: dict, db, user: dict) -> dict:
