@@ -10,28 +10,28 @@ from models import Proveedor
 class ProveedorCRUD(QuiverCRUD):
     model = Proveedor
     route = "proveedores"
-    title = "Proveedores"
+    title = "Suppliers"
     order_by = "nombre"
     search_fields = ["nombre", "contacto", "email"]
 
     columns = [
-        Column("nombre",   label="Nombre",    sortable=True),
-        Column("contacto", label="Contacto"),
+        Column("nombre",   label="Name",      sortable=True),
+        Column("contacto", label="Contact"),
         Column("email",    label="Email"),
-        Column("telefono", label="Teléfono"),
-        Column("activo",   label="Estado",    col_type="badge",
-               badge_map={True: ("Activo", "active"), False: ("Inactivo", "inactive")}),
+        Column("telefono", label="Phone"),
+        Column("activo",   label="Status",    col_type="badge",
+               badge_map={True: ("Active", "active"), False: ("Inactive", "inactive")}),
     ]
 
     fields = [
-        TextField("nombre",    label="Nombre",    required=True),
-        TextField("contacto",  label="Persona de contacto"),
+        TextField("nombre",    label="Name",            required=True),
+        TextField("contacto",  label="Contact person"),
         EmailField("email",    label="Email"),
-        TextField("telefono",  label="Teléfono"),
-        CheckboxField("activo", label="Activo",   default=True),
+        TextField("telefono",  label="Phone"),
+        CheckboxField("activo", label="Active",          default=True),
     ]
 
     filters = [
-        TextFilter("nombre",   label="Nombre"),
-        BooleanFilter("activo", label="Estado"),
+        TextFilter("nombre",   label="Name"),
+        BooleanFilter("activo", label="Status"),
     ]
