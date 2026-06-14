@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface BackLinkProps {
@@ -8,8 +9,9 @@ interface BackLinkProps {
   className?: string
 }
 
-export function BackLink({ to, label = 'Volver', className }: BackLinkProps) {
+export function BackLink({ to, label, className }: BackLinkProps) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const handleClick = () => {
     if (to) navigate(to)
@@ -26,7 +28,7 @@ export function BackLink({ to, label = 'Volver', className }: BackLinkProps) {
       )}
     >
       <ArrowLeft size={14} />
-      {label}
+      {label ?? t('common.back')}
     </button>
   )
 }

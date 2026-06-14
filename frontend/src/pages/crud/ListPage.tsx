@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query'
 import { DataTable } from '@/components/crud/DataTable'
@@ -12,6 +13,7 @@ import { crudApi } from '@/api/crud.api'
 import { apiClient } from '@/api/client'
 
 export function ListPage() {
+  const { t } = useTranslation()
   const { resource } = useParams<{ resource: string }>()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -75,9 +77,9 @@ export function ListPage() {
       qc.invalidateQueries({ queryKey: ['crud-list', resource] })
       setSelectedIds([])
       setDeleteModalOpen(false)
-      toast('Registros eliminados correctamente')
+      toast(t('crud.recordsDeleted'))
     },
-    onError: () => toast('Error al eliminar los registros', 'error'),
+    onError: () => toast(t('crud.recordsDeleteError'), 'error'),
   })
 
   function handleSort(key: string) {
@@ -90,7 +92,7 @@ export function ListPage() {
   }
 
   if (configLoading) {
-    return <div className="text-gray-700 text-base">Cargando...</div>
+    return <div className="text-gray-700 text-base">{t('common.loading')}</div>
   }
 
   if (!config) return null
@@ -103,14 +105,14 @@ export function ListPage() {
         <h1 className="text-3xl font-semibold text-gray-900 flex-1">{config.title ?? resource}</h1>
         <input
           type="search"
-          placeholder="Buscar..."
+          placeholder={t('common.search')}
           value={searchInput}
           onChange={e => setSearchInput(e.target.value)}
           className="w-[200px] px-[10px] py-[7px] border border-gray-300 rounded text-md font-sans outline-none bg-white text-gray-900 focus:border-brand-400 focus:ring-[2px] focus:ring-brand-400/20 transition-shadow"
         />
         {canCreate && (
           <Button variant="primary" onClick={() => navigate(`/admin/${resource}/new`)}>
-            + Crear
+            + {t('common.create')}
           </Button>
         )}
       </div>
@@ -152,13 +154,13 @@ export function ListPage() {
 
       <Modal
         open={deleteModalOpen}
-        title="Eliminar registros"
-        confirmLabel="Eliminar"
+        title={t('crud.deleteRecordsTitle')}
+        confirmLabel={t('common.delete')}
         loading={bulkDelete.isPending}
         onConfirm={() => bulkDelete.mutate(selectedIds)}
         onCancel={() => setDeleteModalOpen(false)}
       >
-        ¿Eliminar {selectedIds.length} registro{selectedIds.length !== 1 ? 's' : ''}? Esta acción no se puede deshacer.
+        {t('crud.deleteRecordsConfirm', { count: selectedIds.length })}
       </Modal>
     </div>
   )

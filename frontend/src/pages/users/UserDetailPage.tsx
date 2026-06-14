@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -11,6 +12,7 @@ import { useToast } from '@/components/ui/Toast'
 import { usersApi } from '@/api/users.api'
 
 export function UserDetailPage() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -29,17 +31,17 @@ export function UserDetailPage() {
       qc.invalidateQueries({ queryKey: ['users'] })
       qc.invalidateQueries({ queryKey: ['user', id] })
       setDeactivateOpen(false)
-      toast('Usuario desactivado correctamente')
+      toast(t('users.deactivateSuccess'))
     },
-    onError: () => toast('Error al desactivar el usuario', 'error'),
+    onError: () => toast(t('users.deactivateError'), 'error'),
   })
 
-  if (isLoading) return <div className="text-gray-500 text-base">Cargando...</div>
+  if (isLoading) return <div className="text-gray-500 text-base">{t('common.loading')}</div>
   if (isError || !user) {
     return (
       <div className="text-center py-10">
-        <p className="text-gray-500 mb-4">Usuario no encontrado.</p>
-        <BackLink to="/admin/users" label="Volver al listado" />
+        <p className="text-gray-500 mb-4">{t('users.notFound')}</p>
+        <BackLink to="/admin/users" label={t('common.backToList')} />
       </div>
     )
   }
@@ -48,7 +50,7 @@ export function UserDetailPage() {
 
   return (
     <div>
-      <BackLink to="/admin/users" label="Volver al listado" />
+      <BackLink to="/admin/users" label={t('common.backToList')} />
 
       <Card className="p-5 mb-4">
         <div className="flex items-center justify-between gap-4">
@@ -67,11 +69,11 @@ export function UserDetailPage() {
           </div>
           <div className="flex gap-2 shrink-0">
             <Button variant="secondary" size="sm" onClick={() => navigate(`/admin/users/${id}/edit`)}>
-              Editar
+              {t('common.edit')}
             </Button>
             {user.is_active && (
               <Button variant="danger" size="sm" onClick={() => setDeactivateOpen(true)}>
-                Desactivar
+                {t('users.deactivate')}
               </Button>
             )}
           </div>
@@ -80,17 +82,17 @@ export function UserDetailPage() {
 
       <Card className="p-5">
         <div className="grid [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-4">
-          <DetailField label="Nombre" value={user.first_name} />
-          <DetailField label="Apellidos" value={user.last_name} />
-          <DetailField label="Email" value={user.email} />
-          <DetailField label="Estado" value={
+          <DetailField label={t('users.fieldFirstName')} value={user.first_name} />
+          <DetailField label={t('users.fieldLastName')} value={user.last_name} />
+          <DetailField label={t('users.fieldEmail')} value={user.email} />
+          <DetailField label={t('users.colStatus')} value={
             <Badge variant={user.is_active ? 'success' : 'inactive'}>
-              {user.is_active ? 'Activo' : 'Inactivo'}
+              {user.is_active ? t('common.active') : t('common.inactive')}
             </Badge>
           } />
-          <DetailField label="Miembro desde" value={new Date(user.created_at).toLocaleDateString('es')} />
+          <DetailField label={t('users.memberSince')} value={new Date(user.created_at).toLocaleDateString('es')} />
           <DetailField
-            label="Último acceso"
+            label={t('users.colLastLogin')}
             value={user.last_login_at ? new Date(user.last_login_at).toLocaleString('es') : '—'}
           />
         </div>
@@ -98,13 +100,13 @@ export function UserDetailPage() {
 
       <Modal
         open={deactivateOpen}
-        title="Desactivar usuario"
-        confirmLabel="Desactivar"
+        title={t('users.deactivateTitle')}
+        confirmLabel={t('users.deactivate')}
         loading={deactivate.isPending}
         onConfirm={() => deactivate.mutate()}
         onCancel={() => setDeactivateOpen(false)}
       >
-        ¿Desactivar a {user.first_name} {user.last_name}? El usuario no podrá iniciar sesión hasta que sea reactivado.
+        {t('users.deactivateConfirmNamed', { name: `${user.first_name} ${user.last_name}` })}
       </Modal>
     </div>
   )

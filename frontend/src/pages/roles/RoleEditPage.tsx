@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Clock } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -20,6 +21,7 @@ function groupPermissions(permissions: Permission[]): Record<string, Permission[
 }
 
 export function RoleEditPage() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -43,8 +45,8 @@ export function RoleEditPage() {
       const ids = [...checkedMap.entries()].filter(([, v]) => v).map(([k]) => k)
       return rolesApi.setPermissions(id!, ids)
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['role', id] }); qc.invalidateQueries({ queryKey: ['roles'] }); toast('Permisos guardados correctamente') },
-    onError: () => toast('Error al guardar permisos', 'error'),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['role', id] }); qc.invalidateQueries({ queryKey: ['roles'] }); toast(t('roles.permissionsSaveSuccess')) },
+    onError: () => toast(t('roles.permissionsSaveError'), 'error'),
   })
 
   function togglePermission(permId: string) {
@@ -60,7 +62,7 @@ export function RoleEditPage() {
     })
   }
 
-  if (roleLoading || permsLoading) return <div className="text-gray-500 text-base">Cargando...</div>
+  if (roleLoading || permsLoading) return <div className="text-gray-500 text-base">{t('common.loading')}</div>
   if (!role) return null
 
   const groups = groupPermissions(allPermissions)
@@ -68,13 +70,13 @@ export function RoleEditPage() {
 
   return (
     <div>
-      <BackLink to="/admin/roles" label="Volver a roles" />
-      <PageHeader title={`Editar rol: ${role.display_name}`} />
+      <BackLink to="/admin/roles" label={t('roles.backToRoles')} />
+      <PageHeader title={t('roles.editTitle', { name: role.display_name })} />
 
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            Permisos — {checkedCount} de {allPermissions.length} activos
+            {t('roles.permissionsActive', { count: checkedCount, total: allPermissions.length })}
           </h2>
           <button
             onClick={() => {
@@ -87,7 +89,7 @@ export function RoleEditPage() {
             }}
             className="text-md text-brand-500 bg-transparent border-none cursor-pointer font-sans"
           >
-            {allPermissions.every(p => checkedMap.get(p.id)) ? 'Deseleccionar todos' : 'Seleccionar todos'}
+            {allPermissions.every(p => checkedMap.get(p.id)) ? t('roles.deselectAll') : t('roles.selectAll')}
           </button>
         </div>
 
@@ -130,13 +132,13 @@ export function RoleEditPage() {
 
         <div className="flex items-center gap-2 mt-5 mb-4 bg-warning-50 border border-warning-500 rounded px-3.5 py-2.5 text-sm text-warning-500">
           <Clock size={14} />
-          Los cambios pueden tardar hasta 15 minutos en reflejarse en sesiones activas.
+          {t('roles.propagationWarning')}
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => navigate('/admin/roles')}>Cancelar</Button>
+          <Button variant="secondary" onClick={() => navigate('/admin/roles')}>{t('common.cancel')}</Button>
           <Button variant="primary" loading={savePermissions.isPending} onClick={() => savePermissions.mutate()}>
-            Guardar permisos
+            {t('roles.savePermissions')}
           </Button>
         </div>
       </Card>
