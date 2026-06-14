@@ -1,8 +1,8 @@
 # Quiver
 
 [![CI](https://github.com/rnkr69/quiver/actions/workflows/ci.yml/badge.svg)](https://github.com/rnkr69/quiver/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
-[![Python](https://img.shields.io/pypi/pyversions/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
+[![PyPI](https://img.shields.io/pypi/v/fastapi-quiver?color=blue)](https://pypi.org/project/fastapi-quiver/)
+[![Python](https://img.shields.io/pypi/pyversions/fastapi-quiver)](https://pypi.org/project/fastapi-quiver/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/rnkr69/quiver/blob/main/LICENSE)
 
 **A complete admin panel and user portal for any FastAPI + SQLModel app — declared in Python.**

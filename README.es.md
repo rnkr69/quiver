@@ -4,8 +4,8 @@
 
 <p align="center">
   <a href="https://github.com/rnkr69/quiver/actions/workflows/ci.yml"><img src="https://github.com/rnkr69/quiver/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
-  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/v/fastapi-quiver.svg" alt="PyPI" /></a>
-  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/pyversions/fastapi-quiver.svg" alt="Python" /></a>
+  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/v/fastapi-quiver?color=blue" alt="PyPI" /></a>
+  <a href="https://pypi.org/project/fastapi-quiver/"><img src="https://img.shields.io/pypi/pyversions/fastapi-quiver" alt="Python" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
 </p>
 
@@ -52,9 +52,9 @@ quiver = QuiverApp(app)  # monta auth, RBAC, usuarios, dashboard, menú, página
 
 ```bash
 pip install fastapi-quiver
-# o fijar un tag publicado directamente desde git (el paquete vive en backend/):
-pip install "git+https://github.com/rnkr69/quiver.git@v0.1.0#subdirectory=backend"
 ```
+
+<sub>¿Instalar desde el código fuente? Mira la [guía de instalación](docs/es/01-instalacion.md).</sub>
 
 ### 2. Configurar el entorno
 
