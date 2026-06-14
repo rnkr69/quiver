@@ -1,55 +1,55 @@
 # Dashboard
 
-> 🇪🇸 [Versión en español](es/04-dashboard.md)
+> 🇬🇧 [English version](../04-dashboard.md)
 
-The admin dashboard shows configurable widgets with data from your database. Quiver ships with two widget types: `StatCardWidget` (counter) and `ChartWidget` (chart).
+El dashboard del admin muestra widgets configurables con datos de tu base de datos. Quiver incluye dos tipos de widget: `StatCardWidget` (contador) y `ChartWidget` (gráfica).
 
 ---
 
 ## StatCardWidget
 
-Shows the record count for a model, with an optional filter.
+Muestra el recuento de registros de un modelo, con filtro opcional.
 
 ```python
 from quiver.dashboard.widgets.stat_card import StatCardWidget
 from models import Product, Order
 
-# Simple counter: total products
+# Contador simple: total de productos
 total_products = StatCardWidget(
-    "Total products",
+    "Total de productos",
     model=Product,
 )
 
-# With filter: only active products
+# Con filtro: solo productos activos
 active_products = StatCardWidget(
-    "Active products",
+    "Productos activos",
     model=Product,
     filter_fn=lambda q: q.where(Product.is_active == True),
 )
 
-# With permission: only visible to users who have that permission
+# Con permiso: solo visible para usuarios con ese permiso
 pending_orders = StatCardWidget(
-    "Pending orders",
+    "Pedidos pendientes",
     model=Order,
     filter_fn=lambda q: q.where(Order.status == "pending"),
     permission="orders.list",
 )
 ```
 
-### Parameters
+### Parámetros
 
-| Parameter | Type | Description |
+| Parámetro | Tipo | Descripción |
 |---|---|---|
-| `title` | `str` | Label shown on the card |
-| `model` | `type` | SQLModel class whose records are counted |
-| `filter_fn` | `callable` | Function `lambda q: q.where(...)` to filter |
-| `permission` | `str` | If set, the widget only appears if the user has that permission |
+| `title` | `str` | Etiqueta visible en la card |
+| `model` | `type` | Clase SQLModel de la que contar registros |
+| `filter_fn` | `callable` | Función `lambda q: q.where(...)` para filtrar |
+| `permission` | `str` | Si se especifica, el widget solo aparece si el usuario tiene ese permiso |
 
 ---
 
 ## ChartWidget
 
-Shows a bar or line chart with data that you provide.
+Muestra una gráfica de barras o líneas con datos que provees tú.
 
 ```python
 from quiver.dashboard.widgets.chart import ChartWidget
@@ -57,7 +57,7 @@ from sqlmodel import Session, func, select
 from models import Order
 
 def orders_by_month(db: Session):
-    """Return the data for the chart."""
+    """Devuelve los datos para la gráfica."""
     rows = db.exec(
         select(
             func.strftime("%Y-%m", Order.created_at).label("month"),
@@ -68,25 +68,25 @@ def orders_by_month(db: Session):
 
 
 orders_chart = ChartWidget(
-    "Orders per month",
+    "Pedidos por mes",
     data_fn=orders_by_month,
-    chart_type="bar",          # "bar" or "line"
+    chart_type="bar",          # "bar" o "line"
     permission="orders.list",
 )
 ```
 
-### Parameters
+### Parámetros
 
-| Parameter | Type | Description |
+| Parámetro | Tipo | Descripción |
 |---|---|---|
-| `title` | `str` | Chart title |
-| `data_fn` | `callable` | Function `(db: Session) -> list[dict]` that returns the data |
-| `chart_type` | `str` | `"bar"` or `"line"`. Defaults to `"bar"`. |
-| `permission` | `str` | Permission required to see the widget |
+| `title` | `str` | Título de la gráfica |
+| `data_fn` | `callable` | Función `(db: Session) -> list[dict]` que devuelve los datos |
+| `chart_type` | `str` | `"bar"` o `"line"`. Por defecto `"bar"`. |
+| `permission` | `str` | Permiso requerido para ver el widget |
 
-### Expected data format
+### Formato de datos esperado
 
-`data_fn` must return a list of dictionaries with `label` and `value` keys:
+`data_fn` debe devolver una lista de diccionarios con claves `label` y `value`:
 
 ```python
 [
@@ -98,9 +98,9 @@ orders_chart = ChartWidget(
 
 ---
 
-## Custom widget
+## Widget personalizado
 
-You can create your own widget type by subclassing `QuiverWidget`:
+Puedes crear tu propio tipo de widget heredando de `QuiverWidget`:
 
 ```python
 from quiver.dashboard.base import QuiverWidget
@@ -117,13 +117,13 @@ class RevenueWidget(QuiverWidget):
         return {"value": result or 0}
 ```
 
-The `component` determines which React component is used to render it. For custom components, see the [custom pages](07-custom-pages.md) section.
+El `component` determina el componente React que se usa para renderizarlo. Para componentes personalizados, consulta la sección de [páginas custom](07-paginas-custom.md).
 
 ---
 
-## Registering widgets
+## Registrar widgets
 
-Register the widgets in `main.py` before the app starts:
+Registra los widgets en `main.py` antes de que arranque la app:
 
 ```python
 from quiver import QuiverApp
@@ -135,11 +135,11 @@ quiver.register_widget(stats.active_products)
 quiver.register_widget(stats.orders_chart)
 ```
 
-The order of `register_widget` calls determines the order in which widgets appear on the dashboard.
+El orden de `register_widget` determina el orden de aparición en el dashboard.
 
 ---
 
-## Complete example
+## Ejemplo completo
 
 ```python
 # widgets/stats.py
@@ -149,16 +149,16 @@ from sqlmodel import Session, func, select
 from models import Product, Order
 
 
-total_products = StatCardWidget("Total products", model=Product)
+total_products = StatCardWidget("Total productos", model=Product)
 
 active_products = StatCardWidget(
-    "Active products",
+    "Productos activos",
     model=Product,
     filter_fn=lambda q: q.where(Product.is_active == True),
 )
 
 pending_orders = StatCardWidget(
-    "Pending orders",
+    "Pedidos pendientes",
     model=Order,
     filter_fn=lambda q: q.where(Order.status == "pending"),
     permission="orders.list",
@@ -176,7 +176,7 @@ def orders_last_6_months(db: Session):
 
 
 orders_chart = ChartWidget(
-    "Orders per month",
+    "Pedidos por mes",
     data_fn=orders_last_6_months,
     chart_type="bar",
     permission="orders.list",
@@ -196,4 +196,4 @@ quiver.register_widget(stats.orders_chart)
 
 ---
 
-← [CRUD Engine](03-crud.md) | [Roles and permissions →](05-rbac.md)
+← [CRUD Engine](03-crud.md) | [Roles y permisos →](05-rbac.md)

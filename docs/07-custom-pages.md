@@ -1,18 +1,20 @@
-# Páginas custom
+> 🇪🇸 [Versión en español](es/07-paginas-custom.md)
 
-Las páginas custom permiten añadir pantallas arbitrarias al admin o al portal — reportes, herramientas internas, vistas complejas — sin que sean CRUDs estándar.
+# Custom pages
 
----
-
-## Cómo funciona
-
-1. Registras la página en Python con `@quiver_page`
-2. Creas el componente React correspondiente en el frontend
-3. Lo registras en `PageRegistry` para que Quiver lo pueda cargar dinámicamente
+Custom pages let you add arbitrary screens to the admin or the portal — reports, internal tools, complex views — without them being standard CRUDs.
 
 ---
 
-## Paso 1 — Registrar la página en Python
+## How it works
+
+1. You register the page in Python with `@quiver_page`
+2. You create the corresponding React component in the frontend
+3. You register it in `PageRegistry` so Quiver can load it dynamically
+
+---
+
+## Step 1 — Register the page in Python
 
 ```python
 # pages/sales_report.py
@@ -23,38 +25,38 @@ from quiver.pages.registry import quiver_page, QuiverPage
     route="/admin/reportes/ventas",
     layout="admin",
     title="Ventas del mes",
-    component="SalesReportPage",    # nombre del componente React
-    permission="reports.view",      # permiso requerido
+    component="SalesReportPage",    # name of the React component
+    permission="reports.view",      # required permission
 )
 class SalesReportPage(QuiverPage):
     pass
 ```
 
-Importa el módulo antes de crear `QuiverApp` para que el decorador se ejecute:
+Import the module before creating `QuiverApp` so the decorator runs:
 
 ```python
 # main.py
-import pages.sales_report  # activa el decorador @quiver_page
+import pages.sales_report  # triggers the @quiver_page decorator
 
 quiver = QuiverApp(app)
 ```
 
-### Parámetros de `@quiver_page`
+### `@quiver_page` parameters
 
-| Parámetro | Tipo | Descripción |
+| Parameter | Type | Description |
 |---|---|---|
-| `route` | `str` | Ruta del frontend. Debe empezar por `/admin/` o `/portal/`. |
-| `layout` | `str` | `"admin"` o `"portal"` |
-| `title` | `str` | Título de la página (usado en el breadcrumb) |
-| `component` | `str` | Nombre exacto del componente React registrado en `PageRegistry` |
-| `permission` | `str` | Solo para `layout="admin"`. Obligatorio. |
-| `allowed_roles` | `list[str]` | Solo para `layout="portal"`. Obligatorio. |
+| `route` | `str` | Frontend route. Must start with `/admin/` or `/portal/`. |
+| `layout` | `str` | `"admin"` or `"portal"` |
+| `title` | `str` | Page title (used in the breadcrumb) |
+| `component` | `str` | Exact name of the React component registered in `PageRegistry` |
+| `permission` | `str` | Only for `layout="admin"`. Required. |
+| `allowed_roles` | `list[str]` | Only for `layout="portal"`. Required. |
 
 ---
 
-## Paso 2 — Crear el componente React
+## Step 2 — Create the React component
 
-Crea el fichero en tu proyecto:
+Create the file in your project:
 
 ```tsx
 // quiver-ui/src/pages/admin/SalesReportPage.tsx
@@ -66,7 +68,7 @@ export function SalesReportPage() {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    // Llama a tu propia API, no a Quiver
+    // Call your own API, not Quiver
     fetch('/api/v1/reports/sales').then(r => r.json()).then(setData)
   }, [])
 
@@ -83,7 +85,7 @@ export function SalesReportPage() {
 
 ---
 
-## Paso 3 — Registrar el componente en PageRegistry
+## Step 3 — Register the component in PageRegistry
 
 ```tsx
 // quiver-ui/src/main.tsx
@@ -93,13 +95,13 @@ import { SalesReportPage } from '@/pages/admin/SalesReportPage'
 PageRegistry.register('SalesReportPage', SalesReportPage)
 ```
 
-El nombre que usas en `PageRegistry.register` debe ser exactamente el mismo que el `component` en `@quiver_page`.
+The name you use in `PageRegistry.register` must be exactly the same as the `component` in `@quiver_page`.
 
 ---
 
-## Página en el portal de usuario
+## Page in the user portal
 
-Para añadir una página al portal, usa `layout="portal"` y `allowed_roles` en vez de `permission`:
+To add a page to the portal, use `layout="portal"` and `allowed_roles` instead of `permission`:
 
 ```python
 # pages/vip_page.py
@@ -132,9 +134,9 @@ PageRegistry.register('VipPage', VipPage)
 
 ---
 
-## Añadir la página al menú
+## Adding the page to the menu
 
-Las páginas custom no aparecen automáticamente en el menú. Añade el ítem manualmente:
+Custom pages do not appear in the menu automatically. Add the item manually:
 
 ```python
 quiver.set_menu([
@@ -147,7 +149,7 @@ quiver.set_menu([
 
 ---
 
-## Múltiples páginas
+## Multiple pages
 
 ```python
 # pages/__init__.py
@@ -166,10 +168,10 @@ class VipPage(QuiverPage): pass
 
 ```python
 # main.py
-import pages  # importar el paquete ejecuta todos los decoradores
+import pages  # importing the package runs all the decorators
 quiver = QuiverApp(app)
 ```
 
 ---
 
-← [Menú](06-menu.md) | [Portal →](08-portal.md)
+← [Menu](06-menu.md) | [Portal →](08-portal.md)

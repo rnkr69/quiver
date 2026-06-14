@@ -1,3 +1,5 @@
+> 🇬🇧 [English version](../10-examples.md)
+
 # Ejemplos
 
 El directorio `examples/` contiene proyectos funcionales listos para ejecutar que demuestran cómo integrar Quiver en aplicaciones reales.

@@ -1,96 +1,104 @@
-# Portal de usuario
+> 🇪🇸 [Versión en español](es/08-portal.md)
 
-El portal es una sección separada del admin, pensada para los clientes o usuarios finales de tu aplicación. Tiene su propio layout, su propia autenticación y acceso controlado por roles.
+# User portal
 
----
-
-## Cómo funciona
-
-- El portal usa los mismos usuarios y autenticación que el admin
-- El acceso se controla por roles: defines qué roles pueden entrar al portal con `QUIVER_PORTAL_ROLES`
-- Los usuarios del portal **no tienen acceso al admin** a menos que sean superuser o tengan permisos de admin
-- En desarrollo, el portal muestra un banner informativo con el estado de configuración
+The portal is a section separate from the admin, intended for your application's clients or end users. It has its own layout, its own authentication, and access controlled by roles.
 
 ---
 
-## Configuración
+## How it works
 
-Define los roles que tienen acceso al portal en tu `.env`:
+- The portal uses the same users and authentication as the admin
+- Access is controlled by roles: the frontend decides which roles may enter the portal via `VITE_PORTAL_ROLES`; the backend reads the same list from `QUIVER_PORTAL_ROLES`
+- Portal users **do not have access to the admin** unless they are superusers or hold admin permissions
+- In development, the portal shows an informational banner with the current configuration state
+
+---
+
+## Configuration
+
+The role gate for the `/portal/*` zone lives in the frontend. Define the allowed roles in the frontend's `.env`:
+
+```env
+VITE_PORTAL_ROLES=cliente,cliente_premium
+```
+
+On the backend, define the same roles in your `.env`:
 
 ```env
 QUIVER_PORTAL_ROLES=cliente,cliente_premium
 ```
 
-Un usuario con el rol `cliente` o `cliente_premium` podrá acceder al portal en `/portal`. Un usuario sin esos roles será redirigido al login.
+A user with the `cliente` or `cliente_premium` role will be able to access the portal at `/portal`. A user without those roles is redirected. If `VITE_PORTAL_ROLES` is left empty, any authenticated user can enter the portal.
 
-Si el superuser intenta acceder al portal, también puede entrar (sin importar los roles).
+A superuser can always access the portal too (regardless of roles).
 
 ---
 
-## Mensaje de bienvenida en producción
+## Welcome message in production
 
-En `QUIVER_ENV=production`, el portal muestra la pantalla de bienvenida configurada. Puedes personalizar el mensaje:
+When `QUIVER_ENV=production`, the portal shows the configured welcome screen. You can customize the message:
 
 ```env
-QUIVER_PORTAL_WELCOME_MESSAGE=Bienvenido al área de clientes. Tu acceso estará disponible próximamente.
+QUIVER_PORTAL_WELCOME_MESSAGE=Welcome to the client area. Your access will be available soon.
 ```
 
-O personaliza directamente la página `PortalWelcomePage.tsx` en el frontend.
+Or customize the `PortalWelcomePage.tsx` page directly in the frontend. (The frontend decides which screen to show using its own `VITE_QUIVER_ENV` variable.)
 
 ---
 
-## Páginas del portal incluidas
+## Bundled portal pages
 
-El portal incluye estas páginas de serie:
+The portal ships with these pages out of the box:
 
-| Ruta | Descripción |
+| Route | Description |
 |---|---|
-| `/portal` | Pantalla de bienvenida |
-| `/portal/perfil` | Ver perfil del usuario |
-| `/portal/perfil/editar` | Editar nombre y contraseña |
+| `/portal` | Welcome screen |
+| `/portal/perfil` | View the user's profile |
+| `/portal/perfil/editar` | Edit name and password |
 
 ---
 
-## Personalizar el portal
+## Customizing the portal
 
-### Navbar del portal (`UserLayout.tsx`)
+### Portal navbar (`UserLayout.tsx`)
 
-La navbar del portal está en `quiver-ui/src/layout/UserLayout.tsx`. Es el fichero principal que vas a modificar para adaptar el portal a tu marca:
+The portal navbar lives in `frontend/src/layout/UserLayout.tsx`. This is the main file you'll modify to adapt the portal to your brand:
 
 ```tsx
-// quiver-ui/src/layout/UserLayout.tsx
+// frontend/src/layout/UserLayout.tsx
 export function UserLayout() {
   const { user } = useAuthStore()
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <nav style={{ height: 60, background: 'white', borderBottom: '1px solid var(--gray-200)', ... }}>
-        {/* Cambia el logo y el título aquí */}
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <header className="h-[60px] ...">
+        {/* Change the logo and the title here */}
         <QuiverLogo size={26} />
-        <span>Mi Empresa</span>
+        <span>My Company</span>
 
-        {/* Añade tus propios enlaces de navegación */}
-        <NavLink to="/portal/mis-pedidos">Mis pedidos</NavLink>
-        <NavLink to="/portal/facturas">Facturas</NavLink>
-      </nav>
+        {/* Add your own navigation links */}
+        <Link to="/portal/mis-pedidos">My orders</Link>
+        <Link to="/portal/facturas">Invoices</Link>
+      </header>
 
-      <main>{/* contenido de las páginas */}</main>
+      <main>{/* page content */}</main>
 
-      <footer>© 2025 Mi Empresa S.L.</footer>
+      <footer>© 2025 My Company Ltd.</footer>
     </div>
   )
 }
 ```
 
-### Añadir páginas propias al portal
+### Adding your own pages to the portal
 
-Consulta la guía de [páginas custom](07-paginas-custom.md) para añadir tus propias pantallas al portal con `@quiver_page(layout="portal", ...)`.
+See the [custom pages](07-custom-pages.md) guide to add your own screens to the portal with `@quiver_page(layout="portal", ...)`.
 
 ---
 
-## Controlar el acceso dentro del portal
+## Controlling access inside the portal
 
-### Por rol (en el frontend)
+### By role (frontend)
 
 ```tsx
 import { HasRole } from '@/components/access/HasRole'
@@ -100,58 +108,74 @@ import { HasRole } from '@/components/access/HasRole'
 </HasRole>
 ```
 
-### Por permiso (permisos custom que tú defines)
+### By permission (custom permissions you define)
 
-Si necesitas control más granular dentro del portal:
+If you need finer-grained control inside the portal:
 
 ```python
 # permissions.py
 from quiver.rbac.registry import quiver_permission
 
-quiver_permission("portal.invoices", display_name="Ver facturas en portal", group="Portal")
+quiver_permission("portal.invoices", display_name="View invoices in portal", group="Portal")
 ```
 
 ```tsx
 import { Can } from '@/components/access/Can'
 
-<Can permission="portal.invoices">
+<Can do="portal.invoices">
   <InvoiceList />
 </Can>
 ```
 
 ---
 
-## Separar completamente el portal del admin
+## Fully separating the portal from the admin
 
-Si quieres que los usuarios del portal no puedan acceder en absoluto al admin, no les asignes ningún permiso de admin. Los roles de portal (`cliente`, `cliente_premium`) no dan acceso al panel de administración.
+If you want portal users to have no access to the admin at all, don't assign them any admin permissions. The portal roles (`cliente`, `cliente_premium`) do not grant access to the administration panel.
 
-Para bloquear también la ruta `/auth/login` del admin a los usuarios del portal, puedes personalizar el `RequireAuth` guard según tus necesidades de seguridad.
+To also block the admin's `/auth/login` route for portal users, you can customize the `RequireAuth` guard to fit your security needs.
 
 ---
 
-## API del portal
+## Portal API
 
-El portal expone un endpoint de información:
+The portal exposes a welcome endpoint (requires authentication):
 
 ```
 GET /quiver/v1/portal/
 ```
 
+In `QUIVER_ENV=production` it returns only the configured welcome message:
+
 ```json
 {
-  "message": "Quiver portal",
-  "version": "0.1.0",
-  "env": "development"
+  "message": "Welcome. This section will be available soon."
 }
 ```
 
-Y los endpoints de perfil (requieren autenticación):
+In development it returns additional info about the current user:
+
+```json
+{
+  "message": "Bienvenido al portal — modo development",
+  "env": "development",
+  "version": "1.0.0",
+  "user": {
+    "name": "Jane Doe",
+    "roles": ["cliente"]
+  }
+}
+```
+
+And the profile endpoints (require authentication):
 
 ```
-GET    /quiver/v1/portal/me           — datos del usuario actual
-PATCH  /quiver/v1/portal/me           — actualizar nombre/contraseña
+GET    /quiver/v1/portal/me           — current user's data
+PUT    /quiver/v1/portal/me           — update name/password
 ```
+
+To change the password via `PUT /me`, send `current_password` and `new_password`; `first_name` and `last_name` are optional.
 
 ---
 
-← [Páginas custom](07-paginas-custom.md) | [Frontend →](09-frontend.md)
+← [Custom pages](07-custom-pages.md) | [Frontend →](09-frontend.md)

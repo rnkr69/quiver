@@ -1,81 +1,145 @@
 # Quiver
 
-Panel de administración y portal de usuario para FastAPI. Añade un admin completo —gestión de usuarios, roles, CRUDs automáticos, dashboard y portal de cliente— a cualquier aplicación FastAPI existente en menos de 30 minutos.
+[![CI](https://github.com/rnkr69/quiver/actions/workflows/ci.yml/badge.svg)](https://github.com/rnkr69/quiver/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
+[![Python](https://img.shields.io/pypi/pyversions/fastapi-quiver.svg)](https://pypi.org/project/fastapi-quiver/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-→ **[Resumen ejecutivo del proyecto](docs/quiver-executive-summary.html)**
+**A complete admin panel and user portal for any FastAPI + SQLModel app — declared in Python.**
+
+Quiver is a library, not a standalone app. Mount it on your existing FastAPI application in
+one line, declare your CRUDs, widgets, pages and permissions in Python, and get a full admin
+panel (list/create/edit/delete UI, dashboard, RBAC) plus a client portal — without writing
+any frontend code.
+
+> 🇪🇸 *Este README está disponible también en [español](README.es.md).*
 
 ---
 
-## Inicio rápido
+## How it works
 
-```bash
-# 1. Instalar el paquete Python
-pip install git+https://github.com/tu-organizacion/quiver.git@v0.1.0
+- **Backend** (`fastapi-quiver`, the installable package) generates REST endpoints and serves
+  the entire UI definition (columns, fields, filters, menu, pages) from your Python declarations.
+- **Frontend** is a generic Vite + React + TypeScript SPA that reads everything from the backend
+  at runtime — so adding a new admin resource needs **zero frontend changes**.
 
-# 2. Montar Quiver en tu app
+```python
 # main.py
 from fastapi import FastAPI
 from quiver import QuiverApp
+import permissions  # noqa: F401 — register permissions at import time
 
 app = FastAPI()
-quiver = QuiverApp(app)   # ← una línea
-
-# 3. Crear tablas y primer usuario
-quiver db migrate
-quiver create-superuser
-
-# 4. Arrancar
-uvicorn main:app --reload
+quiver = QuiverApp(app)  # mounts auth, RBAC, users, dashboard, menu, pages and portal
 ```
 
-El panel queda disponible en `http://localhost:5173` (frontend) y la API bajo `/quiver/v1`.
+---
+
+## Quick start
+
+### 1. Install the backend package
+
+```bash
+pip install fastapi-quiver
+# or pin a released tag straight from git:
+pip install "git+https://github.com/rnkr69/quiver.git@v0.1.0#subdirectory=backend"
+```
+
+### 2. Configure the environment
+
+`SECRET_KEY` and `DATABASE_URL` are required (see [`.env.example`](.env.example)):
+
+```env
+SECRET_KEY=change-me
+DATABASE_URL=sqlite:///./app.db
+```
+
+### 3. Mount Quiver, run migrations and create the first user
+
+```bash
+quiver db migrate          # apply Quiver's auth/RBAC migrations
+quiver create-superuser    # interactive first-user creation
+uvicorn main:app --reload  # API served under /quiver/v1
+```
+
+### 4. Serve the admin UI
+
+The published wheel **bundles the built SPA**. Mount it at the end of your setup (after
+registering your CRUDs) and it is served at `/quiver`, with the API under `/quiver/v1`:
+
+```python
+quiver.serve_frontend()   # serves the admin/portal at /quiver
+```
+
+Open `http://localhost:8000/quiver/` — no separate frontend process needed.
+
+**Developing the frontend?** Run the SPA from [`frontend/`](frontend/) with hot reload instead;
+it serves at `http://localhost:5173/quiver/` and proxies the API to your backend:
+
+```bash
+npm install
+npm run dev
+```
+
+> `serve_frontend()` is a no-op if no build is present, so running the SPA separately just works.
+> The SPA base path (`/quiver`) is configurable via `QUIVER_FRONTEND_PATH` (backend) and
+> `VITE_BASE_PATH` (frontend) — keep them in sync.
 
 ---
 
-## Documentación
+## Documentation
 
-| Documento | Contenido |
+| Document | Contents |
 |---|---|
-| [Instalación](docs/01-instalacion.md) | Instalar backend vía git, configurar variables de entorno, copiar frontend |
-| [Inicio rápido](docs/02-inicio-rapido.md) | Primer CRUD, primer widget — app funcional en 20 minutos |
-| [CRUD Engine](docs/03-crud.md) | Campos, columnas, filtros, hooks, permisos |
-| [Dashboard](docs/04-dashboard.md) | StatCards, gráficas, permisos por widget |
-| [Roles y permisos](docs/05-rbac.md) | Definir permisos, crear roles, proteger rutas |
-| [Menú](docs/06-menu.md) | Estructura del menú lateral del admin |
-| [Páginas custom](docs/07-paginas-custom.md) | Páginas React arbitrarias en el admin o el portal |
-| [Portal de usuario](docs/08-portal.md) | Portal de cliente: roles de acceso, personalización |
-| [Frontend](docs/09-frontend.md) | Tokens de diseño, componentes, UserLayout |
-| [Ejemplos](docs/10-ejemplos.md) | Proyectos funcionales listos para ejecutar |
+| [Installation](docs/01-installation.md) | Install the backend, configure env vars, set up the frontend |
+| [Quick start](docs/02-quick-start.md) | First CRUD, first widget — a working app in 20 minutes |
+| [CRUD engine](docs/03-crud.md) | Fields, columns, filters, lifecycle hooks, permissions |
+| [Dashboard](docs/04-dashboard.md) | StatCards, charts, per-widget permissions |
+| [Roles & permissions](docs/05-rbac.md) | Defining permissions, creating roles, protecting routes |
+| [Menu](docs/06-menu.md) | Structure of the admin sidebar |
+| [Custom pages](docs/07-custom-pages.md) | Arbitrary React pages in the admin or portal |
+| [User portal](docs/08-portal.md) | Client portal: access roles, customization |
+| [Frontend](docs/09-frontend.md) | Design tokens, components, layouts |
+| [Examples](docs/10-examples.md) | Ready-to-run reference projects |
+
+*Spanish versions of these guides live under [`docs/es/`](docs/es/).*
 
 ---
 
-## Ejemplos
+## Example app
 
-El directorio `examples/` contiene proyectos de referencia funcionales:
-
-- **[`examples/almacen/`](examples/almacen/)** — Gestión de materiales de almacén: 4 CRUDs interconectados, movimientos de stock con lógica de negocio, widgets de dashboard, permisos personalizados y página custom.
+[`examples/almacen/`](examples/almacen/) is a complete reference host app (warehouse
+management): 4 interconnected CRUDs, stock movements with business logic, dashboard widgets,
+custom permissions and a custom page. It is the best place to see how a consumer wires
+everything up.
 
 ---
 
-## Requisitos
+## Requirements
 
 - Python 3.11+
-- Node.js 18+ (solo para el frontend)
-- PostgreSQL o SQLite (desarrollo)
-- Un proyecto FastAPI existente con SQLModel como ORM
+- Node.js 18+ (for the frontend only)
+- PostgreSQL or SQLite (for development)
+- An existing FastAPI project using SQLModel as its ORM
 
 ---
 
-## ¿Qué incluye Quiver?
+## What Quiver gives you
 
-- **Autenticación completa** — login, tokens JWT, refresh, reset de contraseña por email
-- **CRUD automático** — define un modelo SQLModel y obtén list/create/edit/delete con UI incluida
-- **Dashboard** — StatCards y gráficas configurables con datos de tu base de datos
-- **Roles y permisos** — RBAC granular, asignación desde la UI
-- **Portal de usuario** — área separada para tus clientes, con roles propios
-- **Páginas custom** — añade tus propias páginas React al admin o al portal
-- **Menú configurable** — estructura el sidebar con grupos, ítems y control de permisos
+- **Full authentication** — login, JWT access/refresh tokens, password reset by email
+- **Automatic CRUD** — declare a SQLModel model and get list/create/edit/delete with UI included
+- **Dashboard** — configurable StatCards and charts backed by your database
+- **Roles & permissions** — granular RBAC, assigned from the UI
+- **User portal** — a separate area for your clients, with its own roles
+- **Custom pages** — drop your own React pages into the admin or portal
+- **Configurable menu** — structure the sidebar with groups, items and permission control
 
 ---
 
-*Quiver v0.1.0*
+## Contributing
+
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[MIT](LICENSE) © rnkr69
