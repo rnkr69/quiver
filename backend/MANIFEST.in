@@ -1,0 +1,4 @@
+include README.md
+include LICENSE
+recursive-include quiver/static *
+recursive-include quiver/database/migrations *.py *.mako *.ini

@@ -9,9 +9,12 @@ from quiver.exceptions import (
     QuiverNotFound,
     QuiverUnauthorized,
 )
-from quiver.pages.registry import quiver_page, QuiverPage
+from quiver.pages.registry import QuiverPage, quiver_page
+
+__version__ = "0.1.0"
 
 __all__ = [
+    "__version__",
     "QuiverApp",
     "QuiverConfig",
     "QuiverConfigError",
