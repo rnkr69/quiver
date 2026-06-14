@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function Pagination({ page, pageSize, total, onChange }: Props) {
+  const { t } = useTranslation()
   const totalPages = Math.ceil(total / pageSize)
   if (totalPages <= 1) return null
 
@@ -17,7 +19,7 @@ export function Pagination({ page, pageSize, total, onChange }: Props) {
 
   return (
     <div className="flex items-center justify-between py-3 text-md text-gray-600">
-      <span>{from}–{to} de {total}</span>
+      <span>{t('crud.showing', { from, to, total })}</span>
       <div className="flex gap-1 items-center">
         <button
           className={cn(
@@ -27,7 +29,7 @@ export function Pagination({ page, pageSize, total, onChange }: Props) {
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
         >
-          <ChevronLeft size={14} /> Anterior
+          <ChevronLeft size={14} /> {t('crud.previous')}
         </button>
 
         <span className="px-[10px] py-[5px] text-md bg-brand-50 text-brand-700 rounded font-medium min-w-16 text-center">
@@ -42,7 +44,7 @@ export function Pagination({ page, pageSize, total, onChange }: Props) {
           disabled={page >= totalPages}
           onClick={() => onChange(page + 1)}
         >
-          Siguiente <ChevronRight size={14} />
+          {t('crud.next')} <ChevronRight size={14} />
         </button>
       </div>
     </div>

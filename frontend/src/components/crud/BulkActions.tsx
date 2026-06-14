@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/Button'
 
 interface Props {
@@ -8,17 +9,14 @@ interface Props {
   onClear: () => void
 }
 
-const ACTION_LABELS: Record<string, string> = {
-  delete: 'Eliminar seleccionados',
-}
-
 export function BulkActions({ selectedCount, actions, loading, onAction, onClear }: Props) {
+  const { t } = useTranslation()
   if (selectedCount === 0) return null
 
   return (
     <div className="flex items-center gap-3 px-4 py-[10px] bg-brand-50 rounded-md mb-3">
       <span className="text-base text-brand-700 font-medium">
-        {selectedCount} seleccionado{selectedCount !== 1 ? 's' : ''}
+        {t('crud.selectedCount', { count: selectedCount })}
       </span>
       <div className="flex-1" />
       {actions.map(action => (
@@ -29,11 +27,11 @@ export function BulkActions({ selectedCount, actions, loading, onAction, onClear
           loading={loading}
           onClick={() => onAction(action)}
         >
-          {ACTION_LABELS[action] ?? action}
+          {action === 'delete' ? t('crud.deleteSelected') : action}
         </Button>
       ))}
       <Button variant="ghost" size="sm" onClick={onClear}>
-        Deseleccionar
+        {t('crud.deselect')}
       </Button>
     </div>
   )

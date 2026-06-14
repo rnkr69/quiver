@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { CrudForm } from '@/components/crud/CrudForm'
@@ -7,6 +8,7 @@ import { useToast } from '@/components/ui/Toast'
 import { crudApi } from '@/api/crud.api'
 
 export function CreatePage() {
+  const { t } = useTranslation()
   const { resource } = useParams<{ resource: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -23,20 +25,20 @@ export function CreatePage() {
     mutationFn: (data: unknown) => crudApi.create(resource!, data),
     onSuccess: (row) => {
       qc.invalidateQueries({ queryKey: ['crud-list', resource] })
-      toast('Registro creado correctamente')
+      toast(t('crud.recordCreated'))
       navigate(`/admin/${resource}/${(row as Record<string, unknown>).id}`)
     },
-    onError: () => toast('Error al crear el registro', 'error'),
+    onError: () => toast(t('crud.recordCreateError'), 'error'),
   })
 
-  if (isLoading) return <div className="text-gray-700 text-base">Cargando...</div>
+  if (isLoading) return <div className="text-gray-700 text-base">{t('common.loading')}</div>
   if (!config) return null
 
   return (
     <div>
       <div className="mb-5">
-        <BackLink to={`/admin/${resource}`} label="Volver al listado" />
-        <h1 className="text-3xl font-semibold text-gray-900 mt-2">Crear {config.title ?? resource}</h1>
+        <BackLink to={`/admin/${resource}`} label={t('common.backToList')} />
+        <h1 className="text-3xl font-semibold text-gray-900 mt-2">{t('crud.createTitle', { name: config.title ?? resource })}</h1>
       </div>
       <Card className="p-6">
         <CrudForm

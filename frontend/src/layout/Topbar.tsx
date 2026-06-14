@@ -1,11 +1,14 @@
 import { PanelLeft } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/auth.store'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
 interface Props {
   onMenuToggle: () => void
 }
 
 export function Topbar({ onMenuToggle }: Props) {
+  const { t } = useTranslation()
   const { user } = useAuthStore()
 
   const initials = user
@@ -20,7 +23,7 @@ export function Topbar({ onMenuToggle }: Props) {
       <button
         onClick={onMenuToggle}
         className="bg-transparent border-none cursor-pointer p-1.5 text-gray-500 flex items-center rounded hover:bg-gray-100 transition-colors"
-        aria-label="Toggle sidebar"
+        aria-label={t('nav.toggleSidebar')}
       >
         <PanelLeft size={18} />
       </button>
@@ -29,9 +32,11 @@ export function Topbar({ onMenuToggle }: Props) {
 
       {hasPortalAccess && (
         <a href="/portal" className="text-md text-brand-500">
-          Ver portal →
+          {t('nav.viewPortal')}
         </a>
       )}
+
+      <LanguageSwitcher />
 
       {user && (
         <span className="text-md text-gray-700">

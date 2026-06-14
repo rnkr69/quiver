@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { getWidgetComponent } from './WidgetRegistry'
 
 interface WidgetData {
@@ -16,6 +17,7 @@ interface Props {
 const SKELETON_COUNT = 3
 
 export function WidgetGrid({ widgets, isLoading, minColWidth = 240 }: Props) {
+  const { t } = useTranslation()
   const gridStyle = {
     gridTemplateColumns: `repeat(auto-fill, minmax(${minColWidth}px, 1fr))`,
   }
@@ -33,7 +35,7 @@ export function WidgetGrid({ widgets, isLoading, minColWidth = 240 }: Props) {
   if (!widgets.length) {
     return (
       <div className="text-center py-12 text-gray-600 text-base">
-        No hay widgets configurados. Registra widgets con{' '}
+        {t('dashboard.noWidgets')}{' '}
         <code className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-sm">
           quiver.register_widget(...)
         </code>
@@ -49,7 +51,7 @@ export function WidgetGrid({ widgets, isLoading, minColWidth = 240 }: Props) {
           return (
             <div key={i} className="bg-warning-50 border border-[#fde68a] rounded-lg p-5">
               <div className="text-sm text-[#92400e]">
-                Widget desconocido: <code>{widget.component}</code>
+                {t('dashboard.unknownWidget')}: <code>{widget.component}</code>
               </div>
             </div>
           )

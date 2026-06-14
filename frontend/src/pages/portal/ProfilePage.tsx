@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Pencil } from 'lucide-react'
 import { portalApi, type PortalProfile } from '@/api/portal.api'
@@ -12,6 +13,7 @@ function formatDate(iso: string) {
 }
 
 export function ProfilePage() {
+  const { t } = useTranslation()
   const [profile, setProfile] = useState<PortalProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -29,14 +31,14 @@ export function ProfilePage() {
   }
 
   if (!profile) {
-    return <div className="text-gray-500 py-6">No se pudo cargar el perfil.</div>
+    return <div className="text-gray-500 py-6">{t('portal.profile.loadError')}</div>
   }
 
   const initials = `${profile.first_name[0] ?? ''}${profile.last_name[0] ?? ''}`.toUpperCase()
 
   return (
     <div className="max-w-[640px]">
-      <PageHeader title="Mi perfil" />
+      <PageHeader title={t('portal.profile.title')} />
 
       <Card>
         <div className="px-6 py-5 flex items-center justify-between gap-4">
@@ -57,21 +59,21 @@ export function ProfilePage() {
             className="inline-flex items-center gap-1.5 px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline shrink-0"
           >
             <Pencil size={14} />
-            Editar perfil
+            {t('portal.profile.editProfile')}
           </Link>
         </div>
 
         <div className="border-t border-gray-200 px-6 py-5">
           <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-            <DetailField label="Nombre" value={profile.first_name} />
-            <DetailField label="Apellidos" value={profile.last_name} />
+            <DetailField label={t('portal.profile.firstName')} value={profile.first_name} />
+            <DetailField label={t('portal.profile.lastName')} value={profile.last_name} />
             <DetailField
-              label="Email"
-              value={<>{profile.email} <span className="text-xs text-gray-400">(no editable)</span></>}
+              label={t('portal.profile.email')}
+              value={<>{profile.email} <span className="text-xs text-gray-400">{t('portal.profile.notEditable')}</span></>}
               className="col-span-full"
             />
             <DetailField
-              label="Miembro desde"
+              label={t('portal.profile.memberSince')}
               value={formatDate(profile.created_at)}
               className="col-span-full"
             />

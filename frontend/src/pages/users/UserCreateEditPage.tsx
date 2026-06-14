@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function UserCreateEditPage({ mode }: Props) {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -50,19 +52,19 @@ export function UserCreateEditPage({ mode }: Props) {
 
   const create = useMutation({
     mutationFn: () => usersApi.create({ email, password, first_name: firstName, last_name: lastName, is_superuser: isSuperuser, role_ids: selectedRoleIds }),
-    onSuccess: (u) => { qc.invalidateQueries({ queryKey: ['users'] }); toast('Usuario creado correctamente'); navigate(`/admin/users/${u.id}`) },
-    onError: () => toast('Error al crear el usuario', 'error'),
+    onSuccess: (u) => { qc.invalidateQueries({ queryKey: ['users'] }); toast(t('users.createSuccess')); navigate(`/admin/users/${u.id}`) },
+    onError: () => toast(t('users.createError'), 'error'),
   })
 
   const update = useMutation({
     mutationFn: () => usersApi.update(id!, { email, first_name: firstName, last_name: lastName, is_superuser: isSuperuser, role_ids: selectedRoleIds, ...(password ? { password } : {}) }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); qc.invalidateQueries({ queryKey: ['user', id] }); toast('Cambios guardados correctamente'); navigate(`/admin/users/${id}`) },
-    onError: () => toast('Error al guardar los cambios', 'error'),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); qc.invalidateQueries({ queryKey: ['user', id] }); toast(t('users.updateSuccess')); navigate(`/admin/users/${id}`) },
+    onError: () => toast(t('users.updateError'), 'error'),
   })
 
   const loading = create.isPending || update.isPending
 
-  if (mode === 'edit' && userLoading) return <div className="text-gray-500 text-base">Cargando...</div>
+  if (mode === 'edit' && userLoading) return <div className="text-gray-500 text-base">{t('common.loading')}</div>
 
   const selectedRoles = roles.filter(r => selectedRoleIds.includes(r.id))
   const availableRoles = roles.filter(r => !selectedRoleIds.includes(r.id))
@@ -70,16 +72,16 @@ export function UserCreateEditPage({ mode }: Props) {
 
   return (
     <div>
-      <BackLink to={backTo} label={mode === 'edit' ? 'Volver al detalle' : 'Volver al listado'} />
-      <PageHeader title={mode === 'create' ? 'Crear usuario' : 'Editar usuario'} />
+      <BackLink to={backTo} label={mode === 'edit' ? t('users.backToDetail') : t('common.backToList')} />
+      <PageHeader title={mode === 'create' ? t('users.createUser') : t('users.editUser')} />
 
       <Card className="p-6">
         <div className="grid [grid-template-columns:repeat(auto-fill,minmax(260px,1fr))] gap-4 mb-5">
-          <Input label="Nombre" value={firstName} onChange={e => setFirstName(e.target.value)} required />
-          <Input label="Apellidos" value={lastName} onChange={e => setLastName(e.target.value)} required />
-          <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+          <Input label={t('users.fieldFirstName')} value={firstName} onChange={e => setFirstName(e.target.value)} required />
+          <Input label={t('users.fieldLastName')} value={lastName} onChange={e => setLastName(e.target.value)} required />
+          <Input label={t('users.fieldEmail')} type="email" value={email} onChange={e => setEmail(e.target.value)} required />
           <PasswordInput
-            label={mode === 'edit' ? 'Contraseña (dejar vacío para no cambiar)' : 'Contraseña'}
+            label={mode === 'edit' ? t('users.passwordEdit') : t('users.password')}
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder={mode === 'edit' ? '••••••••' : ''}
@@ -88,7 +90,7 @@ export function UserCreateEditPage({ mode }: Props) {
         </div>
 
         <div className="mb-5">
-          <label className="text-sm font-medium text-gray-700 block mb-2">Roles</label>
+          <label className="text-sm font-medium text-gray-700 block mb-2">{t('users.roles')}</label>
           <div className="flex gap-1.5 flex-wrap items-center">
             {selectedRoles.map(r => (
               <div key={r.id} className="flex items-center gap-1 bg-brand-50 text-brand-700 py-0.5 pr-2 pl-2.5 rounded text-md">
@@ -107,7 +109,7 @@ export function UserCreateEditPage({ mode }: Props) {
                   onClick={() => setAddingRole(o => !o)}
                   className="px-2.5 py-0.5 text-md font-sans bg-transparent text-gray-600 border border-dashed border-gray-300 rounded cursor-pointer"
                 >
-                  + Agregar rol
+                  {t('users.addRole')}
                 </button>
                 {addingRole && (
                   <div className="absolute top-full mt-1 left-0 z-50 bg-white border border-gray-200 rounded-md shadow-md min-w-[160px] py-1">
@@ -131,14 +133,14 @@ export function UserCreateEditPage({ mode }: Props) {
           <Toggle
             checked={isSuperuser}
             onChange={setIsSuperuser}
-            label="Superusuario (acceso total, sin restricciones de permiso)"
+            label={t('users.superuserLabel')}
           />
         </div>
 
         <div className="flex gap-2 justify-end">
-          <Button variant="secondary" onClick={() => navigate(backTo)} disabled={loading}>Cancelar</Button>
+          <Button variant="secondary" onClick={() => navigate(backTo)} disabled={loading}>{t('common.cancel')}</Button>
           <Button variant="primary" loading={loading} onClick={() => mode === 'create' ? create.mutate() : update.mutate()}>
-            {mode === 'create' ? 'Crear usuario' : 'Guardar cambios'}
+            {mode === 'create' ? t('users.createUser') : t('common.saveChanges')}
           </Button>
         </div>
       </Card>

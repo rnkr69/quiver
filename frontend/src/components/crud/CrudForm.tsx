@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getFieldComponent } from '@/components/fields'
 import { Button } from '@/components/ui/Button'
 import type { FieldConfig } from '@/api/crud.api'
@@ -22,6 +23,7 @@ function buildDefaults(fields: FieldConfig[], initial?: Record<string, unknown>)
 }
 
 export function CrudForm({ fields, initialValues, mode, loading, onSubmit, onCancel }: Props) {
+  const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(() => buildDefaults(fields, initialValues))
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -32,7 +34,7 @@ export function CrudForm({ fields, initialValues, mode, loading, onSubmit, onCan
     const errs: Record<string, string> = {}
     for (const f of fields) {
       if (f.required && (values[f.key] === null || values[f.key] === undefined || values[f.key] === '')) {
-        errs[f.key] = `${f.label} es obligatorio`
+        errs[f.key] = t('crud.fieldRequired', { label: f.label })
       }
     }
     setErrors(errs)
@@ -73,11 +75,11 @@ export function CrudForm({ fields, initialValues, mode, loading, onSubmit, onCan
         <div className="flex gap-2 justify-end">
           {onCancel && (
             <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
-              Cancelar
+              {t('common.cancel')}
             </Button>
           )}
           <Button type="submit" variant="primary" loading={loading}>
-            {mode === 'create' ? 'Crear' : 'Guardar cambios'}
+            {mode === 'create' ? t('common.create') : t('common.saveChanges')}
           </Button>
         </div>
       )}

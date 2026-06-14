@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { portalApi, type PortalProfile } from '@/api/portal.api'
 import { useToast } from '@/components/ui/Toast'
@@ -11,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { PageHeader } from '@/components/ui/PageHeader'
 
 export function EditProfilePage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { toast } = useToast()
   const [profile, setProfile] = useState<PortalProfile | null>(null)
@@ -34,11 +36,11 @@ export function EditProfilePage() {
     e.preventDefault()
     setError(null)
     if (newPassword && newPassword !== confirmPassword) {
-      setError('Las contraseñas nuevas no coinciden.')
+      setError(t('portal.editProfile.passwordMismatch'))
       return
     }
     if (newPassword && !currentPassword) {
-      setError('Debes ingresar tu contraseña actual para establecer una nueva.')
+      setError(t('portal.editProfile.currentPasswordRequired'))
       return
     }
     setSaving(true)
@@ -48,12 +50,12 @@ export function EditProfilePage() {
         last_name: lastName,
         ...(newPassword ? { current_password: currentPassword, new_password: newPassword } : {}),
       })
-      toast('Perfil actualizado correctamente.', 'success')
+      toast(t('portal.editProfile.updateSuccess'), 'success')
       navigate('/portal/perfil')
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ??
-        'No se pudo actualizar el perfil.'
+        t('portal.editProfile.updateError')
       setError(msg)
     } finally {
       setSaving(false)
@@ -70,25 +72,25 @@ export function EditProfilePage() {
 
   return (
     <div className="max-w-[600px]">
-      <BackLink to="/portal/perfil" label="Mi perfil" />
-      <PageHeader title="Editar perfil" />
+      <BackLink to="/portal/perfil" label={t('portal.profile.title')} />
+      <PageHeader title={t('portal.editProfile.title')} />
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Card className="p-6">
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Nombre" value={firstName} onChange={e => setFirstName(e.target.value)} required />
-            <Input label="Apellidos" value={lastName} onChange={e => setLastName(e.target.value)} required />
+            <Input label={t('portal.profile.firstName')} value={firstName} onChange={e => setFirstName(e.target.value)} required />
+            <Input label={t('portal.profile.lastName')} value={lastName} onChange={e => setLastName(e.target.value)} required />
           </div>
 
           <div className="border-t border-gray-100 mt-5 pt-5">
             <div className="text-md font-medium text-gray-700 mb-4">
-              Cambiar contraseña{' '}
-              <span className="font-normal text-gray-400">(opcional)</span>
+              {t('portal.editProfile.changePassword')}{' '}
+              <span className="font-normal text-gray-400">({t('common.optional').toLowerCase()})</span>
             </div>
             <div className="flex flex-col gap-3">
-              <PasswordInput label="Contraseña actual" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
-              <PasswordInput label="Nueva contraseña" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
-              <PasswordInput label="Confirmar nueva contraseña" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+              <PasswordInput label={t('portal.editProfile.currentPassword')} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+              <PasswordInput label={t('portal.editProfile.newPassword')} value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+              <PasswordInput label={t('portal.editProfile.confirmNewPassword')} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
             </div>
           </div>
 
@@ -97,10 +99,10 @@ export function EditProfilePage() {
 
         <div className="flex gap-3 justify-end">
           <Button type="button" variant="secondary" onClick={() => navigate('/portal/perfil')}>
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button type="submit" variant="primary" loading={saving} disabled={saving}>
-            {saving ? 'Guardando…' : 'Guardar cambios'}
+            {saving ? t('common.saving') : t('common.saveChanges')}
           </Button>
         </div>
       </form>
