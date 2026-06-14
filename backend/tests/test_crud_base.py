@@ -1,29 +1,27 @@
 from __future__ import annotations
 
-import os
 import enum
+import os
 from datetime import datetime
-from typing import Optional
 
-import pytest
 from sqlmodel import Field, SQLModel
 
 os.environ.setdefault("SECRET_KEY", "test-secret-crud")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 
 from quiver.crud import (
-    Column,
-    QuiverCRUD,
-    TextField,
-    NumberField,
     CheckboxField,
+    Column,
+    NumberField,
+    QuiverCRUD,
     SelectField,
+    TextField,
 )
 from quiver.crud.fields.text import PasswordField
 from quiver.rbac.registry import _PERMISSION_REGISTRY
 
-
 # ─── Test model ─────────────────────────────────────────────────────────────
+
 
 class Category(enum.Enum):
     A = "a"
@@ -31,16 +29,17 @@ class Category(enum.Enum):
 
 
 class Product(SQLModel, table=False):
-    id: Optional[str] = Field(default=None, primary_key=True)
+    id: str | None = Field(default=None, primary_key=True)
     name: str
     price: float
     is_active: bool = True
-    category: Optional[Category] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    category: Category | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 # ─── Minimal CRUD ────────────────────────────────────────────────────────────
+
 
 class ProductCRUD(QuiverCRUD):
     model = Product
@@ -48,6 +47,7 @@ class ProductCRUD(QuiverCRUD):
 
 
 # ─── Tests ───────────────────────────────────────────────────────────────────
+
 
 def test_auto_columns():
     crud = ProductCRUD()

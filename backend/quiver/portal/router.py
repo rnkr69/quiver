@@ -19,6 +19,7 @@ def create_portal_router() -> APIRouter:
     ):
         from quiver.config import get_config
         from quiver.models.admin_user import AdminUser
+
         config = get_config()
         if config.QUIVER_ENV == "production":
             return {"message": config.QUIVER_PORTAL_WELCOME_MESSAGE}
@@ -40,9 +41,11 @@ def create_portal_router() -> APIRouter:
         db: Session = Depends(get_db),
     ):
         from sqlmodel import select
+
         from quiver.models.admin_user import AdminUser
         from quiver.models.associations import UserHasRole
         from quiver.models.role import Role
+
         user_id: str = payload["sub"]
         user = db.get(AdminUser, user_id)
         if not user:
@@ -70,8 +73,8 @@ def create_portal_router() -> APIRouter:
         payload: dict = Depends(require_authenticated),
         db: Session = Depends(get_db),
     ):
-        from quiver.models.admin_user import AdminUser
         from quiver.auth.password import hash_password, verify_password
+        from quiver.models.admin_user import AdminUser
 
         user_id: str = payload["sub"]
         user = db.get(AdminUser, user_id)

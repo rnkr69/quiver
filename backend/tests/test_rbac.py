@@ -2,24 +2,25 @@ from __future__ import annotations
 
 import os
 import uuid
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlalchemy.pool import StaticPool
 from sqlalchemy import create_engine
+from sqlalchemy.pool import StaticPool
 from sqlmodel import Session
 
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-rbac-tests")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 
-from quiver.database.session import override_engine, create_all_tables
-from quiver.models.admin_user import AdminUser
-from quiver.models.role import Role
-from quiver.models.permission import Permission
-from quiver.models.associations import UserHasRole, RoleHasPermission
-from quiver.auth.password import hash_password
-from quiver.auth.jwt import create_access_token
 from quiver import QuiverApp
+from quiver.auth.jwt import create_access_token
+from quiver.auth.password import hash_password
+from quiver.database.session import create_all_tables, override_engine
+from quiver.models.admin_user import AdminUser
+from quiver.models.associations import RoleHasPermission, UserHasRole
+from quiver.models.permission import Permission
+from quiver.models.role import Role
 
 
 @pytest.fixture(scope="module")
@@ -53,6 +54,7 @@ def db(engine):
 
 def _make_admin_token(db: Session, roles: list[str] = None, permissions: list[str] = None) -> str:
     from quiver.models.admin_user import AdminUser
+
     user = AdminUser(
         email=f"rbac_admin_{uuid.uuid4().hex[:8]}@example.com",
         password_hash=hash_password("pass"),
@@ -77,7 +79,9 @@ def _make_role(db: Session, name: str, display_name: str = None) -> Role:
     return role
 
 
-def _make_permission(db: Session, name: str, display_name: str = "Test", group: str = "Test") -> Permission:
+def _make_permission(
+    db: Session, name: str, display_name: str = "Test", group: str = "Test"
+) -> Permission:
     suffix = uuid.uuid4().hex[:6]
     parts = name.split(".")
     unique_name = f"{parts[0]}_{suffix}.{parts[1]}" if len(parts) == 2 else f"{name}_{suffix}"
@@ -115,7 +119,11 @@ def test_create_role(app_client, db):
     unique_name = f"moderator_{uuid.uuid4().hex[:6]}"
     r = app_client.post(
         "/quiver/v1/admin/roles",
-        json={"name": unique_name, "display_name": "Moderator", "description": "Can moderate content"},
+        json={
+            "name": unique_name,
+            "display_name": "Moderator",
+            "description": "Can moderate content",
+        },
         headers={"Authorization": f"Bearer {token}"},
     )
     assert r.status_code == 201
@@ -209,7 +217,9 @@ def test_replace_role_permissions(app_client, db):
     # verify assignment in DB
     with Session(db.bind) as s:
         rows = s.exec(
-            __import__("sqlmodel").select(RoleHasPermission).where(RoleHasPermission.role_id == str(role.id))
+            __import__("sqlmodel")
+            .select(RoleHasPermission)
+            .where(RoleHasPermission.role_id == str(role.id))
         ).all()
     assert len(rows) == 1
     assert rows[0].permission_id == str(perm.id)
@@ -237,6 +247,7 @@ def test_replace_role_permissions_clears_old(app_client, db):
     assert r.status_code == 204
 
     from sqlmodel import select
+
     with Session(db.bind) as s:
         rows = s.exec(
             select(RoleHasPermission).where(RoleHasPermission.role_id == str(role.id))

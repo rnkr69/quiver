@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from quiver.dashboard.base import QuiverWidget
 
@@ -11,10 +12,10 @@ class ChartWidget(QuiverWidget):
         title: str,
         *,
         data_fn: Callable,
-        chart_type: str = "bar",   # bar | line
+        chart_type: str = "bar",  # bar | line
         x_key: str = "x",
         y_key: str = "y",
-        permission: Optional[str] = None,
+        permission: str | None = None,
     ):
         super().__init__(title, component="ChartWidget", permission=permission)
         self.data_fn = data_fn

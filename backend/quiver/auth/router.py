@@ -55,7 +55,8 @@ def create_auth_router(prefix: str, is_production: bool) -> APIRouter:
             raise QuiverUnauthorized("Invalid email or password.")
 
         access_token, refresh_plain = create_session(
-            user, db,
+            user,
+            db,
             user_agent=request.headers.get("user-agent"),
             ip_address=request.client.host if request.client else None,
         )
@@ -63,7 +64,11 @@ def create_auth_router(prefix: str, is_production: bool) -> APIRouter:
         redirect_to = "/admin" if has_admin_role else "/portal"
 
         response = JSONResponse(
-            content={"access_token": access_token, "token_type": "bearer", "redirect_to": redirect_to}
+            content={
+                "access_token": access_token,
+                "token_type": "bearer",
+                "redirect_to": redirect_to,
+            }
         )
         _set_refresh_cookie(response, refresh_plain, is_production, prefix)
         return response
@@ -93,8 +98,9 @@ def create_auth_router(prefix: str, is_production: bool) -> APIRouter:
         payload: dict[str, Any] = Depends(require_authenticated),
         db: Session = Depends(get_db),
     ):
+
         from quiver.models.admin_user import AdminUser
-        from sqlmodel import select
+
         user = db.get(AdminUser, payload["sub"])
         if not user:
             raise QuiverUnauthorized("User not found.")
@@ -111,6 +117,7 @@ def create_auth_router(prefix: str, is_production: bool) -> APIRouter:
     @router.post("/forgot-password")
     async def forgot_password(request: Request, db: Session = Depends(get_db)):
         from quiver.config import QuiverConfig
+
         body = await request.json()
         email = body.get("email", "")
 
@@ -118,13 +125,18 @@ def create_auth_router(prefix: str, is_production: bool) -> APIRouter:
         if cfg.email_sender is None:
             return JSONResponse(
                 status_code=503,
-                content={"detail": "EmailSender not configured. See documentation.", "code": "QUIVER_EMAIL_NOT_CONFIGURED"},
+                content={
+                    "detail": "EmailSender not configured. See documentation.",
+                    "code": "QUIVER_EMAIL_NOT_CONFIGURED",
+                },
             )
 
         token_plain = initiate_password_reset(email, db)
         if token_plain:
             reset_url = f"{cfg.QUIVER_FRONTEND_URL}/auth/reset-password?token={token_plain}"
-            await cfg.email_sender.send_reset_email(to=email, token=token_plain, reset_url=reset_url)
+            await cfg.email_sender.send_reset_email(
+                to=email, token=token_plain, reset_url=reset_url
+            )
 
         # Always return 200 — do not reveal if email exists
         return JSONResponse(content={"detail": "If that email exists, a reset link has been sent."})

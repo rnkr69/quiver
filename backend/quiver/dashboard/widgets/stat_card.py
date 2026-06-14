@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from collections.abc import Callable
 
 from sqlmodel import Session, func, select
 
@@ -13,9 +13,9 @@ class StatCardWidget(QuiverWidget):
         title: str,
         *,
         model: type,
-        permission: Optional[str] = None,
-        filter_fn: Optional[Callable] = None,
-        icon: Optional[str] = None,
+        permission: str | None = None,
+        filter_fn: Callable | None = None,
+        icon: str | None = None,
     ):
         super().__init__(title, component="StatCard", permission=permission)
         self.model = model

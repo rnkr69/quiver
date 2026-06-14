@@ -1,9 +1,7 @@
-from typing import Any, Optional
+from fastapi import APIRouter, Depends, Query, Request
+from sqlmodel import Session, col
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from sqlmodel import Session, select, col
-
-from quiver.auth.dependencies import require_authenticated, require_permission
+from quiver.auth.dependencies import require_permission
 from quiver.database.session import get_db
 
 
@@ -13,7 +11,9 @@ def create_crud_router(crud_class) -> APIRouter:
 
     model = crud_class.model
     resource = getattr(crud_class, "route", model.__name__.lower())
-    perm_group = crud_class._permission_group() if hasattr(crud_class, "_permission_group") else resource
+    perm_group = (
+        crud_class._permission_group() if hasattr(crud_class, "_permission_group") else resource
+    )
     page_size_default = getattr(crud_class, "page_size", 25)
     search_fields = getattr(crud_class, "search_fields", [])
     default_order = getattr(crud_class, "order_by", None)
@@ -60,9 +60,9 @@ def create_crud_router(crud_class) -> APIRouter:
         request: Request,
         page: int = Query(1, ge=1),
         page_size: int = Query(page_size_default, ge=1, le=500),
-        search: Optional[str] = Query(None),
-        order_by: Optional[str] = Query(None),
-        order_dir: Optional[str] = Query("asc"),
+        search: str | None = Query(None),
+        order_by: str | None = Query(None),
+        order_dir: str | None = Query("asc"),
         db: Session = Depends(get_db),
         payload: dict = Depends(require_permission(f"{perm_group}.list")),
     ):
@@ -71,6 +71,7 @@ def create_crud_router(crud_class) -> APIRouter:
         # search
         if search and search_fields:
             from sqlalchemy import or_
+
             conditions = []
             for sf in search_fields:
                 attr = getattr(model, sf, None)
@@ -82,7 +83,7 @@ def create_crud_router(crud_class) -> APIRouter:
         # filters from query params
         for f_decl in filters_decl:
             value = request.query_params.get(f_decl.key)
-            if value is not None and value != '':
+            if value is not None and value != "":
                 base_q = f_decl.apply(base_q, value, model)
 
         # ordering
@@ -135,10 +136,12 @@ def create_crud_router(crud_class) -> APIRouter:
         items = db.exec(base_q).all()
         result = []
         for item in items:
-            result.append({
-                "value": getattr(item, value_field, None),
-                "label": getattr(item, label_field, None),
-            })
+            result.append(
+                {
+                    "value": getattr(item, value_field, None),
+                    "label": getattr(item, label_field, None),
+                }
+            )
         return result
 
     # ── GET /{id} (show) ─────────────────────────────────────────────────────
@@ -152,6 +155,7 @@ def create_crud_router(crud_class) -> APIRouter:
         instance = db.get(model, item_id)
         if not instance:
             from quiver.exceptions import QuiverNotFound
+
             raise QuiverNotFound(f"{resource} '{item_id}' not found.")
         return instance.model_dump()
 
@@ -167,11 +171,10 @@ def create_crud_router(crud_class) -> APIRouter:
         instance = db.get(model, item_id)
         if not instance:
             from quiver.exceptions import QuiverNotFound
+
             raise QuiverNotFound(f"{resource} '{item_id}' not found.")
 
-        data = await crud_instance.before_update(
-            body.model_dump(exclude_none=True), db, payload
-        )
+        data = await crud_instance.before_update(body.model_dump(exclude_none=True), db, payload)
         for k, v in data.items():
             if hasattr(instance, k):
                 setattr(instance, k, v)
@@ -192,6 +195,7 @@ def create_crud_router(crud_class) -> APIRouter:
         instance = db.get(model, item_id)
         if not instance:
             from quiver.exceptions import QuiverNotFound
+
             raise QuiverNotFound(f"{resource} '{item_id}' not found.")
         await crud_instance.before_delete(instance, db, payload)
         db.delete(instance)

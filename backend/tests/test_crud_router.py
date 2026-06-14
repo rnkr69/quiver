@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import uuid
-from typing import Optional
 
 import pytest
 from fastapi import FastAPI
@@ -14,19 +13,19 @@ from sqlmodel import Field, Session, SQLModel
 os.environ.setdefault("SECRET_KEY", "test-secret-crud-router")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 
+from quiver import QuiverApp
+from quiver.auth.jwt import create_access_token
+from quiver.auth.password import hash_password
+from quiver.crud import QuiverCRUD
 from quiver.database.session import create_all_tables, override_engine
 from quiver.models.admin_user import AdminUser
-from quiver.auth.password import hash_password
-from quiver.auth.jwt import create_access_token
-from quiver import QuiverApp
-from quiver.crud import QuiverCRUD, TextField, NumberField
-
 
 # ─── Test model ──────────────────────────────────────────────────────────────
 
+
 class Widget(SQLModel, table=True):
     __tablename__ = "widgets_test"
-    id: Optional[str] = Field(
+    id: str | None = Field(
         default_factory=lambda: str(uuid.uuid4()),
         primary_key=True,
         max_length=36,
@@ -44,6 +43,7 @@ class WidgetCRUD(QuiverCRUD):
 
 
 # ─── Fixtures ────────────────────────────────────────────────────────────────
+
 
 @pytest.fixture(scope="module")
 def engine():
@@ -92,9 +92,12 @@ def _token(db: Session) -> str:
 
 # ─── Config endpoint ─────────────────────────────────────────────────────────
 
+
 def test_config_endpoint(app_client, db):
     token = _token(db)
-    r = app_client.get("/quiver/v1/admin/widgets/config", headers={"Authorization": f"Bearer {token}"})
+    r = app_client.get(
+        "/quiver/v1/admin/widgets/config", headers={"Authorization": f"Bearer {token}"}
+    )
     assert r.status_code == 200
     data = r.json()
     assert data["resource"] == "widgets"
@@ -105,6 +108,7 @@ def test_config_endpoint(app_client, db):
 
 
 # ─── List endpoint ────────────────────────────────────────────────────────────
+
 
 def test_list_empty(app_client, db):
     token = _token(db)
@@ -123,6 +127,7 @@ def test_list_requires_auth(app_client):
 
 # ─── Create endpoint ─────────────────────────────────────────────────────────
 
+
 def test_create_item(app_client, db):
     token = _token(db)
     r = app_client.post(
@@ -137,6 +142,7 @@ def test_create_item(app_client, db):
 
 
 # ─── Get item endpoint ────────────────────────────────────────────────────────
+
 
 def test_get_item(app_client, db):
     token = _token(db)
@@ -165,6 +171,7 @@ def test_get_item_not_found(app_client, db):
 
 # ─── Update endpoint ─────────────────────────────────────────────────────────
 
+
 def test_update_item(app_client, db):
     token = _token(db)
     create_r = app_client.post(
@@ -183,6 +190,7 @@ def test_update_item(app_client, db):
 
 
 # ─── Delete endpoint ─────────────────────────────────────────────────────────
+
 
 def test_delete_item(app_client, db):
     token = _token(db)
@@ -208,6 +216,7 @@ def test_delete_item(app_client, db):
 
 # ─── Choices endpoint ─────────────────────────────────────────────────────────
 
+
 def test_choices_endpoint(app_client, db):
     token = _token(db)
     app_client.post(
@@ -227,6 +236,7 @@ def test_choices_endpoint(app_client, db):
 
 # ─── Search ──────────────────────────────────────────────────────────────────
 
+
 def test_search(app_client, db):
     token = _token(db)
     app_client.post(
@@ -245,6 +255,7 @@ def test_search(app_client, db):
 
 # ─── Hooks ───────────────────────────────────────────────────────────────────
 
+
 def test_before_create_hook(engine, db):
     class HookedWidget(QuiverCRUD):
         model = Widget
@@ -256,6 +267,7 @@ def test_before_create_hook(engine, db):
 
     fa2 = FastAPI()
     from quiver import QuiverApp as QApp
+
     q2 = QApp(fa2)
     q2.register(HookedWidget)
     create_all_tables()

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass
@@ -10,7 +9,7 @@ class PageDefinition:
     layout: str  # "admin" or "portal"
     title: str
     component: str
-    permission: Optional[str] = None        # admin pages
+    permission: str | None = None  # admin pages
     allowed_roles: list[str] = field(default_factory=list)  # portal pages
 
 
@@ -39,8 +38,8 @@ def quiver_page(
     layout: str,
     title: str,
     component: str,
-    permission: Optional[str] = None,
-    allowed_roles: Optional[list[str]] = None,
+    permission: str | None = None,
+    allowed_roles: list[str] | None = None,
 ):
     """Decorator that registers a class as a Quiver page."""
     if layout not in ("admin", "portal"):
@@ -51,7 +50,10 @@ def quiver_page(
         raise ValueError("quiver_page: portal pages require 'allowed_roles'")
 
     page = PageDefinition(
-        route=route, layout=layout, title=title, component=component,
+        route=route,
+        layout=layout,
+        title=title,
+        component=component,
         permission=permission,
         allowed_roles=allowed_roles or [],
     )
@@ -65,4 +67,5 @@ def quiver_page(
 
 class QuiverPage:
     """Base class for Quiver pages (semantic only)."""
+
     pass

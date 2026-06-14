@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import Depends, Request
+from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from quiver.auth.jwt import decode_access_token
@@ -26,6 +26,7 @@ def require_permission(perm: str):
         if perm not in payload.get("permissions", []):
             raise QuiverForbidden(f"Permission '{perm}' required.")
         return payload
+
     return _dep
 
 
@@ -37,4 +38,5 @@ def require_any_role(roles: list[str]):
         if not user_roles.intersection(roles):
             raise QuiverForbidden(f"One of roles {roles} required.")
         return payload
+
     return _dep
