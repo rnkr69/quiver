@@ -1,52 +1,56 @@
-# Ejemplo — Gestión de materiales de almacén
+> 🇪🇸 [Versión en español](README.es.md)
 
-Demo funcional de Quiver que implementa un sistema de gestión de materiales: catálogo, proveedores, movimientos de stock (entradas/salidas/ajustes) y alertas de stock bajo.
+# Example — Warehouse materials management
+
+A working Quiver demo that implements a materials management system: catalog, suppliers, stock movements (entradas/salidas/ajustes) and low-stock alerts.
 
 ---
 
-## Qué demuestra este ejemplo
+## What this example demonstrates
 
-| Característica | Dónde |
+| Feature | Where |
 |---|---|
-| 4 CRUDs interconectados | `cruds/` |
-| Hooks `before_create` con lógica de negocio | `cruds/movimiento_crud.py` |
-| Validación de negocio (stock insuficiente) | `cruds/movimiento_crud.py` |
-| `SelectField` con opciones dinámicas (`choices_from`) | `cruds/material_crud.py` |
-| `SelectField` con enum como opciones | `cruds/movimiento_crud.py` |
-| Columnas con `badge_map` y enum | `cruds/material_crud.py` |
-| Permisos personalizados (`quiver_permission`) | `permissions.py` |
-| 4 StatCards + 1 ChartWidget en el dashboard | `widgets/almacen_stats.py` |
-| Página custom con `@quiver_page` | `pages/alertas_stock.py` |
-| Menú con grupos y control de permisos | `main.py` |
-| Datos de prueba (seed) | `seed.py` |
+| 4 interconnected CRUDs | `cruds/` |
+| `before_create` hooks with business logic | `cruds/movimiento_crud.py` |
+| Business validation (insufficient stock) | `cruds/movimiento_crud.py` |
+| `SelectField` with dynamic options (`choices_from`) | `cruds/material_crud.py` |
+| `SelectField` with an enum as options | `cruds/movimiento_crud.py` |
+| Columns with `badge_map` and an enum | `cruds/material_crud.py` |
+| Custom permissions (`quiver_permission`) | `permissions.py` |
+| 4 StatCards + 1 ChartWidget on the dashboard | `widgets/almacen_stats.py` |
+| Custom page with `@quiver_page` | `pages/alertas_stock.py` |
+| Menu with groups and permission control | `main.py` |
+| Test data (seed) | `seed.py` |
 
 ---
 
-## Estructura
+## Structure
 
 ```
 almacen/
-├── main.py                  # FastAPI + QuiverApp — punto de entrada
+├── main.py                  # FastAPI + QuiverApp — entry point
 ├── models.py                # Categoria, Proveedor, Material, MovimientoStock
-├── permissions.py           # Permisos custom del módulo almacén
-├── seed.py                  # Script para poblar la BD con datos de prueba
-├── .env.example             # Variables de entorno necesarias
+├── permissions.py           # Custom permissions for the warehouse module
+├── seed.py                  # Script to populate the DB with test data
+├── .env.example             # Required environment variables
 ├── cruds/
-│   ├── categoria_crud.py    # CRUD simple
-│   ├── proveedor_crud.py    # CRUD con búsqueda y filtros
-│   ├── material_crud.py     # CRUD completo: SelectField dinámico, enum, before_update
-│   └── movimiento_crud.py   # CRUD con lógica de negocio en before_create y before_delete
+│   ├── categoria_crud.py    # Simple CRUD
+│   ├── proveedor_crud.py    # CRUD with search and filters
+│   ├── material_crud.py     # Full CRUD: dynamic SelectField, enum, before_update
+│   └── movimiento_crud.py   # CRUD with business logic in before_create and before_delete
 ├── widgets/
 │   └── almacen_stats.py     # 4 StatCards + 1 ChartWidget
 └── pages/
-    └── alertas_stock.py     # Página custom (requiere componente React)
+    └── alertas_stock.py     # Custom page (requires a React component)
 ```
+
+> Quiver is a library: the installable package ships **the API only**. The admin / portal UI (the SPA) is run separately from the repository's `frontend/` directory. The backend does not serve the UI automatically.
 
 ---
 
-## Cómo ejecutarlo
+## How to run it
 
-### 1. Crear el entorno virtual
+### 1. Create the virtual environment
 
 ```bash
 cd examples/almacen
@@ -54,75 +58,79 @@ python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 ```
 
-A partir de aquí todos los comandos usan el entorno activado.
+From here on, all commands use the activated environment.
 
-### 2. Instalar Quiver
+### 2. Install Quiver
 
-Desde el repo local (modo desarrollo):
+From PyPI (public install):
+
+```bash
+pip install fastapi-quiver
+```
+
+To develop against the code in this repo, use the local editable install:
 
 ```bash
 pip install -e ../../backend
 ```
 
-O desde el repositorio remoto:
-
-```bash
-pip install git+https://github.com/tu-organizacion/quiver.git@v0.1.0
-```
-
-Verifica que el CLI está disponible:
+Check that the CLI is available:
 
 ```bash
 quiver --help
 ```
 
-### 3. Configurar el entorno
+### 3. Configure the environment
 
-El directorio ya incluye un `.env` listo para desarrollo con SQLite (`almacen.db`) — no necesitas configurar nada más para probarlo.
+The directory already includes a `.env` ready for development with SQLite (`almacen.db`) — you don't need to configure anything else to try it out.
 
-Si prefieres partir del fichero de ejemplo:
+If you'd rather start from the example file:
 
 ```bash
 cp .env.example .env
 ```
 
-### 4. Crear las tablas de Quiver
+### 4. Create the Quiver tables
 
 ```bash
 quiver db migrate
 ```
 
-> Las tablas de los modelos del ejemplo (`Material`, `Categoria`, etc.) se crean automáticamente al arrancar la app en modo desarrollo (ver `main.py`).
+> The tables for the example's models (`Material`, `Categoria`, etc.) are created automatically when the app starts in development mode (see `main.py`).
 
-### 5. Crear el superuser
+### 5. Create the superuser
 
 ```bash
 quiver create-superuser
 ```
 
-### 6. Arrancar el backend
+### 6. Start the backend (the API)
 
 ```bash
 uvicorn main:app --reload
 ```
 
-### 7. Arrancar el frontend (en otra terminal)
+The API is served under `QUIVER_PREFIX` (default `/quiver/v1`).
+
+### 7. Start the frontend (in another terminal)
+
+The admin/portal SPA lives in the repository's `frontend/` directory and is run separately:
 
 ```bash
-cd /ruta/a/quiver/frontend
+cd /path/to/quiver/frontend
 npm install
 npm run dev
 ```
 
-### 8. (Opcional) Cargar datos de prueba
+### 8. (Optional) Load test data
 
 ```bash
 python seed.py
 ```
 
-Carga 4 categorías, 3 proveedores, 15 materiales y ~40 movimientos históricos.
+Loads 4 categories, 3 suppliers, 15 materials and ~40 historical movements.
 
-### 9. Abrir el panel
+### 9. Open the panel
 
 ```
 http://localhost:5173/auth/login
@@ -130,35 +138,39 @@ http://localhost:5173/auth/login
 
 ---
 
-## Lógica de negocio destacada
+## Notable business logic
 
-### Movimientos de stock (`movimiento_crud.py`)
+### Stock movements (`movimiento_crud.py`)
 
-El hook `before_create` de `MovimientoCRUD`:
+The `before_create` hook of `MovimientoCRUD`:
 
-1. Valida que el material exista
-2. Valida que la cantidad sea positiva
-3. Según el tipo de movimiento:
+1. Validates that the material exists
+2. Validates that the quantity is positive
+3. Depending on the movement type:
    - **Entrada** → `stock_actual += cantidad`
-   - **Salida** → `stock_actual -= cantidad` (lanza error si no hay stock suficiente)
-   - **Ajuste** → `stock_actual = cantidad` (la cantidad es el nuevo valor absoluto)
-4. Actualiza `Material.stock_actual` en la misma transacción
-5. Rellena `stock_anterior`, `stock_resultante` y `creado_por` automáticamente
+   - **Salida** → `stock_actual -= cantidad` (raises an error if there isn't enough stock)
+   - **Ajuste** → `stock_actual = cantidad` (the quantity is the new absolute value)
+4. Updates `Material.stock_actual` within the same transaction
+5. Fills in `stock_anterior`, `stock_resultante` and `creado_por` automatically
 
-El hook `before_delete` bloquea el borrado de movimientos (son registros contables permanentes).
+The `before_delete` hook blocks the deletion of movements (they are permanent accounting records).
 
-### Alertas de stock
+### Stock alerts
 
-`MaterialCRUD` expone la lista con `stock_actual` y `stock_minimo`. El widget `materiales_stock_bajo` cuenta los materiales donde `stock_actual < stock_minimo`. La página custom `AlertasStockPage` puede mostrarlos en detalle.
+`MaterialCRUD` exposes the list with `stock_actual` and `stock_minimo`. The `materiales_stock_bajo` widget counts the materials where `stock_actual < stock_minimo`. The custom `AlertasStockPage` can show them in detail.
 
 ---
 
-## Roles sugeridos para la demo
+## Suggested roles for the demo
 
-| Rol | Permisos |
+| Role | Permissions |
 |---|---|
 | `almacenero` | `materiales.list`, `materiales.show`, `almacen.list`, `almacen.create`, `almacen.ver_alertas`, `almacen.ajustar_stock` |
-| `jefe_almacen` | Todo lo anterior + `materiales.create`, `materiales.update`, `materiales.delete`, `categorias.*`, `proveedores.*`, `almacen.ver_valoracion` |
+| `jefe_almacen` | All of the above + `materiales.create`, `materiales.update`, `materiales.delete`, `categorias.*`, `proveedores.*`, `almacen.ver_valoracion` |
 | `solo_consulta` | `materiales.list`, `materiales.show`, `almacen.list` |
 
-Créalos desde la UI: **Admin → Roles → Nuevo rol**.
+Create them from the UI: **Admin → Roles → New role**.
+
+---
+
+Repository: https://github.com/rnkr69/quiver

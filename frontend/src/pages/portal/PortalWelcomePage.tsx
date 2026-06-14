@@ -25,7 +25,7 @@ export function PortalWelcomePage() {
           {data?.message ?? 'Esta sección estará disponible próximamente.'}
         </p>
         <a
-          href="https://github.com/your-org/quiver"
+          href="https://github.com/rnkr69/quiver"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline"
@@ -78,7 +78,7 @@ export function PortalWelcomePage() {
 
       <div className="text-center">
         <a
-          href="https://github.com/your-org/quiver"
+          href="https://github.com/rnkr69/quiver"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-2 text-base font-medium text-gray-800 bg-white border border-gray-300 rounded hover:bg-gray-50 no-underline"

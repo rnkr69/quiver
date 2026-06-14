@@ -1,24 +1,84 @@
+> 🇪🇸 [Versión en español](es/09-frontend.md)
+
 # Frontend
 
-El frontend de Quiver es una aplicación React + TypeScript que copias a tu proyecto. Esta guía cubre la personalización: tokens de diseño, componentes reutilizables y cómo estructurar tus propias páginas.
+Quiver's frontend is a generic React + TypeScript single-page application (the `frontend/` directory of the repo). It is **server-driven**: it reads columns, fields, filters, the menu and dynamic pages from the backend at runtime, so it rarely needs per-app changes.
+
+This guide covers customization: design tokens, reusable components and how to structure your own pages.
 
 ---
 
-## Estructura de ficheros
+## Serving the SPA
+
+The SPA is **not** served at the site root. It lives under a configurable **base path** (default `/quiver/`) so it can be mounted alongside a host app's own routes. The API stays under `QUIVER_PREFIX` (default `/quiver/v1`), which is nested inside that base path.
+
+There are two ways the SPA reaches users:
+
+### 1. Bundled in the wheel (production)
+
+`npm run build` outputs the compiled SPA to `../backend/quiver/static`, and that directory is bundled into the wheel at release time. The host app mounts it with `serve_frontend()`:
+
+```python
+quiver = QuiverApp(app)
+quiver.register(...)        # register all CRUDs, pages, etc. first
+quiver.set_menu([...])
+quiver.serve_frontend()     # call this LAST — it mounts a catch-all static handler
+```
+
+`serve_frontend()` mounts the bundled build at `QUIVER_FRONTEND_PATH` (default `/quiver`). Because it installs a catch-all static handler, **call it after registering everything else** — anything registered afterwards under the same path prefix would be shadowed. The app then opens at `http://localhost:8000/quiver/`.
+
+If no build is present (e.g. the package was installed without a frontend build, or you run the SPA separately), `serve_frontend()` is a no-op with a warning.
+
+### 2. Run separately (development)
+
+During development you typically run the Vite dev server, which serves the SPA and proxies the API to the backend:
+
+```bash
+cd frontend/
+npm install
+npm run dev        # SPA on http://localhost:5173/quiver/
+```
+
+The dev server serves the SPA under the same base path (`http://localhost:5173/quiver/`) and proxies API requests (`/quiver/v1`) to the backend at `http://localhost:8000` (configured in `frontend/vite.config.ts`).
+
+### Base path: keep frontend and backend in sync
+
+The frontend base path and the backend mount path **must match**:
+
+| Side     | Setting                              | Where                                                                 | Default     |
+| -------- | ------------------------------------ | --------------------------------------------------------------------- | ----------- |
+| Frontend | `VITE_BASE_PATH`                     | Vite `base` (`vite.config.ts`) and React Router `basename` (`src/router.tsx`) | `/quiver/`  |
+| Backend  | `QUIVER_FRONTEND_PATH`               | mount path used by `QuiverApp.serve_frontend()` (`backend/quiver/app.py`) | `/quiver`   |
+
+Keep the trailing slash on `VITE_BASE_PATH`. If you change one, change the other to match.
+
+### Frontend environment variables
+
+The frontend reads these Vite env vars (see `frontend/.env.example`):
+
+| Variable            | Default      | Purpose                                                                                  |
+| ------------------- | ------------ | ---------------------------------------------------------------------------------------- |
+| `VITE_API_BASE_URL` | `/quiver/v1` | Base URL of the Quiver backend API. Lives under the base path.                            |
+| `VITE_BASE_PATH`    | `/quiver/`   | Base path the SPA is served from. Must match the backend `QUIVER_FRONTEND_PATH`. Keep the trailing slash. |
+| `VITE_PORTAL_ROLES` | _(empty)_    | Comma-separated roles allowed into the client portal (`/portal/*`). Empty disables the portal. |
+
+---
+
+## File structure
 
 ```
-quiver-ui/
+frontend/
 ├── src/
 │   ├── components/
-│   │   ├── ui/              # Componentes base (Button, Input, Badge, etc.)
-│   │   ├── crud/            # Componentes del CRUD Engine
+│   │   ├── ui/              # Base components (Button, Input, Badge, etc.)
+│   │   ├── crud/            # CRUD Engine components
 │   │   ├── dashboard/       # StatCard, ChartWidget
-│   │   ├── fields/          # Campos de formulario del CRUD
+│   │   ├── fields/          # CRUD form fields
 │   │   └── access/          # Can, HasRole
 │   ├── layout/
-│   │   ├── AdminLayout.tsx  # Layout del admin (sidebar + topbar)
-│   │   ├── AuthLayout.tsx   # Layout de login/reset
-│   │   ├── UserLayout.tsx   # Layout del portal ← personaliza esto
+│   │   ├── AdminLayout.tsx  # Admin layout (sidebar + topbar)
+│   │   ├── AuthLayout.tsx   # Login/reset layout
+│   │   ├── UserLayout.tsx   # Portal layout ← customize this
 │   │   ├── Sidebar.tsx
 │   │   └── Topbar.tsx
 │   ├── pages/
@@ -29,95 +89,93 @@ quiver-ui/
 │   │   ├── roles/           # RolesPage, RoleEditPage
 │   │   └── users/           # UsersPage, UserCreateEditPage, UserDetailPage
 │   ├── plugin/
-│   │   ├── PageRegistry.tsx  # Registro de páginas custom
-│   │   └── DynamicRoutes.tsx # Rutas generadas desde el backend
+│   │   ├── PageRegistry.tsx  # Custom page registry
+│   │   └── DynamicRoutes.tsx # Routes generated from the backend
 │   └── store/
-│       ├── auth.store.ts     # Estado de autenticación
-│       └── menu.store.ts     # Estado del menú
-├── index.html               # CSS variables del sistema de diseño
+│       ├── auth.store.ts     # Authentication state
+│       ├── menu.store.ts     # Menu state
+│       └── ui.store.ts       # UI state
+├── tailwind.config.ts        # Design-system tokens (colors, fonts, shadows)
+├── src/index.css             # Tailwind layers + global base styles
 └── .env.local
 ```
 
 ---
 
-## Tokens de diseño (CSS variables)
+## Design tokens (Tailwind theme)
 
-Todos los estilos del frontend usan CSS custom properties definidas en `index.html`. Puedes sobreescribirlas para cambiar la apariencia de toda la app:
+The frontend is styled with **Tailwind CSS**. The design-system tokens (brand colors, gray scale, status colors, shadows, fonts) live in `tailwind.config.ts` under `theme.extend`. Edit them there to change the look of the whole app:
 
-```css
-/* index.html — sección :root */
-:root {
-  /* Colores de marca — cámbialos para adaptar Quiver a tu identidad */
-  --brand-500: #009ca6;   /* color principal */
-  --brand-400: #00b3be;
-  --brand-600: #007a83;
-  --brand-50:  #e6f7f8;   /* fondos sutiles */
-  --brand-100: #b3e8ec;
-  --brand-700: #005e63;   /* texto sobre fondo de marca */
-
-  /* Escala de grises */
-  --gray-50:  #f9f9f9;
-  --gray-100: #f3f3f3;
-  --gray-200: #e8e8e8;
-  --gray-300: #d4d4d4;
-  --gray-400: #c0c0c0;
-  --gray-500: #adadad;
-  --gray-600: #8a8a8a;
-  --gray-700: #6b6b6b;
-  --gray-800: #3d3d3d;
-  --gray-900: #1a1a1a;
-
-  /* Estado */
-  --success-500: #2d9e6b;
-  --success-50:  #edf7f2;
-  --danger-500:  #d94040;
-  --danger-50:   #fdf0f0;
-  --warning-500: #c78b1a;
-  --warning-50:  #fdf6e6;
-
-  /* Sombras */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-}
+```ts
+// tailwind.config.ts — theme.extend.colors
+export default {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          50:  '#e6f7f8',
+          100: '#b3e8ec',
+          400: '#00b3be',
+          500: '#009ca6',   // primary color
+          600: '#007a83',
+          700: '#005e63',
+        },
+        gray: {
+          50:  '#f9f9f9',
+          100: '#f3f3f3',
+          200: '#e8e8e8',
+          300: '#d4d4d4',
+          400: '#c0c0c0',
+          500: '#adadad',
+          600: '#8a8a8a',
+          700: '#6b6b6b',
+          800: '#3d3d3d',
+          900: '#1a1a1a',
+        },
+        success: { 50: '#edf7f2', 500: '#2d9e6b' },
+        danger:  { 50: '#fdf0f0', 500: '#d94040' },
+        warning: { 50: '#fdf6e6', 500: '#c78b1a' },
+      },
+    },
+  },
+} satisfies Config
 ```
 
-Para cambiar el color principal de Quiver a, por ejemplo, un azul corporativo:
+To change Quiver's primary color to, for example, a corporate blue, override the `brand` scale:
 
-```css
-:root {
-  --brand-500: #2563eb;
-  --brand-400: #3b82f6;
-  --brand-600: #1d4ed8;
-  --brand-50:  #eff6ff;
-  --brand-100: #dbeafe;
-  --brand-700: #1e40af;
-}
+```ts
+brand: {
+  50:  '#eff6ff',
+  100: '#dbeafe',
+  400: '#3b82f6',
+  500: '#2563eb',
+  600: '#1d4ed8',
+  700: '#1e40af',
+},
 ```
 
 ---
 
-## Componentes UI disponibles
+## Available UI components
 
-Todos los componentes están en `src/components/ui/` y usan los tokens CSS del sistema de diseño.
+All components live in `src/components/ui/` and are styled with the Tailwind theme tokens.
 
 ### `Button`
 
 ```tsx
 import { Button } from '@/components/ui/Button'
 
-<Button variant="primary" onClick={handleClick}>Guardar</Button>
-<Button variant="secondary">Cancelar</Button>
-<Button variant="danger">Eliminar</Button>
-<Button variant="ghost">Más opciones</Button>
-<Button variant="link" href="/ruta">Enlace</Button>
+<Button variant="primary" onClick={handleClick}>Save</Button>
+<Button variant="secondary">Cancel</Button>
+<Button variant="danger">Delete</Button>
+<Button variant="ghost">More options</Button>
+<Button variant="link">Link</Button>
 
-// Con icono
-import { Plus } from 'lucide-react'
-<Button variant="primary" icon={<Plus size={14} />}>Nuevo</Button>
+// Sizes
+<Button variant="primary" size="sm">Small</Button>
 
-// Cargando
-<Button variant="primary" loading>Guardando...</Button>
+// Loading state (shows a spinner and disables the button)
+<Button variant="primary" loading>Saving...</Button>
 ```
 
 ### `Input`, `PasswordInput`, `QSelect`, `Textarea`
@@ -129,22 +187,28 @@ import { QSelect } from '@/components/ui/QSelect'
 import { Textarea } from '@/components/ui/Textarea'
 
 <Input
-  label="Nombre"
+  label="Name"
   value={name}
   onChange={e => setName(e.target.value)}
   required
-  error="El nombre es obligatorio"
-  help_text="Máximo 100 caracteres"
+  error="Name is required"
+  hint="Up to 100 characters"
 />
 
-<PasswordInput label="Contraseña" value={pass} onChange={...} />
+<PasswordInput label="Password" value={pass} onChange={...} />
 
-<QSelect label="Estado" value={status} onChange={...}>
-  <option value="active">Activo</option>
-  <option value="inactive">Inactivo</option>
-</QSelect>
+// QSelect takes an `options` array (strings or { value, label }) — you can also pass <option> children
+<QSelect
+  label="Status"
+  value={status}
+  onChange={...}
+  options={[
+    { value: 'active',   label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+  ]}
+/>
 
-<Textarea label="Descripción" value={desc} onChange={...} rows={5} />
+<Textarea label="Description" value={desc} onChange={...} rows={5} />
 ```
 
 ### `Badge`
@@ -152,26 +216,26 @@ import { Textarea } from '@/components/ui/Textarea'
 ```tsx
 import { Badge } from '@/components/ui/Badge'
 
-<Badge variant="active">Activo</Badge>
-<Badge variant="inactive">Inactivo</Badge>
-<Badge variant="success">Completado</Badge>
+<Badge variant="active">Active</Badge>
+<Badge variant="inactive">Inactive</Badge>
+<Badge variant="success">Completed</Badge>
 <Badge variant="danger">Error</Badge>
-<Badge variant="warning">Pendiente</Badge>
+<Badge variant="warning">Pending</Badge>
 <Badge variant="admin">Admin</Badge>
-<Badge variant="client">Cliente</Badge>
+<Badge variant="client">Client</Badge>
 ```
 
 ### `Alert`
 
-Para mensajes de error o información inline en formularios:
+For inline error or information messages in forms:
 
 ```tsx
 import { Alert } from '@/components/ui/Alert'
 
-<Alert type="error" message="Credenciales incorrectas" />
-<Alert type="success" message="Cambios guardados" />
-<Alert type="warning" message="Esta acción no se puede deshacer" />
-<Alert type="info" message="El proceso puede tardar unos segundos" />
+<Alert type="error" message="Invalid credentials" />
+<Alert type="success" message="Changes saved" />
+<Alert type="warning" message="This action cannot be undone" />
+<Alert type="info" message="The process may take a few seconds" />
 ```
 
 ### `Card`
@@ -179,8 +243,8 @@ import { Alert } from '@/components/ui/Alert'
 ```tsx
 import { Card } from '@/components/ui/Card'
 
-<Card style={{ padding: 20 }}>
-  Contenido con fondo blanco y sombra suave
+<Card className="p-5">
+  Content on a white background with a soft shadow
 </Card>
 ```
 
@@ -192,7 +256,7 @@ import { Toggle } from '@/components/ui/Toggle'
 <Toggle
   checked={isActive}
   onChange={setIsActive}
-  label="Activo"
+  label="Active"
 />
 ```
 
@@ -204,9 +268,9 @@ import { Package } from 'lucide-react'
 
 <EmptyState
   icon={<Package size={40} />}
-  title="Sin productos"
-  description="Crea tu primer producto para empezar."
-  action={<Button variant="primary">Nuevo producto</Button>}
+  title="No products"
+  description="Create your first product to get started."
+  action={<Button variant="primary">New product</Button>}
 />
 ```
 
@@ -216,70 +280,86 @@ import { Package } from 'lucide-react'
 import { PageHeader } from '@/components/ui/PageHeader'
 
 <PageHeader
-  title="Productos"
-  subtitle="Gestiona el catálogo de productos"
-  actions={<Button variant="primary">Nuevo producto</Button>}
+  title="Products"
+  subtitle="Manage the product catalog"
+  actions={<Button variant="primary">New product</Button>}
 />
 ```
 
-### Toast (notificaciones)
+### Toast (notifications)
+
+Toasts are provided by the `ToastProvider` context. Use the `useToast` hook and call `toast(message, type)`:
 
 ```tsx
-import { useToast } from '@/store/toast.store'
+import { useToast } from '@/components/ui/Toast'
 
 const { toast } = useToast()
 
-toast({ type: 'success', message: 'Producto creado correctamente' })
-toast({ type: 'error',   message: 'Error al guardar' })
-toast({ type: 'warning', message: 'Los cambios no se han guardado' })
+toast('Product created successfully', 'success')
+toast('Failed to save', 'error')
+toast('Your changes have not been saved', 'warning')
+toast('Heads up', 'info')
 ```
 
 ---
 
-## Personalizar el portal (`UserLayout.tsx`)
+## Customizing the portal (`UserLayout.tsx`)
 
-El fichero que más vas a modificar es `src/layout/UserLayout.tsx`. Controla la navbar y el footer del portal.
+The file you will modify most is `src/layout/UserLayout.tsx`. It controls the portal navbar and footer, and is styled with Tailwind classes.
 
 ```tsx
 // src/layout/UserLayout.tsx
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth.store'
 import { QuiverLogo } from '@/components/ui/QuiverLogo'
+import { cn } from '@/lib/utils'
 
 export function UserLayout() {
-  const { user, logout } = useAuthStore()
+  const { user } = useAuthStore()
+  const location = useLocation()
+
+  const navLinkClass = (path: string) => cn(
+    'inline-flex items-center px-[10px] py-[5px] rounded text-base no-underline border border-transparent transition-colors',
+    location.pathname === path || location.pathname.startsWith(path + '/')
+      ? 'text-brand-600 bg-brand-50'
+      : 'text-gray-700 bg-transparent hover:bg-gray-100',
+  )
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--gray-50)' }}>
+    <div className="min-h-screen flex flex-col bg-gray-50">
 
-      {/* Navbar — personaliza aquí */}
-      <nav style={{ height: 60, background: 'white', borderBottom: '1px solid var(--gray-200)',
-        display: 'flex', alignItems: 'center', padding: '0 32px', gap: 24, position: 'sticky', top: 0, zIndex: 100 }}>
+      {/* Navbar — customize here */}
+      <header className="h-[60px] shrink-0 bg-white border-b border-gray-200 flex items-center px-6 gap-4 sticky top-0 z-[100]">
 
-        {/* Logo/nombre de tu empresa */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+        {/* Your company logo/name */}
+        <Link to="/portal" className="flex items-center gap-2 no-underline">
           <QuiverLogo size={26} />
-          <span style={{ fontSize: 14, fontWeight: 600 }}>Mi Empresa</span>
-        </div>
+          <span className="text-base font-semibold text-gray-900">My Company</span>
+        </Link>
 
-        {/* Tus enlaces de navegación */}
-        <NavLink to="/portal/mis-pedidos" style={navLinkStyle}>Mis pedidos</NavLink>
-        <NavLink to="/portal/facturas"    style={navLinkStyle}>Facturas</NavLink>
-        <NavLink to="/portal/perfil"      style={navLinkStyle}>Mi perfil</NavLink>
+        {/* Your navigation links */}
+        <nav className="flex items-center gap-1 ml-2">
+          <Link to="/portal/orders"   className={navLinkClass('/portal/orders')}>My orders</Link>
+          <Link to="/portal/invoices" className={navLinkClass('/portal/invoices')}>Invoices</Link>
+          <Link to="/portal/perfil"   className={navLinkClass('/portal/perfil')}>My profile</Link>
+        </nav>
 
-        {/* Usuario actual */}
-        <span style={{ fontSize: 13, color: 'var(--gray-600)' }}>{user?.first_name}</span>
-        <button onClick={logout}>Salir</button>
-      </nav>
+        <div className="flex-1" />
 
-      {/* Contenido */}
-      <main style={{ flex: 1, maxWidth: 1100, width: '100%', margin: '0 auto', padding: 32 }}>
+        {/* Current user */}
+        {user && (
+          <span className="text-md text-gray-800">{user.first_name}</span>
+        )}
+      </header>
+
+      {/* Content */}
+      <main className="flex-1 max-w-[1100px] w-full mx-auto p-8">
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer style={{ background: 'white', borderTop: '1px solid var(--gray-200)', padding: '14px 32px', fontSize: 12, color: 'var(--gray-500)' }}>
-        © 2025 Mi Empresa S.L.
+      <footer className="bg-white border-t border-gray-200 px-8 py-[14px] text-xs text-gray-400">
+        © {new Date().getFullYear()} My Company Ltd.
       </footer>
     </div>
   )
@@ -288,27 +368,28 @@ export function UserLayout() {
 
 ---
 
-## Acceder a los datos del usuario en el frontend
+## Accessing the user's data in the frontend
 
 ```tsx
 import { useAuthStore } from '@/store/auth.store'
 
-const { user } = useAuthStore()
+const { user, logout } = useAuthStore()
 
 // user.id, user.email, user.first_name, user.last_name
-// user.is_superuser, user.roles (array de strings)
+// user.is_superuser, user.roles (array of strings)
+// logout() — clears the session and redirects to login
 ```
 
 ---
 
-## Icono library
+## Icon library
 
-Quiver usa [lucide-react](https://lucide.dev/) para todos los iconos. Ya está instalado:
+Quiver uses [lucide-react](https://lucide.dev/) for all icons. It is already installed:
 
 ```tsx
 import { Package, ShoppingCart, Users, Settings, ChevronRight } from 'lucide-react'
 
-<Package size={20} color="var(--brand-500)" />
+<Package size={20} className="text-brand-500" />
 ```
 
 ---

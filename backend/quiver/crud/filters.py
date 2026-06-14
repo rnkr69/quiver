@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date
-from typing import Any, Optional
-
-from sqlalchemy import Column, and_
+from typing import Any
 
 
 @dataclass
 class TextFilter:
     key: str
-    label: Optional[str] = None
+    label: str | None = None
 
     def apply(self, query, value: str, model):
         col = getattr(model, self.key, None)
@@ -30,7 +27,7 @@ class TextFilter:
 class SelectFilter:
     key: str
     choices: list[dict] = field(default_factory=list)  # [{"value": ..., "label": ...}]
-    label: Optional[str] = None
+    label: str | None = None
 
     def apply(self, query, value: Any, model):
         col = getattr(model, self.key, None)
@@ -50,9 +47,9 @@ class SelectFilter:
 @dataclass
 class BooleanFilter:
     key: str
-    label: Optional[str] = None
+    label: str | None = None
 
-    def apply(self, query, value: Optional[str], model):
+    def apply(self, query, value: str | None, model):
         col = getattr(model, self.key, None)
         if col is None or value is None or value == "":
             return query
@@ -70,7 +67,7 @@ class BooleanFilter:
 @dataclass
 class DateRangeFilter:
     key: str
-    label: Optional[str] = None
+    label: str | None = None
 
     def apply(self, query, value: dict, model):
         """value = {"from": "2024-01-01", "to": "2024-12-31"}"""

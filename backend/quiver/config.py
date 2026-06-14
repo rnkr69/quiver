@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from quiver.email import EmailSender
@@ -17,10 +17,11 @@ class QuiverConfig:
     DATABASE_URL: str
     QUIVER_ENV: str
     QUIVER_PREFIX: str
+    QUIVER_FRONTEND_PATH: str
     QUIVER_PORTAL_ROLES: list[str]
     QUIVER_FRONTEND_URL: str
     QUIVER_PORTAL_WELCOME_MESSAGE: str
-    email_sender: Optional["EmailSender"]
+    email_sender: EmailSender | None
 
     def __init__(
         self,
@@ -28,25 +29,46 @@ class QuiverConfig:
         database_url: str | None = None,
         quiver_env: str | None = None,
         quiver_prefix: str | None = None,
+        quiver_frontend_path: str | None = None,
         quiver_portal_roles: str | None = None,
         quiver_frontend_url: str | None = None,
         quiver_portal_welcome_message: str | None = None,
-        email_sender: Optional["EmailSender"] = None,
+        email_sender: EmailSender | None = None,
     ) -> None:
         # None means "not provided" → read from env. Empty string means explicitly empty.
         self.SECRET_KEY = secret_key if secret_key is not None else os.getenv("SECRET_KEY", "")
-        self.DATABASE_URL = database_url if database_url is not None else os.getenv("DATABASE_URL", "")
-        self.QUIVER_ENV = quiver_env if quiver_env is not None else os.getenv("QUIVER_ENV", "development")
-        self.QUIVER_PREFIX = quiver_prefix if quiver_prefix is not None else os.getenv("QUIVER_PREFIX", "/quiver/v1")
-        raw_roles = quiver_portal_roles if quiver_portal_roles is not None else os.getenv("QUIVER_PORTAL_ROLES", "")
+        self.DATABASE_URL = (
+            database_url if database_url is not None else os.getenv("DATABASE_URL", "")
+        )
+        self.QUIVER_ENV = (
+            quiver_env if quiver_env is not None else os.getenv("QUIVER_ENV", "development")
+        )
+        self.QUIVER_PREFIX = (
+            quiver_prefix if quiver_prefix is not None else os.getenv("QUIVER_PREFIX", "/quiver/v1")
+        )
+        self.QUIVER_FRONTEND_PATH = (
+            quiver_frontend_path
+            if quiver_frontend_path is not None
+            else os.getenv("QUIVER_FRONTEND_PATH", "/quiver")
+        )
+        raw_roles = (
+            quiver_portal_roles
+            if quiver_portal_roles is not None
+            else os.getenv("QUIVER_PORTAL_ROLES", "")
+        )
         self.QUIVER_PORTAL_ROLES = [r.strip() for r in raw_roles.split(",") if r.strip()]
         self.QUIVER_FRONTEND_URL = (
-            quiver_frontend_url if quiver_frontend_url is not None
+            quiver_frontend_url
+            if quiver_frontend_url is not None
             else os.getenv("QUIVER_FRONTEND_URL", "http://localhost:5173")
         )
         self.QUIVER_PORTAL_WELCOME_MESSAGE = (
-            quiver_portal_welcome_message if quiver_portal_welcome_message is not None
-            else os.getenv("QUIVER_PORTAL_WELCOME_MESSAGE", "Bienvenido. Esta sección estará disponible próximamente.")
+            quiver_portal_welcome_message
+            if quiver_portal_welcome_message is not None
+            else os.getenv(
+                "QUIVER_PORTAL_WELCOME_MESSAGE",
+                "Bienvenido. Esta sección estará disponible próximamente.",
+            )
         )
         self.email_sender = email_sender
 

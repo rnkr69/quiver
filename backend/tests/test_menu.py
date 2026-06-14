@@ -1,16 +1,15 @@
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlmodel import SQLModel, create_engine, Session
 from sqlalchemy.pool import StaticPool
+from sqlmodel import Session, SQLModel, create_engine
 
 from quiver.app import QuiverApp
-from quiver.menu.schemas import MenuGroup, MenuItem
 from quiver.menu.builder import MenuBuilder
-from quiver.menu.registry import set_menu, get_menu_config
-
+from quiver.menu.schemas import MenuGroup, MenuItem
 
 # ── unit tests for MenuBuilder ───────────────────────────────────────────────
+
 
 class TestMenuBuilderFiltering:
     MENU = [
@@ -66,6 +65,7 @@ class TestMenuBuilderFiltering:
 
 # ── integration test for GET /admin/menu endpoint ────────────────────────────
 
+
 def _make_engine():
     return create_engine(
         "sqlite://",
@@ -76,17 +76,20 @@ def _make_engine():
 
 def create_all_tables():
     from quiver.database.session import _get_engine
+
     SQLModel.metadata.create_all(_get_engine())
 
 
 @pytest.fixture(scope="module")
 def app_client():
     import os
+
     os.environ.setdefault("SECRET_KEY", "test-secret-for-menu")
     os.environ.setdefault("DATABASE_URL", "sqlite://")
 
     engine = _make_engine()
     import quiver.database.session as _sess
+
     _sess._engine = engine
 
     fa = FastAPI()
@@ -94,10 +97,12 @@ def app_client():
     create_all_tables()
 
     # Set a menu with one public and one restricted item
-    qapp.set_menu([
-        MenuItem(label="Dashboard", route="/admin"),
-        MenuItem(label="Secreto", route="/admin/secret", permission="secret.view"),
-    ])
+    qapp.set_menu(
+        [
+            MenuItem(label="Dashboard", route="/admin"),
+            MenuItem(label="Secreto", route="/admin/secret", permission="secret.view"),
+        ]
+    )
 
     client = TestClient(fa, raise_server_exceptions=True)
     client.__enter__()
@@ -106,25 +111,32 @@ def app_client():
 
 
 def _get_admin_token(client):
-    from quiver.models.admin_user import AdminUser
+    import uuid
+
     from quiver.auth.password import hash_password
     from quiver.database.session import _get_engine
-    import uuid
+    from quiver.models.admin_user import AdminUser
 
     suffix = uuid.uuid4().hex[:8]
     with Session(_get_engine()) as db:
         u = AdminUser(
             email=f"menu_admin_{suffix}@example.com",
             password_hash=hash_password("pass"),
-            first_name="M", last_name="A",
-            is_superuser=True, is_active=True,
+            first_name="M",
+            last_name="A",
+            is_superuser=True,
+            is_active=True,
         )
-        db.add(u); db.commit()
+        db.add(u)
+        db.commit()
 
-    res = client.post("/quiver/v1/auth/login", json={
-        "email": f"menu_admin_{suffix}@example.com",
-        "password": "pass",
-    })
+    res = client.post(
+        "/quiver/v1/auth/login",
+        json={
+            "email": f"menu_admin_{suffix}@example.com",
+            "password": "pass",
+        },
+    )
     return res.json()["access_token"]
 
 

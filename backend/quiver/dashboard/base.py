@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 
 class QuiverWidget(ABC):
     title: str
     component: str
-    permission: Optional[str] = None
+    permission: str | None = None
 
-    def __init__(self, title: str, *, component: str = "StatCard", permission: Optional[str] = None):
+    def __init__(self, title: str, *, component: str = "StatCard", permission: str | None = None):
         self.title = title
         self.component = component
         self.permission = permission

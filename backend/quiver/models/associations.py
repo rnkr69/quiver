@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import uuid
 from datetime import datetime
-from typing import Optional
 
 import sqlalchemy as sa
 from sqlmodel import Field, SQLModel

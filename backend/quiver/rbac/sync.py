@@ -14,20 +14,20 @@ def sync_permissions(db: Session) -> int:
 
     upserted = 0
     for defn in registry.values():
-        existing = db.exec(
-            select(Permission).where(Permission.name == defn.name)
-        ).first()
+        existing = db.exec(select(Permission).where(Permission.name == defn.name)).first()
 
         if existing:
             existing.display_name = defn.display_name
             existing.group = defn.group
             db.add(existing)
         else:
-            db.add(Permission(
-                name=defn.name,
-                display_name=defn.display_name,
-                group=defn.group,
-            ))
+            db.add(
+                Permission(
+                    name=defn.name,
+                    display_name=defn.display_name,
+                    group=defn.group,
+                )
+            )
         upserted += 1
 
     db.commit()

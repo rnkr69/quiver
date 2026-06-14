@@ -2,22 +2,23 @@ from __future__ import annotations
 
 import os
 import uuid
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlalchemy.pool import StaticPool
 from sqlalchemy import create_engine
+from sqlalchemy.pool import StaticPool
 from sqlmodel import Session
 
 os.environ.setdefault("SECRET_KEY", "test-secret-dashboard")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 
-from quiver.database.session import override_engine, create_all_tables
-from quiver.models.admin_user import AdminUser
-from quiver.auth.password import hash_password
-from quiver.auth.jwt import create_access_token
 from quiver import QuiverApp
-from quiver.dashboard import StatCardWidget, ChartWidget
+from quiver.auth.jwt import create_access_token
+from quiver.auth.password import hash_password
+from quiver.dashboard import StatCardWidget
+from quiver.database.session import create_all_tables, override_engine
+from quiver.models.admin_user import AdminUser
 
 
 @pytest.fixture(scope="module")
@@ -105,6 +106,7 @@ def test_dashboard_empty_no_widgets():
     """Test endpoint returns [] when no widgets registered."""
     # Use a fresh registry by mocking
     from quiver.dashboard import registry as reg
+
     original = reg._WIDGET_REGISTRY[:]
     reg._WIDGET_REGISTRY.clear()
     try:
@@ -122,12 +124,18 @@ def test_dashboard_empty_no_widgets():
                 user = AdminUser(
                     email=f"empty_{uuid.uuid4().hex[:8]}@example.com",
                     password_hash=hash_password("pass"),
-                    first_name="E", last_name="U",
-                    is_superuser=True, is_active=True,
+                    first_name="E",
+                    last_name="U",
+                    is_superuser=True,
+                    is_active=True,
                 )
-                db.add(user); db.commit(); db.refresh(user)
+                db.add(user)
+                db.commit()
+                db.refresh(user)
                 token = create_access_token(user, roles=[], permissions=[])
-            r = client.get("/quiver/v1/admin/dashboard", headers={"Authorization": f"Bearer {token}"})
+            r = client.get(
+                "/quiver/v1/admin/dashboard", headers={"Authorization": f"Bearer {token}"}
+            )
             assert r.status_code == 200
             assert r.json() == []
     finally:

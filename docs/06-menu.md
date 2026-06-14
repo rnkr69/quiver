@@ -1,10 +1,12 @@
-# Menú
+> 🇪🇸 [Versión en español](es/06-menu.md)
 
-El menú lateral del admin se configura en Python con `quiver.set_menu(...)`. Si no lo configuras, el sidebar aparece vacío (solo los ítems built-in de usuarios y roles son accesibles por URL directa).
+# Menu
+
+The admin sidebar menu is configured in Python with `quiver.set_menu(...)`. If you don't configure it, the sidebar appears empty (only the built-in users and roles items are reachable via direct URL).
 
 ---
 
-## Estructura básica
+## Basic structure
 
 ```python
 from quiver import QuiverApp
@@ -14,16 +16,16 @@ quiver = QuiverApp(app)
 
 quiver.set_menu([
     MenuItem("Dashboard",  route="/admin"),
-    MenuGroup("Catálogo", items=[
-        MenuItem("Productos",   route="/admin/products",   permission="products.list"),
-        MenuItem("Categorías",  route="/admin/categories", permission="categories.list"),
+    MenuGroup("Catalog", items=[
+        MenuItem("Products",   route="/admin/products",   permission="products.list"),
+        MenuItem("Categories", route="/admin/categories", permission="categories.list"),
     ]),
-    MenuGroup("Gestión", items=[
-        MenuItem("Pedidos",     route="/admin/orders",     permission="orders.list"),
-        MenuItem("Clientes",    route="/admin/customers",  permission="customers.list"),
+    MenuGroup("Management", items=[
+        MenuItem("Orders",     route="/admin/orders",     permission="orders.list"),
+        MenuItem("Customers",  route="/admin/customers",  permission="customers.list"),
     ]),
-    MenuItem("Usuarios",   route="/admin/users",   permission="users.list"),
-    MenuItem("Roles",      route="/admin/roles",   permission="roles.list"),
+    MenuItem("Users",   route="/admin/users",   permission="users.list"),
+    MenuItem("Roles",   route="/admin/roles",   permission="roles.list"),
 ])
 ```
 
@@ -31,72 +33,72 @@ quiver.set_menu([
 
 ## `MenuItem`
 
-Ítem de menú simple, sin hijos.
+A simple menu item, with no children.
 
-| Parámetro | Tipo | Descripción |
+| Parameter | Type | Description |
 |---|---|---|
-| `label` | `str` | Texto visible en el sidebar |
-| `route` | `str` | Ruta del frontend (p.ej. `/admin/products`) |
-| `permission` | `str \| None` | Si se especifica, el ítem solo aparece si el usuario tiene ese permiso |
-| `icon` | `str \| None` | Nombre del icono (reservado para uso futuro) |
+| `label` | `str` | Text shown in the sidebar |
+| `route` | `str` | Frontend route (e.g. `/admin/products`) |
+| `permission` | `str \| None` | If set, the item only appears when the user has that permission |
+| `icon` | `str \| None` | Icon name (reserved for future use) |
 
 ```python
-MenuItem("Pedidos", route="/admin/orders", permission="orders.list")
+MenuItem("Orders", route="/admin/orders", permission="orders.list")
 ```
 
-Si `permission` se omite, el ítem es siempre visible para cualquier usuario autenticado.
+If `permission` is omitted, the item is always visible to any authenticated user.
 
 ---
 
 ## `MenuGroup`
 
-Agrupa ítems bajo un título colapsable.
+Groups items under a collapsible heading.
 
-| Parámetro | Tipo | Descripción |
+| Parameter | Type | Description |
 |---|---|---|
-| `title` | `str` | Cabecera del grupo (en mayúsculas en el sidebar) |
-| `items` | `list[MenuItem]` | Ítems que contiene el grupo |
-| `icon` | `str \| None` | Icono del grupo (reservado) |
+| `title` | `str` | Group heading (shown in uppercase in the sidebar) |
+| `items` | `list[MenuItem]` | Items the group contains |
+| `icon` | `str \| None` | Group icon (reserved) |
 
 ```python
-MenuGroup("Catálogo", items=[
-    MenuItem("Productos",  route="/admin/products",  permission="products.list"),
-    MenuItem("Categorías", route="/admin/categories"),
+MenuGroup("Catalog", items=[
+    MenuItem("Products",   route="/admin/products",  permission="products.list"),
+    MenuItem("Categories", route="/admin/categories"),
 ])
 ```
 
-Los grupos son colapsables por el usuario. El estado se guarda en `localStorage`.
+Groups can be collapsed by the user. The state is saved in `localStorage`.
 
 ---
 
-## Visibilidad basada en permisos
+## Permission-based visibility
 
-El backend filtra los ítems por los permisos del usuario antes de devolver el menú. Un usuario solo ve los ítems para los que tiene permiso.
+The backend filters items by the user's permissions before returning the menu. A user only sees the items they have permission for.
 
-Los ítems sin `permission` son siempre visibles para cualquier usuario autenticado en el admin.
+Items without `permission` are always visible to any authenticated user in the admin.
 
 ---
 
-## Ítems de menú para páginas custom
+## Menu items for custom pages
 
-Si añades una [página custom](07-paginas-custom.md), añade también su ítem al menú:
+If you add a [custom page](07-custom-pages.md), add its menu item too:
 
 ```python
 from quiver.rbac.registry import quiver_permission
 
-quiver_permission("reports.view", display_name="Ver reportes", group="Reportes")
+quiver_permission("reports.view", display_name="View reports", group="Reports")
 
 quiver.set_menu([
     ...
-    MenuGroup("Reportes", items=[
-        MenuItem("Ventas del mes", route="/admin/reportes/ventas", permission="reports.view"),
+    MenuGroup("Reports", items=[
+        MenuItem("Monthly sales", route="/admin/reports/sales", permission="reports.view"),
     ]),
 ])
 ```
 
 ---
 
-## Ejemplo completo
+## Full example
 
 ```python
 # main.py
@@ -106,7 +108,7 @@ from quiver.menu.schemas import MenuGroup, MenuItem
 from cruds.product_crud import ProductCRUD
 from cruds.category_crud import CategoryCRUD
 from cruds.order_crud import OrderCRUD
-import permissions  # registra permisos custom
+import permissions  # registers custom permissions
 
 app = FastAPI()
 quiver = QuiverApp(app)
@@ -116,21 +118,21 @@ quiver.register(OrderCRUD)
 
 quiver.set_menu([
     MenuItem("Dashboard", route="/admin"),
-    MenuGroup("Catálogo", items=[
-        MenuItem("Productos",   route="/admin/products",   permission="products.list"),
-        MenuItem("Categorías",  route="/admin/categories", permission="categories.list"),
+    MenuGroup("Catalog", items=[
+        MenuItem("Products",   route="/admin/products",   permission="products.list"),
+        MenuItem("Categories", route="/admin/categories", permission="categories.list"),
     ]),
-    MenuGroup("Ventas", items=[
-        MenuItem("Pedidos",     route="/admin/orders",     permission="orders.list"),
+    MenuGroup("Sales", items=[
+        MenuItem("Orders",     route="/admin/orders",     permission="orders.list"),
     ]),
-    MenuGroup("Reportes", items=[
-        MenuItem("Ventas del mes", route="/admin/reportes/ventas", permission="reports.view"),
+    MenuGroup("Reports", items=[
+        MenuItem("Monthly sales", route="/admin/reports/sales", permission="reports.view"),
     ]),
-    MenuItem("Usuarios", route="/admin/users", permission="users.list"),
-    MenuItem("Roles",    route="/admin/roles",  permission="roles.list"),
+    MenuItem("Users", route="/admin/users", permission="users.list"),
+    MenuItem("Roles", route="/admin/roles",  permission="roles.list"),
 ])
 ```
 
 ---
 
-← [Roles y permisos](05-rbac.md) | [Páginas custom →](07-paginas-custom.md)
+← [Roles and permissions](05-rbac.md) | [Custom pages →](07-custom-pages.md)

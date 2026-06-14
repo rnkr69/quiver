@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import secrets
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
 from jose import ExpiredSignatureError, JWTError, jwt
@@ -30,11 +30,12 @@ class TokenInvalidError(QuiverUnauthorized):
 
 def _get_config():
     from quiver.config import QuiverConfig
+
     return QuiverConfig()
 
 
 def create_access_token(
-    user: "AdminUser",
+    user: AdminUser,
     roles: list[str] | None = None,
     permissions: list[str] | None = None,
     expire_minutes: int | None = None,
@@ -43,7 +44,7 @@ def create_access_token(
     minutes = expire_minutes or int(
         getattr(cfg, "QUIVER_ACCESS_TOKEN_EXPIRE_MINUTES", _DEFAULT_ACCESS_EXPIRE_MINUTES)
     )
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     payload: dict[str, Any] = {
         "sub": str(user.id),
         "roles": roles or [],
@@ -61,9 +62,9 @@ def decode_access_token(token: str) -> dict[str, Any]:
         payload = jwt.decode(token, cfg.SECRET_KEY, algorithms=[_ALGORITHM])
         return payload
     except ExpiredSignatureError:
-        raise TokenExpiredError()
+        raise TokenExpiredError() from None
     except JWTError:
-        raise TokenInvalidError()
+        raise TokenInvalidError() from None
 
 
 def create_refresh_token() -> tuple[str, str]:

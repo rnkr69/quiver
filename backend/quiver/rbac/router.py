@@ -34,9 +34,12 @@ def create_rbac_router() -> APIRouter:
     ):
         role = service.create_role(body, db)
         return schemas.RoleResponse(
-            id=str(role.id), name=role.name,
-            display_name=role.display_name, description=role.description,
-            permissions_count=0, users_count=0,
+            id=str(role.id),
+            name=role.name,
+            display_name=role.display_name,
+            description=role.description,
+            permissions_count=0,
+            users_count=0,
         )
 
     @router.put("/roles/{role_id}", response_model=schemas.RoleResponse)
@@ -50,9 +53,12 @@ def create_rbac_router() -> APIRouter:
         stats = service.get_roles_with_stats(db)
         stat = next((s for s in stats if s.id == str(role.id)), None)
         return stat or schemas.RoleResponse(
-            id=str(role.id), name=role.name,
-            display_name=role.display_name, description=role.description,
-            permissions_count=0, users_count=0,
+            id=str(role.id),
+            name=role.name,
+            display_name=role.display_name,
+            description=role.description,
+            permissions_count=0,
+            users_count=0,
         )
 
     @router.delete("/roles/{role_id}", status_code=204)

@@ -11,9 +11,7 @@ from quiver.rbac.schemas import RoleCreate, RoleDetailResponse, RoleResponse, Ro
 
 def get_user_permissions(user_id: str, db: Session) -> list[str]:
     """Return unique flat list of permission names for a user (via all their roles)."""
-    role_ids_q = db.exec(
-        select(UserHasRole.role_id).where(UserHasRole.user_id == user_id)
-    ).all()
+    role_ids_q = db.exec(select(UserHasRole.role_id).where(UserHasRole.user_id == user_id)).all()
     if not role_ids_q:
         return []
 
@@ -30,9 +28,7 @@ def get_user_permissions(user_id: str, db: Session) -> list[str]:
 
 
 def assign_roles_to_user(user_id: str, role_ids: list[str], db: Session) -> None:
-    existing = db.exec(
-        select(UserHasRole).where(UserHasRole.user_id == user_id)
-    ).all()
+    existing = db.exec(select(UserHasRole).where(UserHasRole.user_id == user_id)).all()
     for row in existing:
         db.delete(row)
 
@@ -45,20 +41,20 @@ def get_roles_with_stats(db: Session) -> list[RoleResponse]:
     roles = db.exec(select(Role)).all()
     result = []
     for role in roles:
-        perm_count = len(db.exec(
-            select(RoleHasPermission).where(RoleHasPermission.role_id == role.id)
-        ).all())
-        user_count = len(db.exec(
-            select(UserHasRole).where(UserHasRole.role_id == role.id)
-        ).all())
-        result.append(RoleResponse(
-            id=str(role.id),
-            name=role.name,
-            display_name=role.display_name,
-            description=role.description,
-            permissions_count=perm_count,
-            users_count=user_count,
-        ))
+        perm_count = len(
+            db.exec(select(RoleHasPermission).where(RoleHasPermission.role_id == role.id)).all()
+        )
+        user_count = len(db.exec(select(UserHasRole).where(UserHasRole.role_id == role.id)).all())
+        result.append(
+            RoleResponse(
+                id=str(role.id),
+                name=role.name,
+                display_name=role.display_name,
+                description=role.description,
+                permissions_count=perm_count,
+                users_count=user_count,
+            )
+        )
     return result
 
 
@@ -73,8 +69,11 @@ def get_role_detail(role_id: str, db: Session) -> RoleDetailResponse:
     for pid in perm_ids:
         p = db.get(Permission, pid)
         if p:
-            perms.append({"id": str(p.id), "name": p.name, "display_name": p.display_name, "group": p.group})
+            perms.append(
+                {"id": str(p.id), "name": p.name, "display_name": p.display_name, "group": p.group}
+            )
     from quiver.rbac.schemas import PermissionResponse
+
     return RoleDetailResponse(
         id=str(role.id),
         name=role.name,
@@ -112,13 +111,11 @@ def delete_role(role_id: str, db: Session) -> None:
         raise QuiverNotFound(f"Role '{role_id}' not found.")
 
     # Guard: if any user has ONLY this role, deleting it would leave them with no roles
-    users_with_role = db.exec(
-        select(UserHasRole).where(UserHasRole.role_id == role_id)
-    ).all()
+    users_with_role = db.exec(select(UserHasRole).where(UserHasRole.role_id == role_id)).all()
     for uhr in users_with_role:
-        user_role_count = len(db.exec(
-            select(UserHasRole).where(UserHasRole.user_id == uhr.user_id)
-        ).all())
+        user_role_count = len(
+            db.exec(select(UserHasRole).where(UserHasRole.user_id == uhr.user_id)).all()
+        )
         if user_role_count == 1:
             raise QuiverBadRequest(
                 f"Cannot delete role '{role.name}': at least one user would be left without any role. "
@@ -140,9 +137,7 @@ def replace_role_permissions(role_id: str, permission_ids: list[str], db: Sessio
         raise QuiverNotFound(f"Role '{role_id}' not found.")
 
     # Atomic replace
-    existing = db.exec(
-        select(RoleHasPermission).where(RoleHasPermission.role_id == role_id)
-    ).all()
+    existing = db.exec(select(RoleHasPermission).where(RoleHasPermission.role_id == role_id)).all()
     for row in existing:
         db.delete(row)
 
@@ -158,8 +153,12 @@ def get_permissions_grouped(db: Session) -> list[dict]:
     perms = db.exec(select(Permission).order_by(Permission.group, Permission.name)).all()
     groups: dict[str, list] = {}
     for p in perms:
-        groups.setdefault(p.group, []).append({
-            "id": str(p.id), "name": p.name,
-            "display_name": p.display_name, "group": p.group,
-        })
+        groups.setdefault(p.group, []).append(
+            {
+                "id": str(p.id),
+                "name": p.name,
+                "display_name": p.display_name,
+                "group": p.group,
+            }
+        )
     return [{"group": g, "permissions": ps} for g, ps in sorted(groups.items())]

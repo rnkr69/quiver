@@ -1,18 +1,17 @@
 import re
 import uuid
-from typing import Optional
 
 import sqlalchemy as sa
 from sqlalchemy.orm import validates
 from sqlmodel import Field, SQLModel
 
-_PERM_NAME_RE = re.compile(r'^[a-z0-9_]+\.[a-z0-9_]+$')
+_PERM_NAME_RE = re.compile(r"^[a-z0-9_]+\.[a-z0-9_]+$")
 
 
 class Permission(SQLModel, table=True):
     __tablename__ = "permissions"
 
-    id: Optional[str] = Field(
+    id: str | None = Field(
         default_factory=lambda: str(uuid.uuid4()),
         primary_key=True,
         max_length=36,

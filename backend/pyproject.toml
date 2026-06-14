@@ -1,8 +1,37 @@
 [project]
-name = "quiver"
+name = "fastapi-quiver"
 version = "0.1.0"
-description = "Quiver — admin panel framework for FastAPI"
+description = "A complete admin panel and user portal for any FastAPI + SQLModel application, declared in Python."
+readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "rnkr69", email = "rnkr69@gmail.com" },
+]
+keywords = [
+    "fastapi",
+    "sqlmodel",
+    "admin",
+    "admin-panel",
+    "dashboard",
+    "rbac",
+    "crud",
+    "backend",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Typing :: Typed",
+]
 dependencies = [
     "fastapi>=0.111.0",
     "sqlmodel>=0.0.18",
@@ -10,10 +39,29 @@ dependencies = [
     "python-jose[cryptography]>=3.3.0",
     "bcrypt>=4.0.0",
     "python-dotenv>=1.0.0",
-    "uvicorn[standard]>=0.29.0",
     "click>=8.1.0",
     "email-validator>=2.0.0",
 ]
+
+[project.optional-dependencies]
+serve = [
+    "uvicorn[standard]>=0.29.0",
+]
+dev = [
+    "uvicorn[standard]>=0.29.0",
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
+    "ruff>=0.6.0",
+    "build>=1.2.0",
+    "twine>=5.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/rnkr69/quiver"
+Repository = "https://github.com/rnkr69/quiver"
+Documentation = "https://github.com/rnkr69/quiver/tree/main/docs"
+Issues = "https://github.com/rnkr69/quiver/issues"
+Changelog = "https://github.com/rnkr69/quiver/blob/main/CHANGELOG.md"
 
 [project.scripts]
 quiver = "quiver.cli:cli"
@@ -25,3 +73,32 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["quiver*"]
+
+[tool.setuptools.package-data]
+# The built admin/portal SPA, bundled into the wheel by the release workflow
+# (frontend `npm run build` outputs to quiver/static before `python -m build`).
+quiver = ["static/**/*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "W",   # pycodestyle warnings
+]
+ignore = [
+    "E501",  # line length is handled by the formatter
+    "B008",  # FastAPI uses function calls (Depends()) in argument defaults
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]  # tests set env vars before importing the package
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

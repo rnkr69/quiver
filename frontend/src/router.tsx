@@ -21,6 +21,10 @@ import { DynamicRoutes } from '@/plugin/DynamicRoutes'
 const PORTAL_ROLES = (import.meta.env.VITE_PORTAL_ROLES as string | undefined)
   ?.split(',').map(r => r.trim()).filter(Boolean) ?? []
 
+// Base path the SPA is served from (must match Vite `base` / backend mount path).
+const RAW_BASE = (import.meta.env.VITE_BASE_PATH as string | undefined) ?? '/quiver/'
+const BASENAME = RAW_BASE === '/' ? '/' : RAW_BASE.replace(/\/+$/, '')
+
 export const router = createBrowserRouter([
   // Auth zone — no guards
   { path: '/auth/login', element: <LoginPage /> },
@@ -75,4 +79,4 @@ export const router = createBrowserRouter([
 
   // Root redirect
   { path: '/', element: <Navigate to="/auth/login" replace /> },
-])
+], { basename: BASENAME })

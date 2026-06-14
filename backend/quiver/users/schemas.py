@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
@@ -18,12 +17,12 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    is_superuser: Optional[bool] = None
-    role_ids: Optional[list[str]] = None
+    email: EmailStr | None = None
+    password: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    is_superuser: bool | None = None
+    role_ids: list[str] | None = None
 
 
 class UserResponse(BaseModel):
@@ -33,7 +32,7 @@ class UserResponse(BaseModel):
     last_name: str
     is_active: bool
     is_superuser: bool
-    last_login_at: Optional[datetime]
+    last_login_at: datetime | None
     created_at: datetime
     roles: list[RoleResponse]
 
@@ -45,5 +44,5 @@ class UserListResponse(BaseModel):
     last_name: str
     is_active: bool
     is_superuser: bool
-    last_login_at: Optional[datetime]
+    last_login_at: datetime | None
     roles: list[RoleResponse]
