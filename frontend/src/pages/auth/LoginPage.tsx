@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { AuthLayout } from '@/layout/AuthLayout'
 import { useAuth } from '@/hooks/useAuth'
 import { Input } from '@/components/ui/Input'
@@ -12,6 +13,7 @@ type Status = 'idle' | 'loading' | 'error'
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { login } = useAuth()
 
   const [email, setEmail] = useState('')
@@ -23,8 +25,8 @@ export function LoginPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const errs = { email: '', password: '' }
-    if (!email) errs.email = 'El email es obligatorio.'
-    if (!password) errs.password = 'La contraseña es obligatoria.'
+    if (!email) errs.email = t('auth.login.emailRequired')
+    if (!password) errs.password = t('auth.login.passwordRequired')
     if (errs.email || errs.password) { setFieldErrors(errs); return }
 
     setStatus('loading')
@@ -41,13 +43,13 @@ export function LoginPage() {
         if (code === 'QUIVER_UNAUTHORIZED') {
           const detail = err.response?.data?.detail ?? ''
           setErrorMsg(detail.toLowerCase().includes('inactiv')
-            ? 'Tu cuenta está desactivada. Contacta con el administrador.'
-            : 'Email o contraseña incorrectos.')
+            ? t('auth.login.accountDisabled')
+            : t('auth.login.invalidCredentials'))
         } else {
-          setErrorMsg('Ha ocurrido un error. Inténtalo de nuevo.')
+          setErrorMsg(t('common.genericError'))
         }
       } else {
-        setErrorMsg('Ha ocurrido un error. Inténtalo de nuevo.')
+        setErrorMsg(t('common.genericError'))
       }
     }
   }
@@ -56,24 +58,24 @@ export function LoginPage() {
 
   return (
     <AuthLayout>
-      <h2 className="text-xl font-semibold text-gray-900 mb-1">Bienvenido</h2>
-      <p className="text-md text-gray-600 mb-6">Accede a tu cuenta</p>
+      <h2 className="text-xl font-semibold text-gray-900 mb-1">{t('auth.login.title')}</h2>
+      <p className="text-md text-gray-600 mb-6">{t('auth.login.subtitle')}</p>
 
       {status === 'error' && <Alert type="error" message={errorMsg} className="mb-4" />}
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <Input
-          label="Email"
+          label={t('auth.fields.email')}
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          placeholder="nombre@empresa.com"
+          placeholder={t('auth.fields.emailPlaceholder')}
           disabled={isLoading}
           error={fieldErrors.email}
           required
         />
         <PasswordInput
-          label="Contraseña"
+          label={t('auth.fields.password')}
           value={password}
           onChange={e => setPassword(e.target.value)}
           disabled={isLoading}
@@ -81,19 +83,19 @@ export function LoginPage() {
           required
         />
         <Button type="submit" variant="primary" className="w-full justify-center py-2.5" loading={isLoading} disabled={isLoading}>
-          {isLoading ? 'Entrando…' : 'Iniciar sesión'}
+          {isLoading ? t('auth.login.submitting') : t('auth.login.submit')}
         </Button>
       </form>
 
       <div className="text-center mt-4">
         <a href="/auth/forgot-password" className="text-md text-brand-500 hover:underline">
-          ¿Olvidaste tu contraseña?
+          {t('auth.login.forgotPassword')}
         </a>
       </div>
 
       {import.meta.env.DEV && (
         <div className="mt-5 bg-gray-50 border border-gray-200 rounded px-3 py-2.5 text-sm text-gray-600">
-          <strong className="text-gray-700">Demo:</strong> usa las credenciales del superusuario creado en el setup.
+          <strong className="text-gray-700">{t('auth.login.demoLabel')}</strong> {t('auth.login.demoHint')}
         </div>
       )}
     </AuthLayout>

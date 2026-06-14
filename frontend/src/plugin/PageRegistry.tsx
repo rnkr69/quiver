@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { useTranslation } from 'react-i18next'
 
 // Map<componentName, ReactComponent> — populated by the host app in main.tsx
 const _registry = new Map<string, ComponentType>()
@@ -22,6 +23,7 @@ interface FallbackPageProps {
 }
 
 export function FallbackPage({ name }: FallbackPageProps) {
+  const { t } = useTranslation()
   return (
     <div
       style={{
@@ -43,15 +45,17 @@ export function FallbackPage({ name }: FallbackPageProps) {
         }}
       >
         <p style={{ fontSize: 14, fontWeight: 600, color: '#92400e', margin: '0 0 8px' }}>
-          Componente no encontrado en PageRegistry
+          {t('errors.componentNotFoundTitle')}
         </p>
         <p style={{ fontSize: 13, color: '#78350f', margin: 0 }}>
-          El componente <code style={{ background: '#fef3c7', padding: '1px 4px', borderRadius: 3 }}>{name}</code>{' '}
-          no está registrado. Añade{' '}
+          {t('errors.componentNotRegisteredPrefix')}{' '}
+          <code style={{ background: '#fef3c7', padding: '1px 4px', borderRadius: 3 }}>{name}</code>{' '}
+          {t('errors.componentNotRegisteredAdd')}{' '}
           <code style={{ background: '#fef3c7', padding: '1px 4px', borderRadius: 3 }}>
             PageRegistry.register("{name}", {name})
           </code>{' '}
-          en <code style={{ background: '#fef3c7', padding: '1px 4px', borderRadius: 3 }}>main.tsx</code>.
+          {t('errors.componentNotRegisteredIn')}{' '}
+          <code style={{ background: '#fef3c7', padding: '1px 4px', borderRadius: 3 }}>main.tsx</code>.
         </p>
       </div>
     </div>

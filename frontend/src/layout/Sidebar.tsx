@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useMenuStore } from '@/store/menu.store'
 import { useAuthStore } from '@/store/auth.store'
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function Sidebar({ isOpen }: Props) {
+  const { t } = useTranslation()
   const { items, isLoaded, fetchMenu } = useMenuStore()
   const { user, logout } = useAuthStore()
   const location = useLocation()
@@ -147,7 +149,7 @@ export function Sidebar({ isOpen }: Props) {
               </div>
               <button
                 onClick={logout}
-                title="Cerrar sesión"
+                title={t('common.logout')}
                 className="bg-transparent border-none cursor-pointer text-gray-400 p-1 flex shrink-0 hover:text-gray-700 transition-colors"
               >
                 <LogOut size={15} />

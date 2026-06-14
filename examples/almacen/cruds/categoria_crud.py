@@ -9,21 +9,21 @@ from models import Categoria
 class CategoriaCRUD(QuiverCRUD):
     model = Categoria
     route = "categorias"
-    title = "Categorías"
+    title = "Categories"
     order_by = "nombre"
     search_fields = ["nombre"]
 
     columns = [
-        Column("nombre",      label="Nombre",      sortable=True),
-        Column("descripcion", label="Descripción"),
-        Column("created_at",  label="Creada",      col_type="datetime"),
+        Column("nombre",      label="Name",        sortable=True),
+        Column("descripcion", label="Description"),
+        Column("created_at",  label="Created",     col_type="datetime"),
     ]
 
     fields = [
-        TextField("nombre",         label="Nombre",       required=True),
-        TextareaField("descripcion", label="Descripción"),
+        TextField("nombre",         label="Name",        required=True),
+        TextareaField("descripcion", label="Description"),
     ]
 
     filters = [
-        TextFilter("nombre", label="Nombre"),
+        TextFilter("nombre", label="Name"),
     ]

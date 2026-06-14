@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import type { FilterConfig } from '@/api/crud.api'
@@ -13,6 +14,7 @@ interface Props {
 const inputClass = 'w-full px-[10px] py-[7px] rounded border border-gray-300 text-md text-gray-900 font-sans outline-none bg-white focus:border-brand-500 focus:ring-[3px] focus:ring-brand-500/20 transition-shadow'
 
 export function Filters({ filters, values, onChange, onReset }: Props) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   if (filters.length === 0) return null
 
@@ -30,7 +32,7 @@ export function Filters({ filters, values, onChange, onReset }: Props) {
             variant="secondary" size="sm"
             onClick={() => setOpen(o => !o)}
           >
-            Filtros {open ? '▲' : '▼'}
+            {t('common.filters')} {open ? '▲' : '▼'}
           </Button>
           {hasActive && (
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-500" />
@@ -38,7 +40,7 @@ export function Filters({ filters, values, onChange, onReset }: Props) {
         </div>
         {hasActive && (
           <Button variant="ghost" size="sm" onClick={onReset}>
-            Limpiar filtros
+            {t('common.clearFilters')}
           </Button>
         )}
       </div>
@@ -56,7 +58,7 @@ export function Filters({ filters, values, onChange, onReset }: Props) {
                   onChange={e => set(filter.key, e.target.value)}
                   className={cn(inputClass, 'cursor-pointer')}
                 >
-                  <option value="">Todos</option>
+                  <option value="">{t('common.all')}</option>
                   {filter.choices?.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
               ) : filter.type === 'boolean' ? (
@@ -65,9 +67,9 @@ export function Filters({ filters, values, onChange, onReset }: Props) {
                   onChange={e => set(filter.key, e.target.value)}
                   className={cn(inputClass, 'cursor-pointer')}
                 >
-                  <option value="">Todos</option>
-                  <option value="true">Sí</option>
-                  <option value="false">No</option>
+                  <option value="">{t('common.all')}</option>
+                  <option value="true">{t('common.yes')}</option>
+                  <option value="false">{t('common.no')}</option>
                 </select>
               ) : (
                 <input
@@ -75,7 +77,7 @@ export function Filters({ filters, values, onChange, onReset }: Props) {
                   value={values[filter.key] ?? ''}
                   onChange={e => set(filter.key, e.target.value)}
                   className={inputClass}
-                  placeholder={`Buscar ${filter.label.toLowerCase()}...`}
+                  placeholder={t('crud.searchField', { label: filter.label.toLowerCase() })}
                 />
               )}
             </div>

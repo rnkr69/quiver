@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Users } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
@@ -29,6 +30,7 @@ const thClass = 'px-4 py-2.5 text-left text-md font-semibold text-gray-700 bg-gr
 const tdClass = 'px-4 py-3 text-base text-gray-900 border-b border-gray-100 align-middle'
 
 export function UsersPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { toast } = useToast()
   const qc = useQueryClient()
@@ -38,28 +40,28 @@ export function UsersPage() {
 
   const deactivate = useMutation({
     mutationFn: (id: string) => usersApi.deactivate(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); setDeactivateId(null); toast('Usuario desactivado correctamente') },
-    onError: () => toast('Error al desactivar el usuario', 'error'),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); setDeactivateId(null); toast(t('users.deactivateSuccess')) },
+    onError: () => toast(t('users.deactivateError'), 'error'),
   })
 
   return (
     <div>
       <PageHeader
-        title="Usuarios"
-        actions={<Button variant="primary" onClick={() => navigate('/admin/users/new')}>+ Crear usuario</Button>}
+        title={t('users.title')}
+        actions={<Button variant="primary" onClick={() => navigate('/admin/users/new')}>{t('users.createUser')}</Button>}
       />
 
       {isLoading ? (
-        <div className="text-gray-500 text-base">Cargando...</div>
+        <div className="text-gray-500 text-base">{t('common.loading')}</div>
       ) : (
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className={thClass}>Usuario</th>
-                <th className={thClass}>Roles</th>
-                <th className={thClass}>Estado</th>
-                <th className={thClass}>Último acceso</th>
+                <th className={thClass}>{t('users.colUser')}</th>
+                <th className={thClass}>{t('users.colRoles')}</th>
+                <th className={thClass}>{t('users.colStatus')}</th>
+                <th className={thClass}>{t('users.colLastLogin')}</th>
                 <th className={`${thClass} w-10`}></th>
               </tr>
             </thead>
@@ -67,7 +69,7 @@ export function UsersPage() {
               {users.length === 0 ? (
                 <tr>
                   <td colSpan={5}>
-                    <EmptyState icon={<Users size={40} />} title="No hay usuarios" description="Crea el primer usuario para comenzar." />
+                    <EmptyState icon={<Users size={40} />} title={t('users.emptyTitle')} description={t('users.emptyDescription')} />
                   </td>
                 </tr>
               ) : users.map(user => (
@@ -93,15 +95,15 @@ export function UsersPage() {
                   </td>
                   <td className={tdClass}>
                     <Badge variant={user.is_active ? 'success' : 'inactive'}>
-                      {user.is_active ? 'Activo' : 'Inactivo'}
+                      {user.is_active ? t('common.active') : t('common.inactive')}
                     </Badge>
                   </td>
                   <td className={`${tdClass} text-gray-600 text-md`}>{formatDate(user.last_login_at)}</td>
                   <td className={`${tdClass} text-right`} onClick={e => e.stopPropagation()}>
                     <RowMenu items={[
-                      { label: 'Editar', action: () => navigate(`/admin/users/${user.id}/edit`) },
+                      { label: t('common.edit'), action: () => navigate(`/admin/users/${user.id}/edit`) },
                       'divider',
-                      ...(user.is_active ? [{ label: 'Desactivar', danger: true as const, action: () => setDeactivateId(user.id) }] : []),
+                      ...(user.is_active ? [{ label: t('users.deactivate'), danger: true as const, action: () => setDeactivateId(user.id) }] : []),
                     ]} />
                   </td>
                 </tr>
@@ -113,13 +115,13 @@ export function UsersPage() {
 
       <Modal
         open={!!deactivateId}
-        title="Desactivar usuario"
-        confirmLabel="Desactivar"
+        title={t('users.deactivateTitle')}
+        confirmLabel={t('users.deactivate')}
         loading={deactivate.isPending}
         onConfirm={() => deactivateId && deactivate.mutate(deactivateId)}
         onCancel={() => setDeactivateId(null)}
       >
-        ¿Desactivar este usuario? El usuario no podrá iniciar sesión hasta que sea reactivado.
+        {t('users.deactivateConfirm')}
       </Modal>
     </div>
   )

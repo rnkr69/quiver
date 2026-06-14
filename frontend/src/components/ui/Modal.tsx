@@ -1,4 +1,5 @@
 import { ReactNode, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from './Button'
 
 interface Props {
@@ -15,13 +16,14 @@ interface Props {
 
 export function Modal({
   open, title, children,
-  confirmLabel = 'Confirmar',
-  cancelLabel = 'Cancelar',
+  confirmLabel,
+  cancelLabel,
   variant = 'danger',
   loading,
   onConfirm,
   onCancel,
 }: Props) {
+  const { t } = useTranslation()
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel() }
     if (open) document.addEventListener('keydown', onKey)
@@ -45,10 +47,10 @@ export function Modal({
         <div className="text-base text-gray-700 mb-6">{children}</div>
         <div className="flex gap-2 justify-end">
           <Button variant="secondary" size="sm" onClick={onCancel} disabled={loading}>
-            {cancelLabel}
+            {cancelLabel ?? t('common.cancel')}
           </Button>
           <Button variant={variant} size="sm" onClick={onConfirm} loading={loading}>
-            {confirmLabel}
+            {confirmLabel ?? t('common.confirm')}
           </Button>
         </div>
       </div>

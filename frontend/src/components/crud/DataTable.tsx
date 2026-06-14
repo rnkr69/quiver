@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { cn } from '@/lib/utils'
@@ -17,6 +18,7 @@ interface Props {
 }
 
 function CellValue({ col, value, relatedMap }: { col: ColumnConfig; value: unknown; relatedMap?: Record<string, Record<string, string>> }) {
+  const { t } = useTranslation()
   if (value === null || value === undefined) {
     return <span className="text-gray-400">—</span>
   }
@@ -34,7 +36,7 @@ function CellValue({ col, value, relatedMap }: { col: ColumnConfig; value: unkno
     return <Badge value={str} color={(entry ?? 'gray') as Parameters<typeof Badge>[0]['color']} />
   }
   if (col.col_type === 'boolean') {
-    return <Badge value={value ? 'Sí' : 'No'} color={value ? 'green' : 'gray'} />
+    return <Badge value={value ? t('common.yes') : t('common.no')} color={value ? 'green' : 'gray'} />
   }
   if (col.col_type === 'date' || col.col_type === 'datetime') {
     const d = new Date(String(value))
@@ -51,6 +53,7 @@ function CellValue({ col, value, relatedMap }: { col: ColumnConfig; value: unkno
 const SKELETON_ROWS = 8
 
 export function DataTable({ columns, data, isLoading, sortBy, sortDir, selectedIds = [], onSort, onSelect, onRowClick, relatedMap }: Props) {
+  const { t } = useTranslation()
   const allIds = data.map(r => String(r.id))
   const allSelected = allIds.length > 0 && allIds.every(id => selectedIds.includes(id))
 
@@ -107,7 +110,7 @@ export function DataTable({ columns, data, isLoading, sortBy, sortDir, selectedI
               ? (
                 <tr>
                   <td colSpan={columns.length + (onSelect ? 1 : 0)}>
-                    <EmptyState title="Sin resultados" description="No hay registros que coincidan con tu búsqueda." />
+                    <EmptyState title={t('common.noResults')} description={t('crud.emptyDescription')} />
                   </td>
                 </tr>
               )

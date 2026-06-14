@@ -9,10 +9,10 @@ from sqlmodel import SQLModel
 from quiver import QuiverApp
 from quiver.menu.schemas import MenuGroup, MenuItem
 
-# Registrar permisos custom antes de crear QuiverApp
+# Register custom permissions before creating QuiverApp
 import permissions  # noqa: F401
 
-# Importar páginas custom para activar los decoradores @quiver_page
+# Import custom pages to trigger the @quiver_page decorators
 import pages.alertas_stock  # noqa: F401
 
 # CRUDs
@@ -21,17 +21,17 @@ from cruds.proveedor_crud import ProveedorCRUD
 from cruds.material_crud import MaterialCRUD
 from cruds.movimiento_crud import MovimientoCRUD
 
-# Widgets del dashboard
+# Dashboard widgets
 import widgets.almacen_stats as stats
 
 # ─────────────────────────────────────────────────────────────────────────────
 
-app = FastAPI(title="Almacén — demo Quiver")
+app = FastAPI(title="Warehouse — Quiver demo")
 
 
 @app.on_event("startup")
 def crear_tablas():
-    """Crea las tablas del ejemplo al arrancar (solo en desarrollo con SQLite)."""
+    """Create the example tables on startup (development only, with SQLite)."""
     from quiver.database.session import _get_engine
     from models import Categoria, Proveedor, Material, MovimientoStock  # noqa: F401
     SQLModel.metadata.create_all(_get_engine())
@@ -54,23 +54,23 @@ quiver.register_widget(stats.entradas_mes)
 quiver.register_widget(stats.salidas_mes)
 quiver.register_widget(stats.movimientos_chart)
 
-# Menú lateral
+# Sidebar menu
 quiver.set_menu([
     MenuItem("Dashboard",  route="/admin",       icon="speedometer2"),
-    MenuGroup("Almacén", items=[
-        MenuItem("Materiales",    route="/admin/materiales",         permission="materiales.list",       icon="box-seam"),
-        MenuItem("Movimientos",   route="/admin/movimientos",        permission="almacen.list",          icon="arrow-left-right"),
-        MenuItem("Alertas stock", route="/admin/almacen/alertas",   permission="almacen.ver_alertas",   icon="exclamation-triangle"),
+    MenuGroup("Warehouse", items=[
+        MenuItem("Materials",         route="/admin/materiales",         permission="materiales.list",       icon="box-seam"),
+        MenuItem("Stock movements",   route="/admin/movimientos",        permission="almacen.list",          icon="arrow-left-right"),
+        MenuItem("Low stock alerts",  route="/admin/almacen/alertas",   permission="almacen.ver_alertas",   icon="exclamation-triangle"),
     ]),
-    MenuGroup("Maestros", items=[
-        MenuItem("Categorías",  route="/admin/categorias",  permission="categorias.list",  icon="tag"),
-        MenuItem("Proveedores", route="/admin/proveedores", permission="proveedores.list", icon="truck"),
+    MenuGroup("Master data", items=[
+        MenuItem("Categories", route="/admin/categorias",  permission="categorias.list",  icon="tag"),
+        MenuItem("Suppliers",  route="/admin/proveedores", permission="proveedores.list", icon="truck"),
     ]),
-    MenuItem("Usuarios", route="/admin/users", permission="users.list", icon="people"),
-    MenuItem("Roles",    route="/admin/roles",  permission="roles.list", icon="shield-lock"),
+    MenuItem("Users", route="/admin/users", permission="users.list", icon="people"),
+    MenuItem("Roles", route="/admin/roles",  permission="roles.list", icon="shield-lock"),
 ])
 
-# Servir el SPA bundleado en /quiver (debe ir al final, tras registrar los CRUDs).
-# Si no hay build del frontend, esto no hace nada (puedes servir el SPA aparte con
-# `npm run dev`). Ver docs/01-installation.md.
+# Serve the bundled SPA at /quiver (must come last, after registering the CRUDs).
+# If there is no frontend build, this does nothing (you can serve the SPA separately
+# with `npm run dev`). See docs/01-installation.md.
 quiver.serve_frontend()

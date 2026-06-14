@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { QuiverLogo } from '@/components/ui/QuiverLogo'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
 interface Props {
   children: ReactNode
@@ -7,7 +8,11 @@ interface Props {
 
 export function AuthLayout({ children }: Props) {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+    <div className="relative min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
+
       <div className="flex items-center gap-2.5 mb-6">
         <QuiverLogo size={40} />
         <span className="text-3xl font-semibold text-gray-900">Quiver</span>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Shield, Edit, Trash2 } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
@@ -16,6 +17,7 @@ const thClass = 'px-4 py-2.5 text-left text-md font-semibold text-gray-700 bg-gr
 const tdClass = 'px-4 py-3 text-base text-gray-900 border-b border-gray-100 align-middle'
 
 export function RolesPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { toast } = useToast()
   const qc = useQueryClient()
@@ -28,8 +30,8 @@ export function RolesPage() {
 
   const deleteRole = useMutation({
     mutationFn: (id: string) => rolesApi.delete(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['roles'] }); setDeleteId(null); toast('Rol eliminado correctamente') },
-    onError: () => toast('Error al eliminar el rol', 'error'),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['roles'] }); setDeleteId(null); toast(t('roles.deleteSuccess')) },
+    onError: () => toast(t('roles.deleteError'), 'error'),
   })
 
   const createRole = useMutation({
@@ -37,29 +39,29 @@ export function RolesPage() {
     onSuccess: (role) => {
       qc.invalidateQueries({ queryKey: ['roles'] })
       setCreating(false); setNewName(''); setNewDisplayName('')
-      toast('Rol creado correctamente')
+      toast(t('roles.createSuccess'))
       navigate(`/admin/roles/${role.id}/edit`)
     },
-    onError: () => toast('Error al crear el rol', 'error'),
+    onError: () => toast(t('roles.createError'), 'error'),
   })
 
   return (
     <div>
       <PageHeader
-        title="Roles"
-        actions={<Button variant="primary" onClick={() => setCreating(true)}>+ Crear rol</Button>}
+        title={t('roles.title')}
+        actions={<Button variant="primary" onClick={() => setCreating(true)}>{t('roles.createRole')}</Button>}
       />
 
       {isLoading ? (
-        <div className="text-gray-500 text-base">Cargando...</div>
+        <div className="text-gray-500 text-base">{t('common.loading')}</div>
       ) : (
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className={thClass}>Nombre</th>
-                <th className={thClass}>Identificador</th>
-                <th className={`${thClass} text-center`}>Permisos</th>
+                <th className={thClass}>{t('roles.colName')}</th>
+                <th className={thClass}>{t('roles.colIdentifier')}</th>
+                <th className={`${thClass} text-center`}>{t('roles.colPermissions')}</th>
                 <th className={`${thClass} w-10`}></th>
               </tr>
             </thead>
@@ -67,7 +69,7 @@ export function RolesPage() {
               {roles.length === 0 ? (
                 <tr>
                   <td colSpan={4}>
-                    <EmptyState icon={<Shield size={40} />} title="No hay roles" description="Crea el primer rol para asignar permisos." />
+                    <EmptyState icon={<Shield size={40} />} title={t('roles.emptyTitle')} description={t('roles.emptyDescription')} />
                   </td>
                 </tr>
               ) : roles.map(role => (
@@ -77,13 +79,13 @@ export function RolesPage() {
                     <code className="text-sm bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{role.name}</code>
                   </td>
                   <td className={`${tdClass} text-center`}>
-                    <Badge variant="active">{role.permissions_count} permisos</Badge>
+                    <Badge variant="active">{t('roles.permissionsCount', { count: role.permissions_count })}</Badge>
                   </td>
                   <td className={`${tdClass} text-right`}>
                     <RowMenu items={[
-                      { label: 'Editar', icon: <Edit size={14} />, action: () => navigate(`/admin/roles/${role.id}/edit`) },
+                      { label: t('common.edit'), icon: <Edit size={14} />, action: () => navigate(`/admin/roles/${role.id}/edit`) },
                       'divider',
-                      { label: 'Eliminar', icon: <Trash2 size={14} />, danger: true, action: () => setDeleteId(role.id) },
+                      { label: t('common.delete'), icon: <Trash2 size={14} />, danger: true, action: () => setDeleteId(role.id) },
                     ]} />
                   </td>
                 </tr>
@@ -95,20 +97,20 @@ export function RolesPage() {
 
       <Modal
         open={creating}
-        title="Crear rol"
-        confirmLabel="Crear"
+        title={t('roles.createTitle')}
+        confirmLabel={t('common.create')}
         variant="primary"
         loading={createRole.isPending}
         onConfirm={() => createRole.mutate()}
         onCancel={() => { setCreating(false); setNewName(''); setNewDisplayName('') }}
       >
         <div className="flex flex-col gap-3">
-          <Input label="Nombre para mostrar" value={newDisplayName} onChange={e => setNewDisplayName(e.target.value)} placeholder="ej. Supervisor" required />
+          <Input label={t('roles.displayName')} value={newDisplayName} onChange={e => setNewDisplayName(e.target.value)} placeholder={t('roles.displayNamePlaceholder')} required />
           <Input
-            label="Identificador (slug)"
+            label={t('roles.slug')}
             value={newName}
             onChange={e => setNewName(e.target.value.toLowerCase().replace(/\s+/g, '_'))}
-            placeholder="ej. supervisor"
+            placeholder={t('roles.slugPlaceholder')}
             required
           />
         </div>
@@ -116,13 +118,13 @@ export function RolesPage() {
 
       <Modal
         open={!!deleteId}
-        title="Eliminar rol"
-        confirmLabel="Eliminar"
+        title={t('roles.deleteTitle')}
+        confirmLabel={t('common.delete')}
         loading={deleteRole.isPending}
         onConfirm={() => deleteId && deleteRole.mutate(deleteId)}
         onCancel={() => setDeleteId(null)}
       >
-        ¿Eliminar este rol? Los usuarios asignados a este rol perderán sus permisos.
+        {t('roles.deleteConfirm')}
       </Modal>
     </div>
   )

@@ -39,3 +39,11 @@ CLAUDE.md
 .idea/
 *.swp
 *.swo
+
+# demo-recorder artifacts
+out/
+.cache/
+
+# media recording scripts (local; reference machine-specific paths)
+/quiver-demo.yml
+/quiver-install.yml

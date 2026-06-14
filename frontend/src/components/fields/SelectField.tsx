@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { apiClient } from '@/api/client'
 import { cn } from '@/lib/utils'
 import type { FieldProps } from './index'
@@ -9,6 +10,7 @@ const baseSelect = 'w-full px-[10px] py-2 rounded border border-gray-200 text-ba
 const errorSelect = 'border-danger-500 focus:border-danger-500 focus:ring-danger-500/20'
 
 export function SelectField({ field, value, onChange, error, readOnly }: FieldProps) {
+  const { t } = useTranslation()
   const [choices, setChoices] = useState<Choice[]>(field.choices ?? [])
   const multiple = field.field_type === 'select_multiple'
 
@@ -48,7 +50,7 @@ export function SelectField({ field, value, onChange, error, readOnly }: FieldPr
           disabled={readOnly}
           className={cn(baseSelect, error && errorSelect)}
         >
-          <option value="">— Seleccionar —</option>
+          <option value="">{t('common.select')}</option>
           {choices.map(c => (
             <option key={c.value} value={c.value}>{c.label}</option>
           ))}

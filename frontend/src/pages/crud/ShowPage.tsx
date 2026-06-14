@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { CrudForm } from '@/components/crud/CrudForm'
@@ -10,6 +11,7 @@ import { useToast } from '@/components/ui/Toast'
 import { crudApi } from '@/api/crud.api'
 
 export function ShowPage() {
+  const { t } = useTranslation()
   const { resource, id } = useParams<{ resource: string; id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -33,19 +35,19 @@ export function ShowPage() {
     mutationFn: () => crudApi.remove(resource!, id!),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['crud-list', resource] })
-      toast('Registro eliminado correctamente')
+      toast(t('crud.recordDeleted'))
       navigate(`/admin/${resource}`)
     },
-    onError: () => toast('Error al eliminar el registro', 'error'),
+    onError: () => toast(t('crud.recordDeleteError'), 'error'),
   })
 
-  if (configLoading || itemLoading) return <div className="text-gray-700 text-base">Cargando...</div>
+  if (configLoading || itemLoading) return <div className="text-gray-700 text-base">{t('common.loading')}</div>
   if (!config) return null
   if (isError || !item) {
     return (
       <div className="text-center py-10">
-        <p className="text-gray-700 mb-4">No se encontró el registro.</p>
-        <Button variant="link" onClick={() => navigate(`/admin/${resource}`)}>← Volver al listado</Button>
+        <p className="text-gray-700 mb-4">{t('crud.notFound')}</p>
+        <Button variant="link" onClick={() => navigate(`/admin/${resource}`)}>← {t('common.backToList')}</Button>
       </div>
     )
   }
@@ -57,18 +59,18 @@ export function ShowPage() {
     <div>
       <div className="flex items-start mb-5 gap-3">
         <div className="flex-1">
-          <BackLink to={`/admin/${resource}`} label="Volver al listado" />
+          <BackLink to={`/admin/${resource}`} label={t('common.backToList')} />
           <h1 className="text-3xl font-semibold text-gray-900 mt-2">{config.title ?? resource}</h1>
         </div>
         <div className="flex gap-2 pt-6">
           {canUpdate && (
             <Button variant="secondary" size="sm" onClick={() => navigate(`/admin/${resource}/${id}/edit`)}>
-              Editar
+              {t('common.edit')}
             </Button>
           )}
           {canDelete && (
             <Button variant="danger" size="sm" onClick={() => setDeleteModalOpen(true)}>
-              Eliminar
+              {t('common.delete')}
             </Button>
           )}
         </div>
@@ -84,13 +86,13 @@ export function ShowPage() {
 
       <Modal
         open={deleteModalOpen}
-        title="Eliminar registro"
-        confirmLabel="Eliminar"
+        title={t('crud.deleteRecordTitle')}
+        confirmLabel={t('common.delete')}
         loading={remove.isPending}
         onConfirm={() => remove.mutate()}
         onCancel={() => setDeleteModalOpen(false)}
       >
-        ¿Eliminar este registro? Esta acción no se puede deshacer.
+        {t('crud.deleteRecordConfirm')}
       </Modal>
     </div>
   )
